@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.5)
+project(bashclass)
+set(CMAKE_VERBOSE_MAKEFILE ON)
+set(BASH_PROJECT_EXEC "bashc")
+
+# Add easycc CMakeLists.txt to build it automatically
+add_subdirectory(EasyCC-CPP)
+
+# Include bashc header files (e.g. same as -I flag)
+include_directories(include)
+
+# Inlcude easycc headers files
+include_directories(EasyCC-CPP/include)
+
+# Store cpp files in a variable
+file(GLOB_RECURSE BASH_PROJECT_SOURCE_FILES src/*/*.cpp src/*.cpp)
+
+# Add the primary executable
+add_executable(${BASH_PROJECT_EXEC} ${BASH_PROJECT_SOURCE_FILES})
+
+# Link library to the executable
+target_link_libraries(${BASH_PROJECT_EXEC} easyccls)
