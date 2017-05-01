@@ -1,3 +1,4 @@
 [submodule "EasyCC-CPP"]
 	path = EasyCC-CPP
 	url = https://github.com/amirbawab/EasyCC-CPP
+    branch = master
