@@ -1,19 +1,56 @@
 //  Import file
-import file.bashc
+> source "helpers.bashc"
+import("file2.bashc")
 
-// Create a global variable
+// Create global variables
 var int SUCCESS_CODE = 0;
+var int FAILURE_CODE = 1;
+
+/**
+ * Source a file
+ **/
+ function void import(var string file) {
+    > source $1
+ }
+
+/**
+ * Replace first occurence of a pattern by a given value
+ **/
+function string replaceFirst(var string pattern, var any value) {
+    var any x = >$ sed "0,/{}/{s/{}/$2/}" <<< "$1" ;;;
+    return x;
+}
+
+/**
+ * String format with two arguments
+ **/
+function string stringf(var string mesage, var any val1, var any val2) {
+    var string x = message;
+    x = replaceFirst(x, val1);
+    x = replaceFirst(x, val2);
+    return x;
+}
+
+/**
+ * String format with one argument, function overloading
+ **/
+function string stringf(var string message, var any val1) {
+    return stringf(message, val1, "");
+}
 
 // Create a class
 class Team {
 
-    // Create a variable, member of a class
+    // Create variables, members of a class
     var string name;
-    var Person[] people;
+    var Person p1;
+    var Person p2;
 
-    // Create a function, member of a class
+    /**
+     * Print details about the team
+     */
     function string toString() {
-        return stringf("Team %s has %d members", name, people.length());
+        return stringf("Team {} has {} members", name, 2);
     }
 }
 
@@ -24,22 +61,26 @@ class Person {
 }
 
 // Main function, return an int
-function int main(string[] argv) {
+function int main(var string name) {
+
+    // If name was not specified
+    if(name == "") {
+        print("Pleas enter a name as an argument when running this script");
+        return FAILURE_CODE;
+    }
 
     // Welcome message
-    printf("Hello world from BashClass")
-
-    // Run one line of bash
-    > echo Hello world from bash
+    print stringf("Hello {}, welcome to BashClass", name)
 
     // Create a team
     var Team team;
     team.name = "Bash team";
     var Person p1;
-    p1.name = "Basha";
+    p1.name = "One";
     p1.id = 1;
-    team.people.add(p1);
-
+    p2.name = "Two";
+    p2.id = 2;
+    
     // Run a block of bash
     >...
         echo Thank you for using BashClass
