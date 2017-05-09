@@ -8,12 +8,10 @@ add_subdirectory(EasyCC-CPP)
 
 # Include bashc header files (e.g. same as -I flag)
 include_directories(include)
-
-# Inlcude easycc headers files
 include_directories(EasyCC-CPP/include)
 
 # Store cpp files in a variable
-file(GLOB_RECURSE BASH_PROJECT_SOURCE_FILES src/*/*.cpp src/*.cpp)
+file(GLOB_RECURSE BASH_PROJECT_SOURCE_FILES src/*/*.cpp)
 
 # Add the primary executable
 add_executable(${BASH_PROJECT_EXEC} ${BASH_PROJECT_SOURCE_FILES})
