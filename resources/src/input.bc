@@ -14,6 +14,13 @@ var int FAILURE_CODE = 1;
  }
 
 /**
+ * Print a message
+ **/
+function void print(var any message) {
+    > echo "$1"
+}
+
+/**
  * Replace first occurence of a pattern by a given value
  **/
 function string replaceFirst(var string pattern, var any value) {
@@ -70,7 +77,7 @@ function int main(var string name) {
     }
 
     // Welcome message
-    print stringf("Hello {}, welcome to BashClass", name)
+    print(stringf("Hello {}, welcome to BashClass", name));
 
     // Create a team
     var Team team;
