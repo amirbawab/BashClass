@@ -1,0 +1,10 @@
+{
+    "default_message": "Error: token of value '${value}' found at line ${line} and column ${column}",
+    "error_messages": {
+        "error_comment_block" : "Input reached end of file before closing block comment",
+        "error_string" : "Incomplete string found at line ${line}",
+        "error_bash_block" : "Input reached end of file before closing bash block",
+        "error_bash_sub" : "Input reached end of file before closing bash subshell",
+        "error_invalid_character" : "Invalid character '${value}' found at line ${line} and column ${column}"
+    }
+}

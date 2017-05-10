@@ -1,0 +1,28 @@
+{
+    "newline": "LF",
+
+    "ignore": {
+        "prefix": "comment_",
+        "suffix": "",
+        "include": [],
+        "exclude": []
+    },
+
+    "error": {
+        "prefix": "error_",
+        "suffix": "",
+        "include": [],
+        "exclude": []
+    },
+
+    "reserved": {
+        "identifier": {
+            "if" : "if",
+            "while" : "while",
+            "function" : "function",
+            "class" : "class",
+            "var" : "var",
+            "return" : "return"
+        }
+    }
+}
