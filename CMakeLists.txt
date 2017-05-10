@@ -9,6 +9,7 @@ add_subdirectory(EasyCC-CPP)
 # Include bashc header files (e.g. same as -I flag)
 include_directories(include)
 include_directories(EasyCC-CPP/include)
+include_directories(EasyCC-CPP/rapidjson/include)
 
 # Store cpp files in a variable
 file(GLOB_RECURSE BASH_PROJECT_SOURCE_FILES src/*/*.cpp)
@@ -17,4 +18,4 @@ file(GLOB_RECURSE BASH_PROJECT_SOURCE_FILES src/*/*.cpp)
 add_executable(${BASH_PROJECT_EXEC} ${BASH_PROJECT_SOURCE_FILES})
 
 # Link library to the executable
-target_link_libraries(${BASH_PROJECT_EXEC} easyccls)
+target_link_libraries(${BASH_PROJECT_EXEC} easyccdev)
