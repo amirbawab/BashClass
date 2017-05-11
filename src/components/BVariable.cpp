@@ -1,1 +1,3 @@
-#include "BVariable.h"
+#include <bashclass/BVariable.h>
+
+
