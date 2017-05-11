@@ -3,13 +3,10 @@
 
 #include <vector>
 #include <memory>
-#include <bashclass/BVariable.h>
+#include <bashclass/BScope.h>
 
-class BFunction {
-private:
-    std::vector<std::shared_ptr<BVariable>> m_variables;
-public:
-    std::shared_ptr<BVariable> createVariable();
+class BFunction : public BScope {
+
 };
 
 #endif

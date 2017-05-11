@@ -5,17 +5,15 @@
 #include <memory>
 #include <bashclass/BClass.h>
 #include <bashclass/BFunction.h>
-#include <bashclass/BVariable.h>
+#include <bashclass/BScope.h>
 
-class BGlobal {
+class BGlobal : public BScope {
 private:
     std::vector<std::shared_ptr<BClass>> m_classes;
     std::vector<std::shared_ptr<BFunction>> m_functions;
-    std::vector<std::shared_ptr<BVariable>> m_variables;
 public:
     std::shared_ptr<BClass> createClass();
     std::shared_ptr<BFunction> createFunction();
-    std::shared_ptr<BVariable> createVariable();
 };
 
 #endif

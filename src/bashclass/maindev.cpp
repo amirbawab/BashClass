@@ -19,13 +19,20 @@ int main(int argc, char *argv[]) {
     // Start registering semantic actions handlers
     easyCC.registerSemanticAction("#startClass#", bashClass.m_startClass);
 
-    // Start compiling
-    easyCC.setParsingPhase(0);
+    const int MAX_PHASES = 2;
+    for(int phase=1; phase <= MAX_PHASES; phase++) {
 
-    for(std::string fileName : easyCC.getInputFilesNames()) {
-        code = easyCC.compile(fileName);
-        if(code != ecc::EasyCC::OK_CODE) {
-            return code;
+        // Set the phase number
+        easyCC.setParsingPhase(phase);
+
+        // Don't show error message on phase greater than 1
+        easyCC.setSilentSyntaxErrorMessages(phase != 1);
+
+        for(std::string fileName : easyCC.getInputFilesNames()) {
+            code = easyCC.compile(fileName);
+            if(code != ecc::EasyCC::OK_CODE) {
+                return code;
+            }
         }
     }
 }

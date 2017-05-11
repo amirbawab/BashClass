@@ -11,9 +11,3 @@ std::shared_ptr<BFunction> BGlobal::createFunction() {
     m_functions.push_back(functionComp);
     return functionComp;
 }
-
-std::shared_ptr<BVariable> BGlobal::createVariable() {
-    auto variableComp = std::make_shared<BVariable>();
-    m_variables.push_back(variableComp);
-    return variableComp;
-}

@@ -4,14 +4,12 @@
 #include <vector>
 #include <memory>
 #include <bashclass/BFunction.h>
-#include <bashclass/BVariable.h>
+#include <bashclass/BScope.h>
 
-class BClass {
+class BClass : public BScope {
 private:
     std::vector<std::shared_ptr<BFunction>> m_functions;
-    std::vector<std::shared_ptr<BVariable>> m_variables;
 public:
-    std::shared_ptr<BVariable> createVariable();
     std::shared_ptr<BFunction> createFunction();
 };
 

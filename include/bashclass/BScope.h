@@ -6,8 +6,10 @@
 #include <bashclass/BVariable.h>
 
 class BScope {
-private:
+protected:
     std::vector<std::shared_ptr<BVariable>> m_variables;
+public:
+    std::shared_ptr<BVariable> createVariable();
 };
 
 #endif
