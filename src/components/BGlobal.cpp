@@ -6,8 +6,3 @@ std::shared_ptr<BClass> BGlobal::createClass() {
     return classComp;
 }
 
-std::shared_ptr<BFunction> BGlobal::createFunction() {
-    auto functionComp = std::make_shared<BFunction>();
-    m_functions.push_back(functionComp);
-    return functionComp;
-}

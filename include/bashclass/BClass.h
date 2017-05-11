@@ -4,14 +4,12 @@
 #include <vector>
 #include <memory>
 #include <bashclass/BFunction.h>
-#include <bashclass/BScope.h>
+#include <bashclass/BScopeFunc.h>
 
-class BClass : public BScope {
+class BClass : public BScopeFunc {
 private:
     std::string m_name;
-    std::vector<std::shared_ptr<BFunction>> m_functions;
 public:
-    std::shared_ptr<BFunction> createFunction();
     std::string getName() const { return m_name;}
     void setName(std::string name) {m_name = name;}
 };

@@ -14,13 +14,18 @@ int main(int argc, char *argv[]) {
 
     // Create a bash class instance to hold the structure of the code
     BashClass bashClass;
-    bashClass.initHandlers();
 
     // Start registering semantic actions handlers
     easyCC.registerSemanticAction("#startClass#", bashClass.m_startClass);
     easyCC.registerSemanticAction("#className#", bashClass.m_className);
     easyCC.registerSemanticAction("#endClass#", bashClass.m_endClass);
 
+    easyCC.registerSemanticAction("#startFunction#", bashClass.m_endClass);
+    easyCC.registerSemanticAction("#functionType#", bashClass.m_functionType);
+    easyCC.registerSemanticAction("#functionName#", bashClass.m_functionName);
+    easyCC.registerSemanticAction("#endFunction#", bashClass.m_endFunction);
+
+    // Start compiling
     std::vector<int> phases = {BashClass::PHASE_CREATE, BashClass::PHASE_EVAL_GEN};
     for(int phase : phases) {
 
