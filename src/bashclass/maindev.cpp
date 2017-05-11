@@ -18,6 +18,8 @@ int main(int argc, char *argv[]) {
 
     // Start registering semantic actions handlers
     easyCC.registerSemanticAction("#startClass#", bashClass.m_startClass);
+    easyCC.registerSemanticAction("#className#", bashClass.m_className);
+    easyCC.registerSemanticAction("#endClass#", bashClass.m_endClass);
 
     std::vector<int> phases = {BashClass::PHASE_CREATE, BashClass::PHASE_EVAL_GEN};
     for(int phase : phases) {

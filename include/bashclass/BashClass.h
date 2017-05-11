@@ -16,7 +16,11 @@ public:
     static const int PHASE_EVAL_GEN = 2;
     BashClass();
     void initHandlers();
+
+    // Semantic action handlers
     SemanticActionHandler m_startClass;
+    SemanticActionHandler m_className;
+    SemanticActionHandler m_endClass;
 private:
     std::shared_ptr<BGlobal> m_global;
     std::stack<std::shared_ptr<BScope>> m_scopeStack;

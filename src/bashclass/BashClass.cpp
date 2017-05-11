@@ -13,4 +13,17 @@ void BashClass::initHandlers() {
             m_scopeStack.push(newClass);
         }
     };
+
+    m_className = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            auto createdClass = std::dynamic_pointer_cast<BClass>(m_scopeStack.top());
+            createdClass->setName(lexicalVector[index]->getValue());
+        }
+    };
+
+    m_endClass = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            m_scopeStack.pop();
+        }
+    };
 }

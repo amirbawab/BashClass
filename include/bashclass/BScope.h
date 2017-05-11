@@ -9,7 +9,7 @@ class BScope {
 protected:
     std::vector<std::shared_ptr<BVariable>> m_variables;
 public:
-    std::shared_ptr<BVariable> createVariable();
+    virtual std::shared_ptr<BVariable> createVariable();
 };
 
 #endif
