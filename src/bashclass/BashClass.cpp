@@ -8,6 +8,9 @@ BashClass::BashClass() {
 
 void BashClass::initHandlers() {
     m_startClass = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        std::cout << "Class created!" << std::endl;
+        if(phase == BashClass::PHASE_CREATE) {
+            auto newClass = m_global->createClass();
+            m_scopeStack.push(newClass);
+        }
     };
 }

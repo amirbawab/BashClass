@@ -19,19 +19,16 @@ int main(int argc, char *argv[]) {
     // Start registering semantic actions handlers
     easyCC.registerSemanticAction("#startClass#", bashClass.m_startClass);
 
-    /**
-     * Phase 1: Create a table for all the scopes
-     * Phase 2: Evaluate and generate code
-     */
-    const int MAX_PHASES = 2;
-    for(int phase=1; phase <= MAX_PHASES; phase++) {
+    std::vector<int> phases = {BashClass::PHASE_CREATE, BashClass::PHASE_EVAL_GEN};
+    for(int phase : phases) {
 
         // Set the phase number
         easyCC.setParsingPhase(phase);
 
-        // Don't show error message on phase greater than 1
-        easyCC.setSilentSyntaxErrorMessages(phase != 1);
+        // Show error message on create phase only
+        easyCC.setSilentSyntaxErrorMessages(phase != BashClass::PHASE_CREATE);
 
+        // Compile all files passed as arguments
         for(std::string fileName : easyCC.getInputFilesNames()) {
             code = easyCC.compile(fileName);
             if(code != ecc::EasyCC::OK_CODE) {
