@@ -19,6 +19,10 @@ int main(int argc, char *argv[]) {
     // Start registering semantic actions handlers
     easyCC.registerSemanticAction("#startClass#", bashClass.m_startClass);
 
+    /**
+     * Phase 1: Create a table for all the scopes
+     * Phase 2: Evaluate and generate code
+     */
     const int MAX_PHASES = 2;
     for(int phase=1; phase <= MAX_PHASES; phase++) {
 
