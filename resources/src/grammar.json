@@ -72,7 +72,7 @@
     "EXPR_V" : ["EPSILON","OP_GROUP_K EXPR_W EXPR_V"],
     "EXPR_W" : ["EXPR_Y EXPR_X"],
     "EXPR_X" : ["EPSILON","OP_GROUP_L EXPR_Y EXPR_X"],
-    "EXPR_Y" : ["OPEN_PAR EXPR_DEC CLOSE_CUR","ARITH_ID"],
+    "EXPR_Y" : ["OPEN_PAR EXPR_DEC CLOSE_PAR","ARITH_ID"],
 
     "ARITH_ID" : ["'integer'","'string'","IDENTIFIER_VALUE","BASH_SUB"],
 

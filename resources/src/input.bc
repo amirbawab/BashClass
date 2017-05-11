@@ -56,7 +56,7 @@ class Team {
      * Print details about the team
      */
     function string toString() {
-        return stringf("Team {} has {} members: {} and {}", name, 2+2, p1.name, p2.name);
+        return stringf("Team {} has {} members: {} and {}", name, 2, p1.name, p2.name);
     }
 }
 
