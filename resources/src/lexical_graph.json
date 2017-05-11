@@ -359,7 +359,9 @@
             "chars": [
                 "LOWER_CASE_LETTER",
                 "UPPER_CASE_LETTER",
-                "_"
+                "_",
+                "POSITIVE",
+                "0"
             ]
         },
         {
@@ -648,7 +650,7 @@
             "to": 40,
             "chars": [
                 "EOF",
-                "EOL"
+                "NEW_LINE"
             ]
         },
         {
@@ -733,7 +735,7 @@
             "to": 47,
             "chars": [
                 "EOF",
-                "EOL"
+                "NEW_LINE"
             ]
         },
         {
@@ -755,7 +757,7 @@
             "to": 49,
             "chars": [
                 "EOF",
-                "EOL"
+                "NEW_LINE"
             ]
         },
         {

@@ -1,5 +1,5 @@
 //  Import file
-> source "helpers.bashc"
+># source "helpers.bashc"
 import("file2.bashc")
 
 // Create global variables
@@ -10,21 +10,21 @@ var int FAILURE_CODE = 1;
  * Source a file
  **/
  function void import(var string file) {
-    > source $1
+    ># source $1
  }
 
 /**
  * Print a message
  **/
 function void print(var any message) {
-    > echo "$1"
+    ># echo "$1"
 }
 
 /**
  * Replace first occurence of a pattern by a given value
  **/
 function string replaceFirst(var string pattern, var any value) {
-    var any x = >$ sed "0,/{}/{s/{}/$2/}" <<< "$1" ;;;
+    var any x = >$ sed "0,/{}/{s/{}/$2/}" <<< "$1" $<;
     return x;
 }
 
@@ -89,10 +89,10 @@ function int main(var string name) {
     p2.id = 2;
     
     // Run a block of bash
-    >...
+    >@
         echo Thank you for using BashClass
         echo Good bye!
-    ...<
+    @<
 
     // Return 0
     return SUCCESS_CODE;
