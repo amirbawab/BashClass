@@ -3,10 +3,9 @@
 
 #include <vector>
 #include <memory>
-#include <bashclass/BFunction.h>
-#include <bashclass/BScopeFunc.h>
+#include <bashclass/BScope.h>
 
-class BClass : public BScopeFunc {
+class BClass : public BScope {
 private:
     std::string m_name;
 public:

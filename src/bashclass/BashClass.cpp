@@ -10,7 +10,7 @@ BashClass::BashClass() {
 void BashClass::initHandlers() {
     m_startClass = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            auto newClass = m_global->createClass();
+            auto newClass = m_scopeStack.top()->createClass();
             m_scopeStack.push(newClass);
         }
     };
@@ -30,8 +30,7 @@ void BashClass::initHandlers() {
 
     m_startFunction = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            auto scopeFunc = std::dynamic_pointer_cast<BScopeFunc>(m_scopeStack.top());
-            auto newFunction = scopeFunc->createFunction();
+            auto newFunction = m_scopeStack.top()->createFunction();
             m_scopeStack.push(newFunction);
         }
     };
@@ -64,14 +63,14 @@ void BashClass::initHandlers() {
 
     m_varType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            const auto &variables = m_scopeStack.top()->getVariables();
+            const auto &variables = m_scopeStack.top()->findAllVariables();
             variables[variables.size()-1]->setType(lexicalVector[index]->getValue());
         }
     };
 
     m_varName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            const auto &variables = m_scopeStack.top()->getVariables();
+            const auto &variables = m_scopeStack.top()->findAllVariables();
             variables[variables.size()-1]->setName(lexicalVector[index]->getValue());
         }
     };
