@@ -9,6 +9,7 @@ protected:
     std::vector<std::shared_ptr<BFunction>> m_functions;
 public:
     virtual std::shared_ptr<BFunction> createFunction();
+    std::vector<std::shared_ptr<BFunction>> findAllFunctions(std::string name);
 };
 
 #endif

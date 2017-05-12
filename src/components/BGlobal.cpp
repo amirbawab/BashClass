@@ -6,3 +6,13 @@ std::shared_ptr<BClass> BGlobal::createClass() {
     return classComp;
 }
 
+std::vector<std::shared_ptr<BClass>> BGlobal::findAllClasses(std::string name) {
+    std::vector<std::shared_ptr<BClass>> classes;
+    for(auto cls : m_classes) {
+        if(cls->getName() == name) {
+            classes.push_back(cls);
+        }
+    }
+    return classes;
+}
+

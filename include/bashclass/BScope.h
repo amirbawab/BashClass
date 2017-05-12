@@ -10,6 +10,8 @@ protected:
     std::vector<std::shared_ptr<BVariable>> m_variables;
 public:
     virtual std::shared_ptr<BVariable> createVariable();
+    const std::vector<std::shared_ptr<BVariable>> &getVariables() const {return m_variables;}
+    std::vector<std::shared_ptr<BVariable>> findAllVariables(std::string name);
 };
 
 #endif

@@ -12,6 +12,7 @@ private:
     std::vector<std::shared_ptr<BClass>> m_classes;
 public:
     std::shared_ptr<BClass> createClass();
+    std::vector<std::shared_ptr<BClass>> findAllClasses(std::string name);
 };
 
 #endif

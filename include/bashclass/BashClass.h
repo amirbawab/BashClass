@@ -25,6 +25,10 @@ public:
     SemanticActionHandler m_functionType;
     SemanticActionHandler m_functionName;
     SemanticActionHandler m_endFunction;
+
+    SemanticActionHandler m_createVar;
+    SemanticActionHandler m_varType;
+    SemanticActionHandler m_varName;
 private:
     std::shared_ptr<BGlobal> m_global;
     std::stack<std::shared_ptr<BScope>> m_scopeStack;
