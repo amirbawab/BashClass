@@ -7,18 +7,21 @@
 
 std::shared_ptr<BScope> BScope::createClass() {
     auto classComp = std::make_shared<BClass>();
+    classComp->setParentScope(shared_from_this());
     m_scopes.push_back(classComp);
     return classComp;
 }
 
 std::shared_ptr<BScope> BScope::createFunction() {
     auto functionComp = std::make_shared<BFunction>();
+    functionComp->setParentScope(shared_from_this());
     m_scopes.push_back(functionComp);
     return functionComp;
 }
 
 std::shared_ptr<BVariable> BScope::createVariable() {
     auto variableComp = std::make_shared<BVariable>();
+    variableComp->setParentScope(shared_from_this());
     m_variables.push_back(variableComp);
     return variableComp;
 }

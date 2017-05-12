@@ -9,6 +9,7 @@ class BScope : public std::enable_shared_from_this<BScope> {
 protected:
     std::vector<std::shared_ptr<BVariable>> m_variables;
     std::vector<std::shared_ptr<BScope>> m_scopes;
+    std::shared_ptr<BScope> m_parentScope;
 public:
     virtual ~BScope(){}
 
@@ -61,6 +62,18 @@ public:
      * that matches the passed name
      */
     std::vector<std::shared_ptr<BScope>> findAllFunctions(char* name = nullptr);
+
+    /**
+     * Get parent scope
+     * @return pointer to parent scope
+     */
+    std::shared_ptr<BScope> getParentScope() const {return m_parentScope;}
+
+    /**
+     * Set parent scope
+     * @param scope Parent scope
+     */
+    void setParentScope(std::shared_ptr<BScope> scope) { m_parentScope = scope;}
 };
 
 #endif
