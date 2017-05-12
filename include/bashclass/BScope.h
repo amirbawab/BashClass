@@ -5,12 +5,18 @@
 #include <memory>
 #include <bashclass/BVariable.h>
 
-class BScope {
+class BScope : public std::enable_shared_from_this<BScope> {
 protected:
     std::vector<std::shared_ptr<BVariable>> m_variables;
     std::vector<std::shared_ptr<BScope>> m_scopes;
 public:
     virtual ~BScope(){}
+
+    /**
+     * Get a string representation of the scope structure
+     */
+    std::stringstream getStructure();
+
     /**
      * Create a class that belong to this scope
      * @return pointer to the create class

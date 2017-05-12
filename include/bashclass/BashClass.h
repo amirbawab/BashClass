@@ -15,6 +15,9 @@ public:
     static const int PHASE_EVAL_GEN = 2;
     BashClass();
 
+    // Print the structure of the code
+    void printStructure();
+
     // Semantic action handlers
     SemanticActionHandler m_startClass;
     SemanticActionHandler m_className;

@@ -42,5 +42,8 @@ int main(int argc, char *argv[]) {
                 return code;
             }
         }
+
+        // Print structure of the compiled files
+        bashClass.printStructure();
     }
 }

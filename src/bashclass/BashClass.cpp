@@ -1,10 +1,15 @@
 #include <bashclass/BashClass.h>
 #include <iostream>
+#include <sstream>
 
 BashClass::BashClass() {
     m_global = std::make_shared<BGlobal>();
     m_scopeStack.push(m_global);
     initHandlers();
+}
+
+void BashClass::printStructure() {
+    std::cout << m_global->getStructure().str() << std::endl;
 }
 
 void BashClass::initHandlers() {
