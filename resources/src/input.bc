@@ -6,6 +6,14 @@ var int SUCCESS_CODE;
 var int FAILURE_CODE;
 
 /**
+ * Initialize global variables
+ */
+function void init() {
+    SUCCESS_CODE=0;
+    FAILURE_CODE=1;
+}
+
+/**
  * Source a file
  **/
  function void import(var string file) {
@@ -57,8 +65,9 @@ class Team {
     /**
      * Print details about the team
      */
-    function string toString(this) {
-        return stringf("Team {} has {} members: {} and {}", this.name, 2, this.p1.name, this.p2.name);
+    function void printDetails(this) {
+        print(stringf("Team {} has {} members", this.name, 2));
+        print(stringf("First is: {}. Second is: {}",this.p1.name, this.p2.name));
     }
 }
 
@@ -77,17 +86,27 @@ function int main(var string name) {
         return FAILURE_CODE;
     }
 
+    // Initialize global variables
+    init();
+
     // Welcome message
     print(stringf("Hello {}, welcome to BashClass", name));
 
-    // Create a team
-    var Team team;
-    team.name = "Bash team";
-    var Person p1;
-    p1.name = "One";
-    p1.id = 1;
-    p2.name = "Two";
-    p2.id = 2;
+    // Create 10 teams
+    var int i;
+    i=0;
+    while(i < 10) {
+        var Team team;
+        team.name = "Bash team";
+        team.p1.name = "One";
+        team.p1.id = 1;
+        team.p2.name = "Two";
+        team.p2.id = 2;
+        
+        team.printDetails();
+
+        i=i+1;
+    }
     
     // Run a block of bash
     >@
