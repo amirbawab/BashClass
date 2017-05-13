@@ -43,7 +43,7 @@ public:
      * in their order of insertion, otherwise return the variables
      * that matches the passed name
      */
-    std::vector<std::shared_ptr<BVariable>> findAllVariables(char* name = nullptr);
+    std::vector<std::shared_ptr<BVariable>> findAllVariables(const char* name = nullptr);
 
     /**
      * Find all classes
@@ -52,7 +52,7 @@ public:
      * in their order of insertion, otherwise return the classes
      * that matches the passed name
      */
-    std::vector<std::shared_ptr<BScope>> findAllClasses(char* name = nullptr);
+    std::vector<std::shared_ptr<BScope>> findAllClasses(const char* name = nullptr);
 
     /**
      * Find all functions
@@ -61,7 +61,7 @@ public:
      * in their order of insertion, otherwise return the functions
      * that matches the passed name
      */
-    std::vector<std::shared_ptr<BScope>> findAllFunctions(char* name = nullptr);
+    std::vector<std::shared_ptr<BScope>> findAllFunctions(const char* name = nullptr);
 
     /**
      * Get parent scope

@@ -22,6 +22,15 @@ void BashClass::initHandlers() {
 
     m_className = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
+
+            // Check if class already exists
+            const char* className = lexicalVector[index]->getValue().c_str();
+            auto getClass = m_scopeStack.top()->getParentScope()->findAllClasses(className);
+            if(!getClass.empty()) {
+                std::cerr << "Class '" << className << "' is defined multiple times" << std::endl;
+            }
+
+            // Set class name
             auto createdClass = std::dynamic_pointer_cast<BClass>(m_scopeStack.top());
             createdClass->setName(lexicalVector[index]->getValue());
         }

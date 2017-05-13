@@ -26,7 +26,7 @@ std::shared_ptr<BVariable> BScope::createVariable() {
     return variableComp;
 }
 
-std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(char* name) {
+std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(const char* name) {
     std::vector<std::shared_ptr<BVariable>> variables;
     for(auto variable : m_variables) {
         if(!name || variable->getName() == name) {
@@ -36,7 +36,7 @@ std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(char* name) {
     return variables;
 }
 
-std::vector<std::shared_ptr<BScope>> BScope::findAllClasses(char* name) {
+std::vector<std::shared_ptr<BScope>> BScope::findAllClasses(const char* name) {
     std::vector<std::shared_ptr<BScope>> classes;
     for(auto scope : m_scopes) {
         std::shared_ptr<BClass> classScope = std::dynamic_pointer_cast<BClass>(scope);
@@ -47,7 +47,7 @@ std::vector<std::shared_ptr<BScope>> BScope::findAllClasses(char* name) {
     return classes;
 }
 
-std::vector<std::shared_ptr<BScope>> BScope::findAllFunctions(char *name) {
+std::vector<std::shared_ptr<BScope>> BScope::findAllFunctions(const char *name) {
     std::vector<std::shared_ptr<BScope>> functions;
     for(auto scope : m_scopes) {
         std::shared_ptr<BFunction> functionScope = std::dynamic_pointer_cast<BFunction>(scope);
