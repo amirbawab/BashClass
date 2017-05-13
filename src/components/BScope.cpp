@@ -79,7 +79,12 @@ std::stringstream BScope::getStructure() {
         } else if(castFunction) {
             structure << "function: " << castFunction->getName() << " : " << castFunction->getType() << std::endl;
         } else if(castGlobal) {
-            structure << "Global" << std::endl;
+            structure << "global" << std::endl;
+        }
+
+        // Get all variables
+        for(auto variable : top->findAllVariables()) {
+            structure << "variable: " << variable->getName() << " : " << variable->getType() << std::endl;
         }
 
         if(castGlobal || castClass || castFunction) {
