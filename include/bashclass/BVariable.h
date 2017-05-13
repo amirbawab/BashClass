@@ -10,8 +10,10 @@ private:
     std::string m_type;
     std::string m_name;
     std::string m_value;
+    bool m_isParam;
     std::shared_ptr<BScope> m_parentScope;
 public:
+    BVariable();
 
     /**
      * Get variable name
@@ -60,6 +62,18 @@ public:
      * @param parent scope pointer
      */
     void setParentScope(std::shared_ptr<BScope> scope) {m_parentScope = scope;}
+
+    /**
+     * Check if variable is a function parameter
+     * @return true if it is a parameter
+     */
+    bool isParam() const {return m_isParam;}
+
+    /**
+     * Set parameter flag for a variable
+     * @param isParam True if the variable is a function parameter
+     */
+    void setIsParam(bool isParam) {m_isParam = isParam;}
 };
 
 #endif

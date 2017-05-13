@@ -84,7 +84,8 @@ std::stringstream BScope::getStructure() {
 
         // Get all variables
         for(auto variable : top->findAllVariables()) {
-            structure << "variable: " << variable->getName() << " : " << variable->getType() << std::endl;
+            structure << "variable" << (variable->isParam() ? "[P]" : "") << ": " << variable->getName() << " : "
+            << variable->getType() << std::endl;
         }
 
         if(castGlobal || castClass || castFunction) {

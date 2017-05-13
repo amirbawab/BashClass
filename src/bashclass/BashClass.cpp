@@ -79,4 +79,25 @@ void BashClass::initHandlers() {
             variables[variables.size()-1]->setName(lexicalVector[index]->getValue());
         }
     };
+
+    m_createParam = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            auto createdVar = m_scopeStack.top()->createVariable();
+            createdVar->setIsParam(true);
+        }
+    };
+
+    m_paramType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            const auto &variables = m_scopeStack.top()->findAllVariables();
+            variables[variables.size()-1]->setType(lexicalVector[index]->getValue());
+        }
+    };
+
+    m_paramName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            const auto &variables = m_scopeStack.top()->findAllVariables();
+            variables[variables.size()-1]->setName(lexicalVector[index]->getValue());
+        }
+    };
 }

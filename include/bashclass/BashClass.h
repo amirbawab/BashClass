@@ -31,6 +31,10 @@ public:
     SemanticActionHandler m_createVar;
     SemanticActionHandler m_varType;
     SemanticActionHandler m_varName;
+
+    SemanticActionHandler m_createParam;
+    SemanticActionHandler m_paramType;
+    SemanticActionHandler m_paramName;
 private:
     std::shared_ptr<BGlobal> m_global;
     std::stack<std::shared_ptr<BScope>> m_scopeStack;
