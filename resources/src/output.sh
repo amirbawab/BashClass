@@ -37,22 +37,22 @@ _f_stringf_1() {
     local _l_val1="$2"
     local _l_val2="$3"
     local _l_x=""
-    _l_x=${_l_message}
-    _l_x=$(_f_replaceFirst ${_l_x} ${_l_val1})
-    _l_x=$(_f_replaceFirst ${_l_x} ${_l_val2})
+    _l_x="${_l_message}"
+    _l_x="$(_f_replaceFirst "${_l_x}" "${_l_val1}")"
+    _l_x="$(_f_replaceFirst "${_l_x}" "${_l_val2}")"
     echo ${_l_x}
 }
 
 _f_stringf_2() {
     local _l_message="$1"
     local _l_val1="$2"
-    echo $(_f_stringf_1 ${_l_message} ${_l_val1} "")
+    echo $(_f_stringf_1 "${_l_message}" "${_l_val1}" "")
 }
 
 _c_Team_f_toString() {
     local _l_this="$1"
-    echo $(_f_stringf_1 "Team {} has {} members" ${_Team_[${_l_this,"_v_name"}]} 2)
-    echo $(_f_stringf_1 "First is: {}. Second is: {}" ${_Person_[${_Team_[${_l_this,"_v_p1"},"_v_name"]}]} ${_Person_[${_Team_[${_l_this},"_v_p2"]},"_v_name"]})
+    echo $(_f_stringf_1 "Team {} has {} members" "${_Team_[${_l_this},"_v_name"]}" "2")
+    echo $(_f_stringf_1 "First is: {}. Second is: {}" "${_Person_[${_Team_[${_l_this},"_v_p1"]},"_v_name"]}" "${_Person_[${_Team_[${_l_this},"_v_p2"]},"_v_name"]}")
 }
 
 _f_main() {
@@ -66,7 +66,7 @@ _f_main() {
 
     _f_init
 
-    _f_print $(_f_stringf_2 "Hello {}, welcome to BashClass" ${_l_name})
+    _f_print "$(_f_stringf_2 "Hello {}, welcome to BashClass" ${_l_name})"
     
     local _l_i=0
     _l_i=0
@@ -98,7 +98,7 @@ _f_main() {
         _Person_[${_uid_},"_v_id"]=0
         # [END CREATING TEAM]
 
-        _Team_[${_l_team},"_v_name"]="Bash team"
+        _Team_[${_l_team},"_v_name"]="Bash team #${_l_i}"
         _Person_[${_Team_[${_l_team},"_v_p1"]},"_v_name"]="One"
         _Person_[${_Team_[${_l_team},"_v_p1"]},"_v_id"]=1
         _Person_[${_Team_[${_l_team},"_v_p2"]},"_v_name"]="Two"
