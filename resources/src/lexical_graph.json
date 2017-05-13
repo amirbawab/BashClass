@@ -331,6 +331,10 @@
             "id": 61,
             "token": "dot",
             "backtrack": false
+        },
+        {
+            "type": "NORMAL",
+            "id": 62
         }
     ],
     "transitions": [
@@ -898,6 +902,28 @@
             "to": 61,
             "chars": [
                 "."
+            ]
+        },
+        {
+            "from": 45,
+            "to": 62,
+            "chars": [
+                "\\"
+            ]
+        },
+        {
+            "from": 62,
+            "to": 45,
+            "chars": [
+                "OTHER"
+            ]
+        },
+        {
+            "from": 62,
+            "to": 47,
+            "chars": [
+                "EOF",
+                "NEW_LINE"
             ]
         }
     ]

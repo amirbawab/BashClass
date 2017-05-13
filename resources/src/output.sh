@@ -66,7 +66,7 @@ _f_main() {
 
     _f_init
 
-    _f_print "$(_f_stringf_2 "Hello {}, welcome to BashClass" ${_l_name})"
+    _f_print "$(_f_stringf_2 "Hello \"{}\", welcome to BashClass" ${_l_name})"
     
     local _l_i=0
     _l_i=0
