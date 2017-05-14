@@ -34,15 +34,6 @@ public:
      * @param type
      */
     void setType(std::string type) { m_type = type;}
-
-    /**
-     * Find all parameter variables
-     * @param name Name of the parameter variable | nullptr
-     * @return if name is a nullptr, then return all the parameter variables
-     * in their order of insertion, otherwise return the parameter variables
-     * that matches the passed name
-     */
-    std::vector<std::shared_ptr<BVariable>> findAllParameters(char* name = nullptr);
 };
 
 #endif

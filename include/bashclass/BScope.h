@@ -1,14 +1,17 @@
 #ifndef BASHCLASS_BSCOPE_H
 #define BASHCLASS_BSCOPE_H
 
+#include <map>
 #include <vector>
 #include <memory>
 #include <bashclass/BVariable.h>
+#include <easycc/LexicalToken.h>
 
 class BScope : public std::enable_shared_from_this<BScope> {
 protected:
-    std::vector<std::shared_ptr<BVariable>> m_variables;
-    std::vector<std::shared_ptr<BScope>> m_scopes;
+    std::map<unsigned int,std::shared_ptr<BVariable>> m_variables;
+    std::map<unsigned int,std::shared_ptr<BScope>> m_scopes;
+    std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
     std::shared_ptr<BScope> m_parentScope;
 public:
     virtual ~BScope(){}
@@ -22,19 +25,19 @@ public:
      * Create a class that belong to this scope
      * @return pointer to the create class
      */
-    std::shared_ptr<BScope> createClass();
+    std::shared_ptr<BScope> createClass(std::shared_ptr<ecc::LexicalToken> lexicalToken);
 
     /**
      * Create a function that belong to this scope
      * @return pointer to the create function
      */
-    std::shared_ptr<BScope> createFunction();
+    std::shared_ptr<BScope> createFunction(std::shared_ptr<ecc::LexicalToken> lexicalToken);
 
     /**
      * Create a variable that belong to this scope
      * @return pointer to the create variable
      */
-    std::shared_ptr<BVariable> createVariable();
+    std::shared_ptr<BVariable> createVariable(std::shared_ptr<ecc::LexicalToken> lexicalToken);
 
     /**
      * Find all variables
@@ -44,6 +47,15 @@ public:
      * that matches the passed name
      */
     std::vector<std::shared_ptr<BVariable>> findAllVariables(const char* name = nullptr);
+
+    /**
+     * Find all parameter variables
+     * @param name Name of the parameter variable | nullptr
+     * @return if name is a nullptr, then return all the parameter variables
+     * in their order of insertion, otherwise return the parameter variables
+     * that matches the passed name
+     */
+    std::vector<std::shared_ptr<BVariable>> findAllParameters(char* name = nullptr);
 
     /**
      * Find all classes
@@ -74,6 +86,18 @@ public:
      * @param scope Parent scope
      */
     void setParentScope(std::shared_ptr<BScope> scope) { m_parentScope = scope;}
+
+    /**
+     * Set lexical token that defines this scope
+     * @param lexicalToken
+     */
+    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {m_lexicalToken=lexicalToken;}
+
+    /**
+     * Get lexical token
+     * @return lexical token pointer
+     */
+    std::shared_ptr<ecc::LexicalToken> getLexicalToken() const {return m_lexicalToken;}
 };
 
 #endif

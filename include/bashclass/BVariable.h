@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <easycc/LexicalToken.h>
 
 class BScope;
 class BVariable {
@@ -12,6 +13,7 @@ private:
     std::string m_value;
     bool m_isParam;
     std::shared_ptr<BScope> m_parentScope;
+    std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
 public:
     BVariable();
 
@@ -74,6 +76,18 @@ public:
      * @param isParam True if the variable is a function parameter
      */
     void setIsParam(bool isParam) {m_isParam = isParam;}
+
+    /**
+     * Set lexical token that defines this variable
+     * @param lexicalToken
+     */
+    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) { m_lexicalToken = lexicalToken;}
+
+    /**
+     * Get lexical token
+     * @return lexical token pointer
+     */
+    std::shared_ptr<ecc::LexicalToken> getLexicalToken() const {return m_lexicalToken;}
 };
 
 #endif

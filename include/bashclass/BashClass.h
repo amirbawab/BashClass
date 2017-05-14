@@ -28,16 +28,20 @@ public:
     SemanticActionHandler m_functionName;
     SemanticActionHandler m_endFunction;
 
-    SemanticActionHandler m_createVar;
+    SemanticActionHandler m_startVar;
     SemanticActionHandler m_varType;
     SemanticActionHandler m_varName;
+    SemanticActionHandler m_endVar;
 
-    SemanticActionHandler m_createParam;
+    SemanticActionHandler m_startParam;
     SemanticActionHandler m_paramType;
     SemanticActionHandler m_paramName;
+    SemanticActionHandler m_endParam;
 private:
     std::shared_ptr<BGlobal> m_global;
     std::stack<std::shared_ptr<BScope>> m_scopeStack;
+    std::shared_ptr<BScope> m_focusScope;
+    std::shared_ptr<BVariable> m_focusVariable;
     void initHandlers();
 };
 

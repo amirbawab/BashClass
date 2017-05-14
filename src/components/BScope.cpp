@@ -3,43 +3,55 @@
 #include <bashclass/BGlobal.h>
 #include <bashclass/BashClass.h>
 #include <sstream>
-#include <stack>
 
-std::shared_ptr<BScope> BScope::createClass() {
+std::shared_ptr<BScope> BScope::createClass(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
     auto classComp = std::make_shared<BClass>();
     classComp->setParentScope(shared_from_this());
-    m_scopes.push_back(classComp);
+    classComp->setLexicalToken(lexicalToken);
+    m_scopes[lexicalToken->getUID()]=classComp;
     return classComp;
 }
 
-std::shared_ptr<BScope> BScope::createFunction() {
+std::shared_ptr<BScope> BScope::createFunction(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
     auto functionComp = std::make_shared<BFunction>();
     functionComp->setParentScope(shared_from_this());
-    m_scopes.push_back(functionComp);
+    functionComp->setLexicalToken(lexicalToken);
+    m_scopes[lexicalToken->getUID()]=functionComp;
     return functionComp;
 }
 
-std::shared_ptr<BVariable> BScope::createVariable() {
+std::shared_ptr<BVariable> BScope::createVariable(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
     auto variableComp = std::make_shared<BVariable>();
     variableComp->setParentScope(shared_from_this());
-    m_variables.push_back(variableComp);
+    variableComp->setLexicalToken(lexicalToken);
+    m_variables[lexicalToken->getUID()]=variableComp;
     return variableComp;
 }
 
 std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(const char* name) {
     std::vector<std::shared_ptr<BVariable>> variables;
     for(auto variable : m_variables) {
-        if(!name || variable->getName() == name) {
-            variables.push_back(variable);
+        if(!name || variable.second->getName() == name) {
+            variables.push_back(variable.second);
         }
     }
     return variables;
 }
 
+std::vector<std::shared_ptr<BVariable>> BScope::findAllParameters(char *name) {
+    std::vector<std::shared_ptr<BVariable>> parameters;
+    for(auto variable : m_variables) {
+        if(variable.second->isParam() && (!name || variable.second->getName() == name)) {
+            parameters.push_back(variable.second);
+        }
+    }
+    return parameters;
+}
+
 std::vector<std::shared_ptr<BScope>> BScope::findAllClasses(const char* name) {
     std::vector<std::shared_ptr<BScope>> classes;
     for(auto scope : m_scopes) {
-        std::shared_ptr<BClass> classScope = std::dynamic_pointer_cast<BClass>(scope);
+        std::shared_ptr<BClass> classScope = std::dynamic_pointer_cast<BClass>(scope.second);
         if(classScope && (!name || classScope->getName() == name)) {
             classes.push_back(classScope);
         }
@@ -50,7 +62,7 @@ std::vector<std::shared_ptr<BScope>> BScope::findAllClasses(const char* name) {
 std::vector<std::shared_ptr<BScope>> BScope::findAllFunctions(const char *name) {
     std::vector<std::shared_ptr<BScope>> functions;
     for(auto scope : m_scopes) {
-        std::shared_ptr<BFunction> functionScope = std::dynamic_pointer_cast<BFunction>(scope);
+        std::shared_ptr<BFunction> functionScope = std::dynamic_pointer_cast<BFunction>(scope.second);
         if(functionScope && (!name || functionScope->getName() == name)) {
             functions.push_back(functionScope);
         }
@@ -91,7 +103,7 @@ std::stringstream BScope::getStructure() {
         if(castGlobal || castClass || castFunction) {
             // Push all the children scopes
             for(auto scope : top->m_scopes) {
-                structureStack.push(scope);
+                structureStack.push(scope.second);
             }
         }
     }
