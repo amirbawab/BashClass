@@ -90,6 +90,14 @@ void BashClass::initHandlers() {
 
     m_varName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
+
+            // Check if variable already exists in the current scope
+            const char* varName = lexicalVector[index]->getValue().c_str();
+            auto getVar = m_scopeStack.top()->findAllVariables(varName);
+            if(!getVar.empty()) {
+                std::cerr << "Variable '" << varName << "' is defined multiple times in the same scope" << std::endl;
+            }
+
             m_focusVariable->setName(lexicalVector[index]->getValue());
         }
     };
