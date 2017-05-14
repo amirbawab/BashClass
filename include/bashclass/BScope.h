@@ -98,6 +98,20 @@ public:
      * @return lexical token pointer
      */
     std::shared_ptr<ecc::LexicalToken> getLexicalToken() const {return m_lexicalToken;}
+
+    /**
+     * Get scope by lexical token
+     * @param lexicalToken
+     * @return pointer to scope | nullptr
+     */
+    std::shared_ptr<BScope> getScope(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+
+    /**
+     * Get variable by lexical token
+     * @param lexicalToken
+     * @return pointer to variable | nullptr
+     */
+    std::shared_ptr<BVariable> getVariable(std::shared_ptr<ecc::LexicalToken> lexicalToken);
 };
 
 #endif

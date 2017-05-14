@@ -70,6 +70,20 @@ std::vector<std::shared_ptr<BScope>> BScope::findAllFunctions(const char *name) 
     return functions;
 }
 
+std::shared_ptr<BScope> BScope::getScope(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+    if(m_scopes.find(lexicalToken->getUID()) != m_scopes.end()) {
+        return m_scopes[lexicalToken->getUID()];
+    }
+    return nullptr;
+}
+
+std::shared_ptr<BVariable> BScope::getVariable(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+    if(m_variables.find(lexicalToken->getUID()) != m_variables.end()) {
+        return m_variables[lexicalToken->getUID()];
+    }
+    return nullptr;
+}
+
 std::stringstream BScope::getStructure() {
     std::stringstream structure;
     std::stack<std::shared_ptr<BScope>> structureStack;
