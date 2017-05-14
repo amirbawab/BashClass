@@ -63,6 +63,14 @@ void BashClass::initHandlers() {
 
     m_functionName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
+
+            // Check if function already exists in the current scope and has the same number of params
+            const char* funcName = lexicalVector[index]->getValue().c_str();
+            auto getFunc = m_scopeStack.top()->getParentScope()->findAllFunctions(funcName);
+            if(!getFunc.empty()) {
+                std::cerr << "Function '" << funcName << "' is defined multiple times in the same scope" << std::endl;
+            }
+
             auto createdFunction = std::dynamic_pointer_cast<BFunction>(m_focusScope);
             createdFunction->setName(lexicalVector[index]->getValue());
         }

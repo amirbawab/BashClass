@@ -40,7 +40,7 @@ function string replaceFirst(var string pattern, var any value) {
 /**
  * String format with two arguments
  **/
-function string stringf(var string mesage, var any val1, var any val2) {
+function string stringf2(var string mesage, var any val1, var any val2) {
     var string x;
     x = message;
     x = replaceFirst(x, val1);
@@ -51,8 +51,8 @@ function string stringf(var string mesage, var any val1, var any val2) {
 /**
  * String format with one argument, function overloading
  **/
-function string stringf(var string message, var any val1) {
-    return stringf(message, val1, "");
+function string stringf1(var string message, var any val1) {
+    return stringf2(message, val1, "");
 }
 
 // Create a class
@@ -67,8 +67,8 @@ class Team {
      * Print details about the team
      */
     function void printDetails(var int this) {
-        print(stringf("Team {} has {} members", this.name, 2));
-        print(stringf("First is: {}. Second is: {}",this.p1.name, this.p2.name));
+        print(stringf2("Team {} has {} members", this.name, 2));
+        print(stringf2("First is: {}. Second is: {}",this.p1.name, this.p2.name));
     }
 }
 
@@ -91,7 +91,7 @@ function int main(var string name) {
     init();
 
     // Welcome message
-    print(stringf("Hello \"{}\", welcome to BashClass", name));
+    print(stringf1("Hello \"{}\", welcome to BashClass", name));
 
     // Create 10 teams
     var int i;
