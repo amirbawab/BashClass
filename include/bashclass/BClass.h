@@ -11,6 +11,11 @@ private:
 public:
     std::string getName() const { return m_name;}
     void setName(std::string name) {m_name = name;}
+
+    /**
+     * Get class label
+     */
+    std::stringstream getLabel();
 };
 
 #endif

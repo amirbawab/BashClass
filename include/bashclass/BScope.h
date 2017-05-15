@@ -4,9 +4,11 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <sstream>
 #include <bashclass/BVariable.h>
 #include <easycc/LexicalToken.h>
 
+class BVariable;
 class BScope : public std::enable_shared_from_this<BScope> {
 protected:
     std::map<unsigned int,std::shared_ptr<BVariable>> m_variables;
@@ -112,6 +114,11 @@ public:
      * @return pointer to variable | nullptr
      */
     std::shared_ptr<BVariable> getVariable(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+
+    /**
+     * Get label for that scope
+     */
+    virtual std::stringstream getLabel()=0;
 };
 
 #endif

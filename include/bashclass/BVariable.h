@@ -2,8 +2,10 @@
 #define BASHCLASS_BVARIABLE_H
 
 #include <string>
+#include <sstream>
 #include <memory>
 #include <easycc/LexicalToken.h>
+#include <bashclass/BScope.h>
 
 class BScope;
 class BVariable {
@@ -88,6 +90,11 @@ public:
      * @return lexical token pointer
      */
     std::shared_ptr<ecc::LexicalToken> getLexicalToken() const {return m_lexicalToken;}
+
+    /**
+     * Get variable label
+     */
+    std::stringstream getLabel();
 };
 
 #endif

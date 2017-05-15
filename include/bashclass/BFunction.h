@@ -34,6 +34,11 @@ public:
      * @param type
      */
     void setType(std::string type) { m_type = type;}
+
+    /**
+     * Get function label
+     */
+    std::stringstream getLabel();
 };
 
 #endif

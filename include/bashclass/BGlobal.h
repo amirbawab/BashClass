@@ -7,6 +7,12 @@
 #include <bashclass/BFunction.h>
 
 class BGlobal : public BScope {
+public:
+
+    /**
+     * Get global label
+     */
+    std::stringstream getLabel();
 };
 
 #endif

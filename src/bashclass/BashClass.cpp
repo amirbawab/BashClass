@@ -54,6 +54,9 @@ void BashClass::initHandlers() {
         }
     };
 
+    /**************************************
+     *          FUNCTIONS
+     **************************************/
     m_startFunction = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto newFunction = m_scopeStack.top()->createFunction(lexicalVector[index]);
@@ -66,9 +69,6 @@ void BashClass::initHandlers() {
         }
     };
 
-    /**************************************
-     *          FUNCTIONS
-     **************************************/
     m_functionType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto createdFunction = std::dynamic_pointer_cast<BFunction>(m_focusScope);
