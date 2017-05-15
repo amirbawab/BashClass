@@ -117,6 +117,8 @@ std::stringstream BScope::getStructure() {
         auto castGlobal = std::dynamic_pointer_cast<BGlobal>(top);
         auto castClass = std::dynamic_pointer_cast<BClass>(top);
         auto castFunction = std::dynamic_pointer_cast<BFunction>(top);
+        auto castWhile = std::dynamic_pointer_cast<BWhile>(top);
+        auto castIf = std::dynamic_pointer_cast<BIf>(top);
 
         // Get corresponding information
         if(castClass) {
@@ -126,6 +128,10 @@ std::stringstream BScope::getStructure() {
             ". Label: " << castFunction->getLabel().str() << std::endl;
         } else if(castGlobal) {
             structure << "global" << std::endl;
+        } else if(castWhile) {
+            structure << "while. Label: " << castWhile->getLabel().str() << std::endl;
+        } else if(castIf) {
+            structure << "if. Label: " << castIf->getLabel().str() << std::endl;
         }
 
         // Get all variables
@@ -134,7 +140,7 @@ std::stringstream BScope::getStructure() {
             << " : " << variable->getType() << ". Label: " << variable->getLabel().str() << std::endl;
         }
 
-        if(castGlobal || castClass || castFunction) {
+        if(castGlobal || castClass || castFunction || castWhile || castIf) {
             // Push all the children scopes
             for(auto scope : top->m_scopes) {
                 structureStack.push(scope.second);
