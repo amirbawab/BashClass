@@ -40,7 +40,7 @@ function string replaceFirst(var string pattern, var any value) {
 /**
  * String format with two arguments
  **/
-function string stringf2(var string mesage, var any val1, var any val2) {
+function string stringf2(var string message, var any val1, var any val2) {
     var string x;
     x = message;
     x = replaceFirst(x, val1);

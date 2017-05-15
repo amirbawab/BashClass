@@ -103,6 +103,14 @@ std::shared_ptr<BVariable> BScope::getVariable(std::shared_ptr<ecc::LexicalToken
     return nullptr;
 }
 
+std::vector<std::shared_ptr<BScope>> BScope::getAllScopes() {
+    std::vector<std::shared_ptr<BScope>> scopes;
+    for(auto pair : m_scopes) {
+        scopes.push_back(pair.second);
+    }
+    return scopes;
+}
+
 std::stringstream BScope::getStructure() {
     std::stringstream structure;
     std::stack<std::shared_ptr<BScope>> structureStack;

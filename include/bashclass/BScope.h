@@ -121,6 +121,12 @@ public:
     std::shared_ptr<BScope> getScope(std::shared_ptr<ecc::LexicalToken> lexicalToken);
 
     /**
+     * Get all scopes
+     * @return vector fo scopes
+     */
+    std::vector<std::shared_ptr<BScope>> getAllScopes();
+
+    /**
      * Get variable by lexical token
      * @param lexicalToken
      * @return pointer to variable | nullptr

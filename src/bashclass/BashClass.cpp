@@ -24,13 +24,32 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_EVAL_GEN) {
 
             // Check if all variables types exist and set them
-            for(auto cls : m_global->findAllClasses()) {
-                auto castClass = std::dynamic_pointer_cast<BClass>(cls);
-                for(auto var : castClass->findAllVariables()) {
-                    std::string varType = var->getType();
-                    if(!BType::isBuiltInType(varType)) {
-                        // TODO
+            std::stack<std::shared_ptr<BScope>> scopeStack;
+            scopeStack.push(m_global);
+            while(!scopeStack.empty()) {
+
+                // Get top scope
+                auto top = scopeStack.top();
+                scopeStack.pop();
+
+                // Evaluate all variables in the top scope
+                for(auto variable : top->findAllVariables()) {
+                    if(!BType::isBuiltInType(variable->getType())) {
+                        // Find class scope of that type
+                        auto cls = m_global->findAllClasses(variable->getType().c_str());
+                        if(cls.empty()) {
+                            std::cerr << "Undefined variable type '" << variable->getType() <<
+                            "' for '" << variable->getName() << "'"<< std::endl;
+                        } else {
+                            // In case the class was defined several times (which is a semantic error)
+                            // take the front element
+                            variable->setTypeScope(cls.front());
+                        }
                     }
+                }
+
+                for(auto scope : top->getAllScopes()) {
+                    scopeStack.push(scope);
                 }
             }
         }
