@@ -1,6 +1,7 @@
 #include <bashclass/BashClass.h>
 #include <iostream>
 #include <sstream>
+#include <bashclass/BTypes.h>
 
 BashClass::BashClass() {
     m_global = std::make_shared<BGlobal>();
@@ -15,6 +16,27 @@ void BashClass::printStructure() {
 }
 
 void BashClass::initHandlers() {
+
+    /**************************************
+     *          PROGRAM
+     **************************************/
+    m_start = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL_GEN) {
+
+            // Check if all variables types exist and set them
+            for(auto cls : m_global->findAllClasses()) {
+                auto castClass = std::dynamic_pointer_cast<BClass>(cls);
+                for(auto var : castClass->findAllVariables()) {
+                    std::string varType = var->getType();
+                    if(!BType::isBuiltInType(varType)) {
+                        // TODO
+                    }
+                }
+            }
+        }
+    };
+
+    m_end = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){};
 
     /**************************************
      *          CLASSES

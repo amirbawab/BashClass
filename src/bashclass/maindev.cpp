@@ -16,6 +16,9 @@ int main(int argc, char *argv[]) {
     BashClass bashClass;
 
     // Start registering semantic actions handlers
+    easyCC.registerSemanticAction("#start#", bashClass.m_start);
+    easyCC.registerSemanticAction("#end#", bashClass.m_end);
+
     easyCC.registerSemanticAction("#startClass#", bashClass.m_startClass);
     easyCC.registerSemanticAction("#className#", bashClass.m_className);
     easyCC.registerSemanticAction("#endClass#", bashClass.m_endClass);

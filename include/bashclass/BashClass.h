@@ -19,6 +19,9 @@ public:
     void printStructure();
 
     // Semantic action handlers
+    SemanticActionHandler m_start;
+    SemanticActionHandler m_end;
+
     SemanticActionHandler m_startClass;
     SemanticActionHandler m_className;
     SemanticActionHandler m_endClass;
