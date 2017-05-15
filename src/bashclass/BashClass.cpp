@@ -15,6 +15,10 @@ void BashClass::printStructure() {
 }
 
 void BashClass::initHandlers() {
+
+    /**************************************
+     *          CLASSES
+     **************************************/
     m_startClass = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto newClass = m_scopeStack.top()->createClass(lexicalVector[index]);
@@ -62,6 +66,9 @@ void BashClass::initHandlers() {
         }
     };
 
+    /**************************************
+     *          FUNCTIONS
+     **************************************/
     m_functionType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto createdFunction = std::dynamic_pointer_cast<BFunction>(m_focusScope);
@@ -91,6 +98,9 @@ void BashClass::initHandlers() {
         }
     };
 
+    /**************************************
+     *          VARIABLES
+     **************************************/
     m_startVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto variable = m_scopeStack.top()->createVariable(lexicalVector[index]);
@@ -124,6 +134,10 @@ void BashClass::initHandlers() {
         }
     };
 
+
+    /**************************************
+     *          PARAMETERS
+     **************************************/
     m_startParam = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto createdVar = m_scopeStack.top()->createVariable(lexicalVector[index]);
