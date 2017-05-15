@@ -66,7 +66,7 @@ class Team {
     /**
      * Print details about the team
      */
-    function void printDetails(var int this) {
+    function void printDetails(var Team this) {
         print(stringf2("Team {} has {} members", this.name, 2));
         print(stringf2("First is: {}. Second is: {}",this.p1.name, this.p2.name));
     }
