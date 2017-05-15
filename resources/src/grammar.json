@@ -9,7 +9,7 @@
     
     "FUNCTION_DEC" : ["#startFunction# FUNCTION FUNCTION_TYPE #functionType# FUNCTION_NAME #functionName# OPEN_PAR FUNCTION_PARAM CLOSE_PAR OPEN_CUR FUNCTION_BODY CLOSE_CUR #endFunction#"],
     "FUNCTION": ["'function'"],
-    "FUNCTION_TYPE" : ["'identifier'"],
+    "FUNCTION_TYPE" : ["'int_type'","'string_type'","'void_type'","'any_type'"],
     "FUNCTION_NAME" : ["'identifier'"],
     "FUNCTION_BODY" : ["EPSILON","VARIABLE_DEC FUNCTION_BODY","VAR_ASSIGN_OR_FUNC_CALL FUNCTION_BODY","STATEMENT FUNCTION_BODY","RETURN EXPR_DEC SEMICOLON","BASH_SUB FUNCTION_BODY","BASH_INLINE FUNCTION_BODY","BASH_BLOCK FUNCTION_BODY"],
     "FUNCTION_PARAM" : ["EPSILON","#startParam# VARIABLE VARIABLE_TYPE #paramType# VARIABLE_NAME #paramName# #endParam# FUNCTION_PARAM_MORE"],
@@ -21,7 +21,7 @@
     
     "VARIABLE_DEC" : ["#startVar# VARIABLE VARIABLE_TYPE #varType# VARIABLE_NAME #varName# SEMICOLON #endVar#"],
     "VARIABLE" : ["'var'"],
-    "VARIABLE_TYPE" : ["'identifier'"],
+    "VARIABLE_TYPE" : ["'identifier'","'int_type'","'string_type'","'void_type'","'any_type'"],
     "VARIABLE_NAME" : ["'identifier'"],
 
     "STATEMENT" : ["IF OPEN_PAR EXPR_DEC CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR",

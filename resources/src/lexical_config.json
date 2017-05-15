@@ -22,7 +22,11 @@
             "function" : "function",
             "class" : "class",
             "var" : "var",
-            "return" : "return"
+            "return" : "return",
+            "int" : "int_type",
+            "string" : "string_type",
+            "void" : "void_type",
+            "any" : "any_type"
         }
     }
 }
