@@ -20,6 +20,10 @@ void BashClass::initHandlers() {
             auto newClass = m_scopeStack.top()->createClass(lexicalVector[index]);
             m_scopeStack.push(newClass);
             m_focusScope = newClass;
+        } else if(phase == BashClass::PHASE_EVAL_GEN) {
+            auto newClass = m_scopeStack.top()->getScope(lexicalVector[index]);
+            m_scopeStack.push(newClass);
+            m_focusScope = newClass;
         }
     };
 
@@ -40,7 +44,7 @@ void BashClass::initHandlers() {
     };
 
     m_endClass = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE) {
+        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL_GEN) {
             m_scopeStack.pop();
             m_focusScope = nullptr;
         }
@@ -49,6 +53,10 @@ void BashClass::initHandlers() {
     m_startFunction = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto newFunction = m_scopeStack.top()->createFunction(lexicalVector[index]);
+            m_scopeStack.push(newFunction);
+            m_focusScope = newFunction;
+        } else if(phase == BashClass::PHASE_EVAL_GEN) {
+            auto newFunction = m_scopeStack.top()->getScope(lexicalVector[index]);
             m_scopeStack.push(newFunction);
             m_focusScope = newFunction;
         }
@@ -77,7 +85,7 @@ void BashClass::initHandlers() {
     };
 
     m_endFunction = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE) {
+        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL_GEN) {
             m_scopeStack.pop();
             m_focusScope = nullptr;
         }
