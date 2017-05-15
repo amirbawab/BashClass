@@ -48,7 +48,7 @@ public:
     SemanticActionHandler m_endIf;
 private:
     std::shared_ptr<BGlobal> m_global;
-    std::stack<std::shared_ptr<BScope>> m_scopeStack;
+    std::vector<std::shared_ptr<BScope>> m_scopeStack;
     std::shared_ptr<BScope> m_focusScope;
     std::shared_ptr<BVariable> m_focusVariable;
     void initHandlers();
