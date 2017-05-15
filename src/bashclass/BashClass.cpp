@@ -15,6 +15,77 @@ void BashClass::printStructure() {
     std::cout << m_global->getStructure().str() << std::endl;
 }
 
+/**
+ * Run a depth-first traversal and link all the variables
+ * to their types
+ */
+void _linkTypes(std::shared_ptr<BScope> scope) {
+
+    // Check if all variables types exist and set them
+    std::stack<std::shared_ptr<BScope>> scopeStack;
+    scopeStack.push(scope);
+    while(!scopeStack.empty()) {
+
+        // Get top scope
+        auto top = scopeStack.top();
+        scopeStack.pop();
+
+        // Evaluate all variables in the top scope
+        for(auto variable : top->findAllVariables()) {
+            if(!BType::isBuiltInType(variable->getType())) {
+                // Find class scope of that type
+                auto cls = scope->findAllClasses(variable->getType().c_str());
+                if(cls.empty()) {
+                    std::cerr << "Undefined variable type '" << variable->getType() <<
+                    "' for '" << variable->getName() << "'"<< std::endl;
+                } else {
+                    // In case the class was defined several times (which is a semantic error)
+                    // take the front element
+                    variable->setTypeScope(cls.front());
+                }
+            }
+        }
+
+        // Add all children scopes to the stack
+        for(auto childScope : top->getAllScopes()) {
+            scopeStack.push(childScope);
+        }
+    }
+}
+
+/**
+ * Check if class was already defined
+ */
+void _checkDuplicateClass(ecc::LexicalToken &token, std::stack<std::shared_ptr<BScope>> &scopeStack) {
+    auto getClass = scopeStack.top()->getParentScope()->findAllClasses(token.getValue().c_str());
+    if(!getClass.empty()) {
+        std::cerr << "Class '" << token.getValue() << "' at line " << token.getLine()
+        << " was defined previously" << std::endl;
+    }
+}
+
+/**
+ * Check if function was already defined in the scope
+ */
+void _checkDuplicateFunction(ecc::LexicalToken &token, std::stack<std::shared_ptr<BScope>> &scopeStack) {
+    auto getFunc = scopeStack.top()->getParentScope()->findAllFunctions(token.getValue().c_str());
+    if(!getFunc.empty()) {
+        std::cerr << "Function '" << token.getValue() << "' at line " << token.getLine()
+        <<" was defined previously in the same scope" << std::endl;
+    }
+}
+
+/**
+ * Check if variable was already defined in the scope
+ */
+void _checkDuplicateVariable(ecc::LexicalToken &token, std::stack<std::shared_ptr<BScope>> &scopeStack) {
+    auto getVar = scopeStack.top()->findAllVariables(token.getValue().c_str());
+    if(!getVar.empty()) {
+        std::cerr << "Variable '" << token.getValue() << "' at line " << token.getLine()
+        << " was defined previously in the same scope" << std::endl;
+    }
+}
+
 void BashClass::initHandlers() {
 
     /**************************************
@@ -22,36 +93,7 @@ void BashClass::initHandlers() {
      **************************************/
     m_start = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL_GEN) {
-
-            // Check if all variables types exist and set them
-            std::stack<std::shared_ptr<BScope>> scopeStack;
-            scopeStack.push(m_global);
-            while(!scopeStack.empty()) {
-
-                // Get top scope
-                auto top = scopeStack.top();
-                scopeStack.pop();
-
-                // Evaluate all variables in the top scope
-                for(auto variable : top->findAllVariables()) {
-                    if(!BType::isBuiltInType(variable->getType())) {
-                        // Find class scope of that type
-                        auto cls = m_global->findAllClasses(variable->getType().c_str());
-                        if(cls.empty()) {
-                            std::cerr << "Undefined variable type '" << variable->getType() <<
-                            "' for '" << variable->getName() << "'"<< std::endl;
-                        } else {
-                            // In case the class was defined several times (which is a semantic error)
-                            // take the front element
-                            variable->setTypeScope(cls.front());
-                        }
-                    }
-                }
-
-                for(auto scope : top->getAllScopes()) {
-                    scopeStack.push(scope);
-                }
-            }
+            _linkTypes(m_global);
         }
     };
 
@@ -76,11 +118,7 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_CREATE) {
 
             // Check if class already exists
-            const char* className = lexicalVector[index]->getValue().c_str();
-            auto getClass = m_scopeStack.top()->getParentScope()->findAllClasses(className);
-            if(!getClass.empty()) {
-                std::cerr << "Class '" << className << "' is defined multiple times" << std::endl;
-            }
+            _checkDuplicateClass(*lexicalVector[index], m_scopeStack);
 
             // Set class name
             auto createdClass = std::dynamic_pointer_cast<BClass>(m_focusScope);
@@ -120,12 +158,8 @@ void BashClass::initHandlers() {
     m_functionName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
 
-            // Check if function already exists in the current scope and has the same number of params
-            const char* funcName = lexicalVector[index]->getValue().c_str();
-            auto getFunc = m_scopeStack.top()->getParentScope()->findAllFunctions(funcName);
-            if(!getFunc.empty()) {
-                std::cerr << "Function '" << funcName << "' is defined multiple times in the same scope" << std::endl;
-            }
+            // Check if function already exists in the current scope
+            _checkDuplicateFunction(*lexicalVector[index],m_scopeStack);
 
             auto createdFunction = std::dynamic_pointer_cast<BFunction>(m_focusScope);
             createdFunction->setName(lexicalVector[index]->getValue());
@@ -159,11 +193,7 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_CREATE) {
 
             // Check if variable already exists in the current scope
-            const char* varName = lexicalVector[index]->getValue().c_str();
-            auto getVar = m_scopeStack.top()->findAllVariables(varName);
-            if(!getVar.empty()) {
-                std::cerr << "Variable '" << varName << "' is defined multiple times in the same scope" << std::endl;
-            }
+            _checkDuplicateVariable(*lexicalVector[index], m_scopeStack);
 
             m_focusVariable->setName(lexicalVector[index]->getValue());
         }
