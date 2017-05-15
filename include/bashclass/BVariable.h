@@ -11,6 +11,7 @@ class BScope;
 class BVariable {
 private:
     std::string m_type;
+    std::shared_ptr<BScope> m_typeScope;
     std::string m_name;
     std::string m_value;
     bool m_isParam;
@@ -42,6 +43,18 @@ public:
      * @param type
      */
     void setType(std::string type) {m_type = type;}
+
+    /**
+     * Get variable type scope
+     * @return type
+     */
+    std::shared_ptr<BScope> getTypeScope() const {return m_typeScope;}
+
+    /**
+     * Set variable type scope
+     * @param type
+     */
+    void setTypeScope(std::shared_ptr<BScope> scope) {m_typeScope = scope;}
 
     /**
      * Get variable value
