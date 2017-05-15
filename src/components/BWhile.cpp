@@ -2,6 +2,6 @@
 
 std::stringstream BWhile::getLabel() {
     std::stringstream stream = m_parentScope->getLabel();
-    stream << "_for_";
+    stream << "_while_";
     return stream;
 }

@@ -36,6 +36,18 @@ public:
     std::shared_ptr<BScope> createFunction(std::shared_ptr<ecc::LexicalToken> lexicalToken);
 
     /**
+     * Create a while that belong to this scope
+     * @return pointer to the create while
+     */
+    std::shared_ptr<BScope> createWhile(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+
+    /**
+     * Create an if that belong to this scope
+     * @return pointer to the create if
+     */
+    std::shared_ptr<BScope> createIf(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+
+    /**
      * Create a variable that belong to this scope
      * @return pointer to the create variable
      */

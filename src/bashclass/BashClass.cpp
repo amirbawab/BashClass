@@ -1,7 +1,7 @@
 #include <bashclass/BashClass.h>
-#include <iostream>
-#include <sstream>
 #include <bashclass/BTypes.h>
+#include <bashclass/BClass.h>
+#include <iostream>
 
 BashClass::BashClass() {
     m_global = std::make_shared<BGlobal>();
@@ -184,6 +184,52 @@ void BashClass::initHandlers() {
     m_endParam = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusVariable = nullptr;
+        }
+    };
+
+    /**************************************
+     *          WHILE
+     **************************************/
+
+    m_startWhile = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            auto newWhile = m_scopeStack.top()->createWhile(lexicalVector[index]);
+            m_scopeStack.push(newWhile);
+            m_focusScope = newWhile;
+        } else if(phase == BashClass::PHASE_EVAL_GEN) {
+            auto newWhile = m_scopeStack.top()->getScope(lexicalVector[index]);
+            m_scopeStack.push(newWhile);
+            m_focusScope = newWhile;
+        }
+    };
+
+    m_endWhile = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL_GEN) {
+            m_scopeStack.pop();
+            m_focusScope = nullptr;
+        }
+    };
+
+    /**************************************
+     *          IF
+     **************************************/
+
+    m_startIf = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            auto newIf = m_scopeStack.top()->createIf(lexicalVector[index]);
+            m_scopeStack.push(newIf);
+            m_focusScope = newIf;
+        } else if(phase == BashClass::PHASE_EVAL_GEN) {
+            auto newIf = m_scopeStack.top()->getScope(lexicalVector[index]);
+            m_scopeStack.push(newIf);
+            m_focusScope = newIf;
+        }
+    };
+
+    m_endIf = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL_GEN) {
+            m_scopeStack.pop();
+            m_focusScope = nullptr;
         }
     };
 }

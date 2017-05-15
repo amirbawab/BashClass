@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <memory>
-#include <bashclass/BClass.h>
 #include <bashclass/BFunction.h>
 
 class BGlobal : public BScope {

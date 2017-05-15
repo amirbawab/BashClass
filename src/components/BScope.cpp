@@ -1,6 +1,9 @@
 #include <bashclass/BScope.h>
 #include <bashclass/BFunction.h>
 #include <bashclass/BGlobal.h>
+#include <bashclass/BClass.h>
+#include <bashclass/BWhile.h>
+#include <bashclass/BIf.h>
 #include <bashclass/BashClass.h>
 #include <sstream>
 
@@ -18,6 +21,22 @@ std::shared_ptr<BScope> BScope::createFunction(std::shared_ptr<ecc::LexicalToken
     functionComp->setLexicalToken(lexicalToken);
     m_scopes[lexicalToken->getUID()]=functionComp;
     return functionComp;
+}
+
+std::shared_ptr<BScope> BScope::createWhile(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+    auto whileComp = std::make_shared<BWhile>();
+    whileComp->setParentScope(shared_from_this());
+    whileComp->setLexicalToken(lexicalToken);
+    m_scopes[lexicalToken->getUID()]=whileComp;
+    return whileComp;
+}
+
+std::shared_ptr<BScope> BScope::createIf(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+    auto ifComp = std::make_shared<BIf>();
+    ifComp->setParentScope(shared_from_this());
+    ifComp->setLexicalToken(lexicalToken);
+    m_scopes[lexicalToken->getUID()]=ifComp;
+    return ifComp;
 }
 
 std::shared_ptr<BVariable> BScope::createVariable(std::shared_ptr<ecc::LexicalToken> lexicalToken) {

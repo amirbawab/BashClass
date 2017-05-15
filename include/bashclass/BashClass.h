@@ -40,6 +40,12 @@ public:
     SemanticActionHandler m_paramType;
     SemanticActionHandler m_paramName;
     SemanticActionHandler m_endParam;
+
+    SemanticActionHandler m_startWhile;
+    SemanticActionHandler m_endWhile;
+
+    SemanticActionHandler m_startIf;
+    SemanticActionHandler m_endIf;
 private:
     std::shared_ptr<BGlobal> m_global;
     std::stack<std::shared_ptr<BScope>> m_scopeStack;

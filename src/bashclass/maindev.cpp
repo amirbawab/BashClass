@@ -38,6 +38,12 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#paramName#", bashClass.m_paramName);
     easyCC.registerSemanticAction("#endParam#", bashClass.m_endParam);
 
+    easyCC.registerSemanticAction("#startWhile#", bashClass.m_startWhile);
+    easyCC.registerSemanticAction("#endWhile#", bashClass.m_endWhile);
+
+    easyCC.registerSemanticAction("#startIf#", bashClass.m_startIf);
+    easyCC.registerSemanticAction("#endIf#", bashClass.m_endIf);
+
     // Start compiling
     std::vector<int> phases = {BashClass::PHASE_CREATE, BashClass::PHASE_EVAL_GEN};
     for(int phase : phases) {
