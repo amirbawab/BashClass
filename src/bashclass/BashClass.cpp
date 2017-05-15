@@ -54,6 +54,40 @@ void _linkTypes(std::shared_ptr<BScope> scope) {
 }
 
 /**
+ * Run a depth-first traversal on variable types and detect
+ * all circular references
+ */
+void _detectCircularReference(std::shared_ptr<BScope> scope) {
+    for(auto cls : scope->findAllClasses()) {
+        std::stack<std::shared_ptr<BScope>> scopeStack;
+        scopeStack.push(cls);
+        std::set<std::shared_ptr<BScope>> visited;
+        while(!scopeStack.empty()) {
+
+            // Get top class scope
+            auto top = scopeStack.top();
+            scopeStack.pop();
+
+            // Mark class as visited
+            visited.insert(top);
+
+            // Evaluate all variables in the class scope
+            for(auto variable : top->findAllVariables()) {
+                if(variable->getTypeScope()) {
+                    if(visited.find(variable->getTypeScope()) == visited.end()) {
+                        scopeStack.push(variable->getTypeScope());
+                    } else {
+                        auto castClass = std::dynamic_pointer_cast<BClass>(cls);
+                        std::cerr << "Circular reference detected from class " << castClass->getName() << std::endl;
+                    }
+                }
+            }
+        }
+
+    }
+}
+
+/**
  * Check if class was already defined
  */
 void _checkDuplicateClass(ecc::LexicalToken &token, std::stack<std::shared_ptr<BScope>> &scopeStack) {
@@ -94,6 +128,7 @@ void BashClass::initHandlers() {
     m_start = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL_GEN) {
             _linkTypes(m_global);
+            _detectCircularReference(m_global);
         }
     };
 
