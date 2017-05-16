@@ -6,7 +6,6 @@
 BashClass::BashClass() {
     m_global = std::make_shared<BGlobal>();
     m_scopeStack.push_back(m_global);
-    m_focusVariable = nullptr;
     initHandlers();
 }
 
@@ -119,6 +118,9 @@ void _checkDuplicateVariable(ecc::LexicalToken &token, std::vector<std::shared_p
     }
 }
 
+/**
+ * Make sure that functions, members of classes, have at least one param
+ */
 void _requiredParam(std::shared_ptr<BScope> functionScope) {
 
     // Check if function is a member of a class
@@ -224,13 +226,13 @@ void BashClass::initHandlers() {
     m_startVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto variable = m_scopeStack.back()->createVariable(lexicalVector[index]);
-            m_focusVariable = variable;
+            m_variableStack.push_back(variable);
         }
     };
 
     m_varType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            m_focusVariable->setType(lexicalVector[index]->getValue());
+            m_variableStack.back()->setType(lexicalVector[index]->getValue());
         }
     };
 
@@ -240,13 +242,13 @@ void BashClass::initHandlers() {
             // Check if variable already exists in the current scope
             _checkDuplicateVariable(*lexicalVector[index], m_scopeStack);
 
-            m_focusVariable->setName(lexicalVector[index]->getValue());
+            m_variableStack.back()->setName(lexicalVector[index]->getValue());
         }
     };
 
     m_endVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            m_focusVariable = nullptr;
+            m_variableStack.pop_back();
         }
     };
 
@@ -258,26 +260,25 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_CREATE) {
             auto createdVar = m_scopeStack.back()->createVariable(lexicalVector[index]);
             createdVar->setIsParam(true);
+            m_variableStack.push_back(createdVar);
         }
     };
 
     m_paramType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            const auto &variables = m_scopeStack.back()->findAllVariables();
-            variables[variables.size()-1]->setType(lexicalVector[index]->getValue());
+            m_variableStack.back()->setType(lexicalVector[index]->getValue());
         }
     };
 
     m_paramName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            const auto &variables = m_scopeStack.back()->findAllVariables();
-            variables[variables.size()-1]->setName(lexicalVector[index]->getValue());
+            m_variableStack.back()->setName(lexicalVector[index]->getValue());
         }
     };
 
     m_endParam = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            m_focusVariable = nullptr;
+            m_variableStack.pop_back();
         }
     };
 

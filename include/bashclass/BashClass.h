@@ -50,7 +50,7 @@ public:
 private:
     std::shared_ptr<BGlobal> m_global;
     std::vector<std::shared_ptr<BScope>> m_scopeStack;
-    std::shared_ptr<BVariable> m_focusVariable;
+    std::vector<std::shared_ptr<BVariable>> m_variableStack;
     void initHandlers();
 };
 
