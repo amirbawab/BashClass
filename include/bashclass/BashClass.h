@@ -5,6 +5,7 @@
 #include <stack>
 #include <memory>
 #include <bashclass/BGlobal.h>
+#include <bashclass/IBCallable.h>
 
 typedef std::vector<std::shared_ptr<ecc::LexicalToken>> LexicalTokens;
 typedef std::function<void(int, LexicalTokens&, int, bool)> SemanticActionHandler;
@@ -31,11 +32,13 @@ public:
     SemanticActionHandler m_functionType;
     SemanticActionHandler m_functionName;
     SemanticActionHandler m_endFunction;
+    SemanticActionHandler m_functionCall;
 
     SemanticActionHandler m_startVar;
     SemanticActionHandler m_varType;
     SemanticActionHandler m_varName;
     SemanticActionHandler m_endVar;
+    SemanticActionHandler m_varCall;
 
     SemanticActionHandler m_startParam;
     SemanticActionHandler m_paramType;
@@ -50,7 +53,8 @@ public:
 private:
     std::shared_ptr<BGlobal> m_global;
     std::vector<std::shared_ptr<BScope>> m_scopeStack;
-    std::vector<std::shared_ptr<BVariable>> m_variableStack;
+    std::vector<std::shared_ptr<IBCallable>> m_callableStack;
+    std::shared_ptr<BVariable> m_focusVariable;
     void initHandlers();
 };
 

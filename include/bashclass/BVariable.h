@@ -6,9 +6,10 @@
 #include <memory>
 #include <easycc/LexicalToken.h>
 #include <bashclass/BScope.h>
+#include <bashclass/IBCallable.h>
 
 class BScope;
-class BVariable {
+class BVariable : public IBCallable {
 private:
     std::string m_type;
     std::shared_ptr<BScope> m_typeScope;

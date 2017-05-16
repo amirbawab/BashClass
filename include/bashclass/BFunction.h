@@ -4,8 +4,9 @@
 #include <vector>
 #include <memory>
 #include <bashclass/BScope.h>
+#include <bashclass/IBCallable.h>
 
-class BFunction : public BScope {
+class BFunction : public BScope, public IBCallable {
 private:
     std::string m_name;
     std::string m_type;

@@ -221,18 +221,18 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
-     *          VARIABLES
+     *          VARIABLES DECLARATION
      **************************************/
     m_startVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto variable = m_scopeStack.back()->createVariable(lexicalVector[index]);
-            m_variableStack.push_back(variable);
+            m_focusVariable = variable;
         }
     };
 
     m_varType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            m_variableStack.back()->setType(lexicalVector[index]->getValue());
+            m_focusVariable->setType(lexicalVector[index]->getValue());
         }
     };
 
@@ -242,16 +242,25 @@ void BashClass::initHandlers() {
             // Check if variable already exists in the current scope
             _checkDuplicateVariable(*lexicalVector[index], m_scopeStack);
 
-            m_variableStack.back()->setName(lexicalVector[index]->getValue());
+            m_focusVariable->setName(lexicalVector[index]->getValue());
         }
     };
 
     m_endVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            m_variableStack.pop_back();
+            m_focusVariable = nullptr;
         }
     };
 
+    /**************************************
+     *          VARIABLES CALLS
+     **************************************/
+
+    m_varCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            //TODO
+        }
+    };
 
     /**************************************
      *          PARAMETERS
