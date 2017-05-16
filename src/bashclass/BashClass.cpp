@@ -187,27 +187,46 @@ void _findFirstChainVariable(std::shared_ptr<BScope> scope, std::vector<std::sha
 }
 
 /**
- * Find next variable as a member of the type of the previous variable in the chain
+ * Find first function, and add it to the callable chain
  */
-void _findNextChainVariableInVariable(std::shared_ptr<BVariable> variable,
+void _findFirstChainFunction(std::shared_ptr<BScope> globalScope, std::vector<std::shared_ptr<IBCallable>> &callableChain,
+                             std::shared_ptr<ecc::LexicalToken> token) {
+    auto functions = globalScope->findAllFunctions(token->getValue().c_str());
+    if(!functions.empty()) {
+        auto function = std::dynamic_pointer_cast<BFunction>(functions.front());
+        // TODO Check for the correct number and type of parameters
+        callableChain.push_back(function);
+    } else {
+        std::cerr << "Undefined function " << token->getValue()
+        << " at line " << token->getLine() << " and column "
+        << token->getColumn() << std::endl;
+        callableChain.push_back(nullptr);
+    }
+}
+
+/**
+ * Find next variable as a member of the type of the previous element in the chain
+ */
+void _findNextChainVariableInPrevType(std::shared_ptr<BScope> typeScope,
                                               std::vector<std::shared_ptr<IBCallable>> &callableChain,
                                               std::shared_ptr<ecc::LexicalToken> token) {
-    auto typeScope = variable->getTypeScope();
     if(typeScope) {
         auto variables = typeScope->findAllVariables(token->getValue().c_str());
         if(!variables.empty()) {
             callableChain.push_back(variables.front());
         } else {
             auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
-            std::cerr << "Class " << castClass->getName() << " does not have "
-                    "member " << token->getValue() << " at line "
+            std::cerr << "Class " << castClass->getName() << " does not have a variable member "
+            << token->getValue() << " at line "
             << token->getLine() << " and column "
             << token->getColumn() << std::endl;
             callableChain.push_back(nullptr);
         }
     } else {
-        std::cerr << "Member " << token->getValue() << " does not exist. "
-        << "Previous element does not have any known members." << std::endl;
+        std::cerr << "Variable member " << token->getValue()
+        << " at line " << token->getLine()
+        << " and column " << token->getColumn()
+        << " does not exist. Previous element type does not have any known members." << std::endl;
         callableChain.push_back(nullptr);
     }
 }
@@ -219,20 +238,73 @@ void _findNextChainVariable(std::vector<std::shared_ptr<IBCallable>> &callableCh
                             std::shared_ptr<ecc::LexicalToken> token) {
 
     if(!callableChain.back()) {
-        std::cerr << "Cannot access member " << token->getValue()
+        std::cerr << "Cannot access variable member " << token->getValue()
         << " of undefined at line " << token->getLine() << " and column "
         << token->getColumn() << std::endl;
     } else {
         auto castPrevVariable = std::dynamic_pointer_cast<BVariable>(callableChain.back());
         auto castPrevFunction = std::dynamic_pointer_cast<BFunction>(callableChain.back());
         if(castPrevVariable) {
-            _findNextChainVariableInVariable(castPrevVariable, callableChain, token);
+            _findNextChainVariableInPrevType(castPrevVariable->getTypeScope(), callableChain, token);
         } else if(castPrevFunction) {
-            // TODO Grammar right now does not allow that, but to be done later
+            _findNextChainVariableInPrevType(castPrevFunction->getTypeScope(), callableChain, token);
         }
     }
 }
 
+/**
+ * Find next function as a member of the type of the previous element in the chain
+ */
+void _findNextChainFunctionInPrevType(std::shared_ptr<BScope> typeScope,
+                                      std::vector<std::shared_ptr<IBCallable>> &callableChain,
+                                      std::shared_ptr<ecc::LexicalToken> token) {
+    if(typeScope) {
+        auto functions = typeScope->findAllFunctions(token->getValue().c_str());
+        if(!functions.empty()) {
+            auto function = std::dynamic_pointer_cast<BFunction>(functions.front());
+            // TODO Check for the correct number and type of parameters
+            callableChain.push_back(function);
+        } else {
+            auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
+            std::cerr << "Class " << castClass->getName() << " does not have a function member "
+            << token->getValue() << " at line "
+            << token->getLine() << " and column "
+            << token->getColumn() << std::endl;
+            callableChain.push_back(nullptr);
+        }
+    } else {
+        std::cerr << "Function member " << token->getValue()
+        << " at line " << token->getLine()
+        << " and column " << token->getColumn()
+        << " does not exist. Previous element type does not have any known members." << std::endl;
+        callableChain.push_back(nullptr);
+    }
+}
+
+/**
+ * Find next function, and add it to the callable chain
+ */
+void _findNextChainFunction(std::vector<std::shared_ptr<IBCallable>> &callableChain,
+                            std::shared_ptr<ecc::LexicalToken> token) {
+
+    if(!callableChain.back()) {
+        std::cerr << "Cannot access function member " << token->getValue()
+        << " of undefined at line " << token->getLine() << " and column "
+        << token->getColumn() << std::endl;
+    } else {
+        auto castPrevVariable = std::dynamic_pointer_cast<BVariable>(callableChain.back());
+        auto castPrevFunction = std::dynamic_pointer_cast<BFunction>(callableChain.back());
+        if(castPrevVariable) {
+            _findNextChainFunctionInPrevType(castPrevVariable->getTypeScope(), callableChain, token);
+        } else if(castPrevFunction) {
+            _findNextChainFunctionInPrevType(castPrevFunction->getTypeScope(), callableChain, token);
+        }
+    }
+}
+
+/**
+ * Initialize semantic action handlers
+ */
 void BashClass::initHandlers() {
 
     /**************************************
@@ -339,7 +411,13 @@ void BashClass::initHandlers() {
     };
 
     m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-
+        if(phase == BashClass::PHASE_EVAL) {
+            if(m_callableChain.empty()) {
+                _findFirstChainFunction(m_global, m_callableChain, lexicalVector[index]);
+            } else {
+                _findNextChainFunction(m_callableChain, lexicalVector[index]);
+            }
+        }
     };
 
     m_endCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
