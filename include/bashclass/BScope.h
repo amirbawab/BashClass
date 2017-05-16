@@ -137,6 +137,13 @@ public:
      * Get label for that scope
      */
     virtual std::stringstream getLabel()=0;
+
+    /**
+     * Find closest variable in current or ancestor scope
+     * @param name Name of the variable
+     * @return closest variable pointer | nullptr if not found
+     */
+    std::shared_ptr<BVariable> findClosestVariable(std::string name);
 };
 
 #endif

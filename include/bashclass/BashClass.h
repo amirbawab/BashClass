@@ -45,6 +45,9 @@ public:
     SemanticActionHandler m_paramName;
     SemanticActionHandler m_endParam;
 
+    SemanticActionHandler m_startCall;
+    SemanticActionHandler m_endCall;
+
     SemanticActionHandler m_startWhile;
     SemanticActionHandler m_endWhile;
 

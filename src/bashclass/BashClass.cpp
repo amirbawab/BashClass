@@ -35,7 +35,7 @@ void _linkTypes(std::shared_ptr<BScope> scope) {
                 auto cls = scope->findAllClasses(variable->getType().c_str());
                 if(cls.empty()) {
                     std::cerr << "Undefined variable type " << variable->getType() <<
-                    " for variable " << variable->getName() << std::endl;
+                    " for variable " << variable->getValue() << std::endl;
                 } else {
                     // In case the class was defined several times (which is a semantic error)
                     // take the front element
@@ -181,7 +181,7 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
-     *          FUNCTIONS
+     *          FUNCTIONS DECLARATION
      **************************************/
     m_startFunction = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
@@ -221,6 +221,72 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
+     *          VARIABLE AND FUNCTION CALL
+     **************************************/
+
+    m_startCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            m_callableStack.clear();
+        }
+    };
+
+    m_varCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            // If first variable in the chain, search for it
+            if(m_callableStack.empty()) {
+                auto variable = m_scopeStack.back()->findClosestVariable(lexicalVector[index]->getValue());
+                if(variable) {
+                    m_callableStack.push_back(variable);
+                } else {
+                    std::cerr << "Undefined variable " << lexicalVector[index]->getValue()
+                    << " at line " << lexicalVector[index]->getLine() << " and column "
+                    << lexicalVector[index]->getColumn() << std::endl;
+                    m_callableStack.push_back(nullptr);
+                }
+            } else {
+                if(!m_callableStack.back()) {
+                    std::cerr << "Cannot access member " << lexicalVector[index]->getValue()
+                    << " of undefined at line " << lexicalVector[index]->getLine() << " and column "
+                    << lexicalVector[index]->getColumn() << std::endl;
+                } else {
+                    auto castPrevVariable = std::dynamic_pointer_cast<BVariable>(m_callableStack.back());
+                    auto castPrevFunction = std::dynamic_pointer_cast<BFunction>(m_callableStack.back());
+                    if(castPrevVariable) {
+                        auto typeScope = castPrevVariable->getTypeScope();
+                        if(typeScope) {
+                            auto variables = typeScope->findAllVariables(lexicalVector[index]->getValue().c_str());
+                            if(!variables.empty()) {
+                                m_callableStack.push_back(variables.front());
+                            } else {
+                                auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
+                                std::cerr << "Class " << castClass->getName() << " does not have "
+                                        "member " << lexicalVector[index]->getValue() << " at line "
+                                << lexicalVector[index]->getLine() << " and column "
+                                << lexicalVector[index]->getColumn() << std::endl;
+                                m_callableStack.push_back(nullptr);
+                            }
+                        } else {
+                            std::cerr << "Member " << lexicalVector[index]->getValue() << " does not exist. "
+                            << "Previous element does not have any known members." << std::endl;
+                            m_callableStack.push_back(nullptr);
+                        }
+                    } else if(castPrevFunction) {
+                        // TODO Grammar right now does not allow that, but to be done later
+                    }
+                }
+            }
+        }
+    };
+
+    m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+
+    };
+
+    m_endCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+
+    };
+
+    /**************************************
      *          VARIABLES DECLARATION
      **************************************/
     m_startVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
@@ -253,41 +319,31 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
-     *          VARIABLES CALLS
-     **************************************/
-
-    m_varCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            //TODO
-        }
-    };
-
-    /**************************************
      *          PARAMETERS
      **************************************/
     m_startParam = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto createdVar = m_scopeStack.back()->createVariable(lexicalVector[index]);
             createdVar->setIsParam(true);
-            m_variableStack.push_back(createdVar);
+            m_focusVariable = createdVar;
         }
     };
 
     m_paramType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            m_variableStack.back()->setType(lexicalVector[index]->getValue());
+            m_focusVariable->setType(lexicalVector[index]->getValue());
         }
     };
 
     m_paramName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            m_variableStack.back()->setName(lexicalVector[index]->getValue());
+            m_focusVariable->setName(lexicalVector[index]->getValue());
         }
     };
 
     m_endParam = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            m_variableStack.pop_back();
+            m_focusVariable = nullptr;
         }
     };
 

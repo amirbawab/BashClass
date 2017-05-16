@@ -111,6 +111,19 @@ std::vector<std::shared_ptr<BScope>> BScope::getAllScopes() {
     return scopes;
 }
 
+std::shared_ptr<BVariable> BScope::findClosestVariable(std::string name) {
+    auto currentScope = shared_from_this();
+    while(currentScope != nullptr) {
+        auto variables = currentScope->findAllVariables(name.c_str());
+        if(!variables.empty()) {
+            // If multiple variable definition were found (semantic error), also select the front
+            return variables.front();
+        }
+        currentScope = currentScope->getParentScope();
+    }
+    return nullptr;
+}
+
 std::stringstream BScope::getStructure() {
     std::stringstream structure;
     std::stack<std::shared_ptr<BScope>> structureStack;
