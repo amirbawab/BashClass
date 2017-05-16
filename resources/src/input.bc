@@ -63,6 +63,14 @@ class Team {
     var Person p1;
     var Person p2;
 
+    function Person getP1(var Team this) {
+        return p1;
+    }
+
+    function Person getP2(var Team this) {
+        return p1;
+    }
+
     /**
      * Print details about the team
      */
@@ -100,9 +108,9 @@ function int main(var string name) {
         var Team team;
         team.name = "Bash team";
         team.p1.name = "One";
-        team.p1.id = 1;
+        team.getP1().id = 1;
         team.p2.name = "Two";
-        team.p2.id = 2;
+        team.getP2().id = 2;
         
         team.printDetails();
 

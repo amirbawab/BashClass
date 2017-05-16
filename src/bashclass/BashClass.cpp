@@ -14,39 +14,62 @@ void BashClass::printStructure() {
 }
 
 /**
+ * Link variable types in the provided scope
+ */
+void _linkVariablesTypes(std::shared_ptr<BScope> scope, std::shared_ptr<BScope> globalScope) {
+    // Evaluate all variables in that scope
+    for(auto variable : scope->findAllVariables()) {
+        if(!BType::isBuiltInType(variable->getType())) {
+            // Find class scope of that type
+            auto cls = globalScope->findAllClasses(variable->getType().c_str());
+            if(cls.empty()) {
+                std::cerr << "Undefined type " << variable->getType() <<
+                " for variable " << variable->getName() << std::endl;
+            } else {
+                variable->setTypeScope(cls.front());
+            }
+        }
+    }
+}
+
+/**
+ * Link functions types in the provided scope
+ */
+void _linkFunctionsTypes(std::shared_ptr<BScope> scope, std::shared_ptr<BScope> globalScope) {
+    // Evaluate all functions in that scope
+    for(auto function : scope->findAllFunctions()) {
+        auto castFunction = std::dynamic_pointer_cast<BFunction>(function);
+        if(!BType::isBuiltInType(castFunction->getType())) {
+            // Find class scope of that type
+            auto cls = globalScope->findAllClasses(castFunction->getType().c_str());
+            if(cls.empty()) {
+                std::cerr << "Undefined type " << castFunction->getType() <<
+                " for function " << castFunction->getName() << std::endl;
+            } else {
+                castFunction->setTypeScope(cls.front());
+            }
+        }
+    }
+}
+
+/**
  * Run a depth-first traversal and link all the variables
  * to their types
  */
-void _linkTypes(std::shared_ptr<BScope> scope) {
+void _linkTypes(std::shared_ptr<BScope> globalScope) {
 
-    // Check if all variables types exist and set them
     std::stack<std::shared_ptr<BScope>> scopeStack;
-    scopeStack.push(scope);
+    scopeStack.push(globalScope);
     while(!scopeStack.empty()) {
 
-        // Get top scope
         auto top = scopeStack.top();
         scopeStack.pop();
 
-        // Evaluate all variables in the top scope
-        for(auto variable : top->findAllVariables()) {
-            if(!BType::isBuiltInType(variable->getType())) {
-                // Find class scope of that type
-                auto cls = scope->findAllClasses(variable->getType().c_str());
-                if(cls.empty()) {
-                    std::cerr << "Undefined variable type " << variable->getType() <<
-                    " for variable " << variable->getValue() << std::endl;
-                } else {
-                    // In case the class was defined several times (which is a semantic error)
-                    // take the front element
-                    variable->setTypeScope(cls.front());
-                }
-            }
-        }
+        _linkVariablesTypes(top,globalScope);
+        _linkFunctionsTypes(top,globalScope);
 
-        // Add all children scopes to the stack
-        for(auto childScope : top->getAllScopes()) {
-            scopeStack.push(childScope);
+        for(auto scope : top->getAllScopes()) {
+            scopeStack.push(scope);
         }
     }
 }
@@ -102,7 +125,7 @@ void _checkDuplicateClass(ecc::LexicalToken &token, std::vector<std::shared_ptr<
 void _checkDuplicateFunction(ecc::LexicalToken &token, std::vector<std::shared_ptr<BScope>> &scopeStack) {
     auto getFunc = scopeStack.back()->getParentScope()->findAllFunctions(token.getValue().c_str());
     if(!getFunc.empty()) {
-        std::cerr << "Function '" << token.getValue() << "' at line " << token.getLine()
+        std::cerr << "Function " << token.getValue() << " at line " << token.getLine()
         <<" was defined previously in the same scope" << std::endl;
     }
 }
@@ -272,6 +295,7 @@ void BashClass::initHandlers() {
                         }
                     } else if(castPrevFunction) {
                         // TODO Grammar right now does not allow that, but to be done later
+                        // FIXME DO THIS NOW
                     }
                 }
             }
