@@ -158,6 +158,81 @@ void _requiredParam(std::shared_ptr<BScope> functionScope) {
     }
 }
 
+/**
+ * Find first variable, and add it to the callable chain
+ */
+void _findFirstChainVariable(std::shared_ptr<BScope> scope, std::vector<std::shared_ptr<IBCallable>> &callableChain,
+                    std::shared_ptr<ecc::LexicalToken> token) {
+    auto variable = scope->findClosestVariable(token->getValue());
+    if(variable) {
+
+        // Check if the variable is a class member
+        auto castParentClass = std::dynamic_pointer_cast<BClass>(variable->getParentScope());
+        if(castParentClass) {
+            std::cerr << "Use the first parameter of the function to refer to the variable "
+            << variable->getName() << " at line " << token->getLine() << " and column "
+            << token->getColumn() << std::endl;
+
+            // Push variable instead of nullptr because the meaning is correct
+            callableChain.push_back(variable);
+        } else {
+            callableChain.push_back(variable);
+        }
+    } else {
+        std::cerr << "Undefined variable " << token->getValue()
+        << " at line " << token->getLine() << " and column "
+        << token->getColumn() << std::endl;
+        callableChain.push_back(nullptr);
+    }
+}
+
+/**
+ * Find next variable as a member of the type of the previous variable in the chain
+ */
+void _findNextChainVariableInVariable(std::shared_ptr<BVariable> variable,
+                                              std::vector<std::shared_ptr<IBCallable>> &callableChain,
+                                              std::shared_ptr<ecc::LexicalToken> token) {
+    auto typeScope = variable->getTypeScope();
+    if(typeScope) {
+        auto variables = typeScope->findAllVariables(token->getValue().c_str());
+        if(!variables.empty()) {
+            callableChain.push_back(variables.front());
+        } else {
+            auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
+            std::cerr << "Class " << castClass->getName() << " does not have "
+                    "member " << token->getValue() << " at line "
+            << token->getLine() << " and column "
+            << token->getColumn() << std::endl;
+            callableChain.push_back(nullptr);
+        }
+    } else {
+        std::cerr << "Member " << token->getValue() << " does not exist. "
+        << "Previous element does not have any known members." << std::endl;
+        callableChain.push_back(nullptr);
+    }
+}
+
+/**
+ * Find next variable, and add it to the callable chain
+ */
+void _findNextChainVariable(std::vector<std::shared_ptr<IBCallable>> &callableChain,
+                            std::shared_ptr<ecc::LexicalToken> token) {
+
+    if(!callableChain.back()) {
+        std::cerr << "Cannot access member " << token->getValue()
+        << " of undefined at line " << token->getLine() << " and column "
+        << token->getColumn() << std::endl;
+    } else {
+        auto castPrevVariable = std::dynamic_pointer_cast<BVariable>(callableChain.back());
+        auto castPrevFunction = std::dynamic_pointer_cast<BFunction>(callableChain.back());
+        if(castPrevVariable) {
+            _findNextChainVariableInVariable(castPrevVariable, callableChain, token);
+        } else if(castPrevFunction) {
+            // TODO Grammar right now does not allow that, but to be done later
+        }
+    }
+}
+
 void BashClass::initHandlers() {
 
     /**************************************
@@ -249,55 +324,16 @@ void BashClass::initHandlers() {
 
     m_startCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_callableStack.clear();
+            m_callableChain.clear();
         }
     };
 
     m_varCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // If first variable in the chain, search for it
-            if(m_callableStack.empty()) {
-                auto variable = m_scopeStack.back()->findClosestVariable(lexicalVector[index]->getValue());
-                if(variable) {
-                    m_callableStack.push_back(variable);
-                } else {
-                    std::cerr << "Undefined variable " << lexicalVector[index]->getValue()
-                    << " at line " << lexicalVector[index]->getLine() << " and column "
-                    << lexicalVector[index]->getColumn() << std::endl;
-                    m_callableStack.push_back(nullptr);
-                }
+            if(m_callableChain.empty()) {
+                _findFirstChainVariable(m_scopeStack.back(), m_callableChain, lexicalVector[index]);
             } else {
-                if(!m_callableStack.back()) {
-                    std::cerr << "Cannot access member " << lexicalVector[index]->getValue()
-                    << " of undefined at line " << lexicalVector[index]->getLine() << " and column "
-                    << lexicalVector[index]->getColumn() << std::endl;
-                } else {
-                    auto castPrevVariable = std::dynamic_pointer_cast<BVariable>(m_callableStack.back());
-                    auto castPrevFunction = std::dynamic_pointer_cast<BFunction>(m_callableStack.back());
-                    if(castPrevVariable) {
-                        auto typeScope = castPrevVariable->getTypeScope();
-                        if(typeScope) {
-                            auto variables = typeScope->findAllVariables(lexicalVector[index]->getValue().c_str());
-                            if(!variables.empty()) {
-                                m_callableStack.push_back(variables.front());
-                            } else {
-                                auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
-                                std::cerr << "Class " << castClass->getName() << " does not have "
-                                        "member " << lexicalVector[index]->getValue() << " at line "
-                                << lexicalVector[index]->getLine() << " and column "
-                                << lexicalVector[index]->getColumn() << std::endl;
-                                m_callableStack.push_back(nullptr);
-                            }
-                        } else {
-                            std::cerr << "Member " << lexicalVector[index]->getValue() << " does not exist. "
-                            << "Previous element does not have any known members." << std::endl;
-                            m_callableStack.push_back(nullptr);
-                        }
-                    } else if(castPrevFunction) {
-                        // TODO Grammar right now does not allow that, but to be done later
-                        // FIXME DO THIS NOW
-                    }
-                }
+                _findNextChainVariable(m_callableChain, lexicalVector[index]);
             }
         }
     };

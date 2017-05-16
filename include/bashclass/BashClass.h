@@ -56,7 +56,7 @@ public:
 private:
     std::shared_ptr<BGlobal> m_global;
     std::vector<std::shared_ptr<BScope>> m_scopeStack;
-    std::vector<std::shared_ptr<IBCallable>> m_callableStack;
+    std::vector<std::shared_ptr<IBCallable>> m_callableChain;
     std::shared_ptr<BVariable> m_focusVariable;
     void initHandlers();
 };

@@ -64,11 +64,11 @@ class Team {
     var Person p2;
 
     function Person getP1(var Team this) {
-        return p1;
+        return this.p1;
     }
 
     function Person getP2(var Team this) {
-        return p1;
+        return this.p2;
     }
 
     /**
