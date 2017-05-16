@@ -1,6 +1,7 @@
 #include <bashclass/BashClass.h>
 #include <bashclass/BTypes.h>
 #include <bashclass/BClass.h>
+#include <bashclass/BCallableToken.h>
 #include <iostream>
 
 BashClass::BashClass() {
@@ -431,6 +432,15 @@ void BashClass::initHandlers() {
         }
     };
 
+    m_tokenCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            // Example token calls: integer
+            auto callableToken = std::make_shared<BCallableToken>();
+            callableToken->setLexicalToken(lexicalVector[index]);
+            m_callableChainStack.back().push_back(callableToken);
+        }
+    };
+
     m_endCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_callableChainStack.pop_back();
@@ -539,6 +549,22 @@ void BashClass::initHandlers() {
     m_endIf = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
             m_scopeStack.pop_back();
+        }
+    };
+
+    /**************************************
+     *          EXPRESSION
+     **************************************/
+
+    m_startExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            m_expressionStack.push_back(std::make_shared<BExpression>());
+        }
+    };
+
+    m_endExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            m_expressionStack.pop_back();
         }
     };
 }

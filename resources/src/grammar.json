@@ -49,7 +49,8 @@
     "SEMICOLON" : ["'semicolon'"],
     "DOT" : ["'dot'"],
 
-    "EXPR_DEC" : ["EXPR_C EXPR_B"],
+    "EXPR_DEC" : ["#startExpr# EXPR_A #endExpr#"],
+    "EXPR_A" : ["EXPR_C EXPR_B"],
     "EXPR_B" : ["EPSILON","OP_GROUP_A EXPR_C EXPR_B"],
     "EXPR_C" : ["EXPR_E EXPR_D"],
     "EXPR_D" : ["EPSILON","OP_GROUP_B EXPR_E EXPR_D"],
@@ -73,9 +74,9 @@
     "EXPR_V" : ["EPSILON","OP_GROUP_K EXPR_W EXPR_V"],
     "EXPR_W" : ["EXPR_Y EXPR_X"],
     "EXPR_X" : ["EPSILON","OP_GROUP_L EXPR_Y EXPR_X"],
-    "EXPR_Y" : ["OPEN_PAR EXPR_DEC CLOSE_PAR","ARITH_ID"],
+    "EXPR_Y" : ["OPEN_PAR EXPR_A CLOSE_PAR","ARITH_ID"],
 
-    "ARITH_ID" : ["'integer'","'string'","ARITH_VAR_OR_FUNC_CALL","BASH_SUB"],
+    "ARITH_ID" : ["#startCall# 'integer' #tokenCall# #endCall#","#startCall# 'string' #tokenCall# #endCall#","ARITH_VAR_OR_FUNC_CALL","BASH_SUB"],
     "ARITH_VAR_OR_FUNC_CALL" : ["#startCall# ARITH_VAR_OR_FUNC_CALL_A #endCall#"],
     "ARITH_VAR_OR_FUNC_CALL_A" : ["IDENTIFIER ARITH_VAR_OR_FUNC_CALL_B"],
     "ARITH_VAR_OR_FUNC_CALL_B" : ["#varCall# EPSILON","#functionCall# IDENTIFIER_FUNCTION_CALL ARITH_VAR_OR_FUNC_CALL_C","#varCall# DOT ARITH_VAR_OR_FUNC_CALL_A"],
