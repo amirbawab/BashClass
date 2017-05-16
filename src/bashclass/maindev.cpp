@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#endIf#", bashClass.m_endIf);
 
     // Start compiling
-    std::vector<int> phases = {BashClass::PHASE_CREATE, BashClass::PHASE_EVAL_GEN};
+    std::vector<int> phases = {BashClass::PHASE_CREATE, BashClass::PHASE_EVAL, BashClass::PHASE_GENERATE};
     for(int phase : phases) {
 
         // Set the phase number
