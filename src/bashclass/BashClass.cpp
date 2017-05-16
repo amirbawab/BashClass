@@ -396,32 +396,34 @@ void BashClass::initHandlers() {
 
     m_startCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_callableChain.clear();
+            m_callableChainStack.push_back({});
         }
     };
 
     m_varCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            if(m_callableChain.empty()) {
-                _findFirstChainVariable(m_scopeStack.back(), m_callableChain, lexicalVector[index]);
+            if(m_callableChainStack.back().empty()) {
+                _findFirstChainVariable(m_scopeStack.back(), m_callableChainStack.back(), lexicalVector[index]);
             } else {
-                _findNextChainVariable(m_callableChain, lexicalVector[index]);
+                _findNextChainVariable(m_callableChainStack.back(), lexicalVector[index]);
             }
         }
     };
 
     m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            if(m_callableChain.empty()) {
-                _findFirstChainFunction(m_global, m_callableChain, lexicalVector[index]);
+            if(m_callableChainStack.back().empty()) {
+                _findFirstChainFunction(m_global, m_callableChainStack.back(), lexicalVector[index]);
             } else {
-                _findNextChainFunction(m_callableChain, lexicalVector[index]);
+                _findNextChainFunction(m_callableChainStack.back(), lexicalVector[index]);
             }
         }
     };
 
     m_endCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-
+        if(phase == BashClass::PHASE_EVAL) {
+            m_callableChainStack.pop_back();
+        }
     };
 
     /**************************************
