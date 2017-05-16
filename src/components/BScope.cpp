@@ -57,7 +57,7 @@ std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(const char* nam
     return variables;
 }
 
-std::vector<std::shared_ptr<BVariable>> BScope::findAllParameters(char *name) {
+std::vector<std::shared_ptr<BVariable>> BScope::findAllParameters(const char *name) {
     std::vector<std::shared_ptr<BVariable>> parameters;
     for(auto variable : m_variables) {
         if(variable.second->isParam() && (!name || variable.second->getName() == name)) {

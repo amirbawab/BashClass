@@ -136,7 +136,18 @@ void _checkDuplicateFunction(ecc::LexicalToken &token, std::vector<std::shared_p
 void _checkDuplicateVariable(ecc::LexicalToken &token, std::vector<std::shared_ptr<BScope>> &scopeStack) {
     auto getVar = scopeStack.back()->findAllVariables(token.getValue().c_str());
     if(!getVar.empty()) {
-        std::cerr << "Variable '" << token.getValue() << "' at line " << token.getLine()
+        std::cerr << "Variable " << token.getValue() << " at line " << token.getLine()
+        << " was defined previously in the same scope" << std::endl;
+    }
+}
+
+/**
+ * Check if parameter was already defined in the scope
+ */
+void _checkDuplicateParameter(ecc::LexicalToken &token, std::vector<std::shared_ptr<BScope>> &scopeStack) {
+    auto getVar = scopeStack.back()->findAllParameters(token.getValue().c_str());
+    if(!getVar.empty()) {
+        std::cerr << "Parameter " << token.getValue() << " at line " << token.getLine()
         << " was defined previously in the same scope" << std::endl;
     }
 }
@@ -477,6 +488,10 @@ void BashClass::initHandlers() {
 
     m_paramName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
+
+            // Check if parameter already exists in the current scope
+            _checkDuplicateParameter(*lexicalVector[index], m_scopeStack);
+
             m_focusVariable->setName(lexicalVector[index]->getValue());
         }
     };

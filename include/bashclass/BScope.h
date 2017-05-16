@@ -69,7 +69,7 @@ public:
      * in their order of insertion, otherwise return the parameter variables
      * that matches the passed name
      */
-    std::vector<std::shared_ptr<BVariable>> findAllParameters(char* name = nullptr);
+    std::vector<std::shared_ptr<BVariable>> findAllParameters(const char* name = nullptr);
 
     /**
      * Find all classes
