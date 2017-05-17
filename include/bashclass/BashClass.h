@@ -69,12 +69,32 @@ public:
     SemanticActionHandler m_endArgument;
 
 private:
+
+    // Global scope
     std::shared_ptr<BGlobal> m_global;
+
+    // Hold nesting scopes
     std::vector<std::shared_ptr<BScope>> m_scopeStack;
+
+    // Hold chain of callable elements and their nesting ones
+    // For example, a.b(c.d() + e.f()) is represented in three steps:
+    // [[a,b()]] => [[a,b()],[c,d()]] => [[a,b()][e,f()]]
     std::vector<std::vector<std::shared_ptr<IBCallable>>> m_callableChainStack;
-    std::shared_ptr<BVariable> m_focusVariable;
+
+    // Hold expressions with their nesting ones
+    // For example, a.b(c.d() + e.f()) is represented:
+    // [{operands: [[c,d()],[e.f()]], operators: [+]}]
     std::vector<std::shared_ptr<BExpression>> m_expressionStack;
+
+    // Hold variable currently being defined
+    std::shared_ptr<BVariable> m_focusVariable;
+
+    // Hold arguments for a function to be called soon
     std::vector<std::vector<std::shared_ptr<BExpression>>> m_argumentListStack;
+
+    /**
+     * Initialize semantic action handlers
+     */
     void initHandlers();
 };
 
