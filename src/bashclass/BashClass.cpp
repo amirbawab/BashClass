@@ -328,6 +328,7 @@ void _checkNumberAndTypeOfParameters(std::shared_ptr<BFunction> function,
         << argumentList.size() << " instead" << std::endl;
     } else {
         for(size_t i = startIndex; i < parameters.size(); i++) {
+            //FIXME Callable tokens cause nullptr on getDominantType()
             std::string parameterType = parameters[i]->getType()->getValue();
             std::string argumentType = argumentList[i-startIndex]->getDominantType()->getValue();
             if(parameterType != argumentType) {
@@ -621,8 +622,7 @@ void BashClass::initHandlers() {
             // Get function from last callable chain
             auto function = std::dynamic_pointer_cast<BFunction>(m_callableChainStack.back().back());
             if(function) {
-                _checkNumberAndTypeOfParameters(function, m_argumentListStack.back());
-                std::cout << function->getName()->getValue() << std::endl;
+//                _checkNumberAndTypeOfParameters(function, m_argumentListStack.back());
             } else {
                 std::cerr << "Cannot set argument to undefined function" << std::endl;
             }
