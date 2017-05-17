@@ -63,12 +63,18 @@ public:
     SemanticActionHandler m_startExpr;
     SemanticActionHandler m_endExpr;
 
+    SemanticActionHandler m_varAssign;
+    SemanticActionHandler m_setArgument;
+    SemanticActionHandler m_startArgument;
+    SemanticActionHandler m_endArgument;
+
 private:
     std::shared_ptr<BGlobal> m_global;
     std::vector<std::shared_ptr<BScope>> m_scopeStack;
     std::vector<std::vector<std::shared_ptr<IBCallable>>> m_callableChainStack;
     std::shared_ptr<BVariable> m_focusVariable;
     std::vector<std::shared_ptr<BExpression>> m_expressionStack;
+    std::vector<std::vector<std::shared_ptr<BExpression>>> m_argumentListStack;
     void initHandlers();
 };
 

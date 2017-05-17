@@ -315,6 +315,31 @@ void _findNextChainFunction(std::vector<std::shared_ptr<IBCallable>> &callableCh
 }
 
 /**
+ * Check if the number and type of parameters is correct
+ */
+void _checkNumberAndTypeOfParameters(std::shared_ptr<BFunction> function,
+                                     std::vector<std::shared_ptr<BExpression>> &argumentList) {
+    auto parameters = function->findAllParameters();
+    size_t startIndex = function->isClassMember() ? 1 /*var Class this*/ : 0;
+
+    if(parameters.size() != argumentList.size() + startIndex) {
+        std::cerr << "Function " << function->getName()->getValue()
+        << " expects " << parameters.size() - startIndex << " but given "
+        << argumentList.size() << " instead" << std::endl;
+    } else {
+        for(size_t i = startIndex; i < parameters.size(); i++) {
+            std::string parameterType = parameters[i]->getType()->getValue();
+            std::string argumentType = argumentList[i-startIndex]->getDominantType()->getValue();
+            if(parameterType != argumentType) {
+                std::cerr << "Function " << function->getName()->getValue()
+                << " expects argument " << i << " to be of type " << parameterType
+                << " but given " << argumentType << std::endl;
+            }
+        }
+    }
+}
+
+/**
  * Initialize semantic action handlers
  */
 void BashClass::initHandlers() {
@@ -572,6 +597,42 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
+     *          ARGUMENT
+     **************************************/
+
+    m_startArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            std::cout << "START ARGUMENT" << std::endl;
+            m_argumentListStack.push_back({});
+        }
+    };
+
+    m_setArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            std::cout << "SET ARGUMENT" << std::endl;
+            m_argumentListStack.back().push_back(m_expressionStack.back());
+            m_expressionStack.pop_back();
+        }
+    };
+
+    m_endArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            std::cout << "END ARGUMENT" << std::endl;
+            // Get function from last callable chain
+            auto function = std::dynamic_pointer_cast<BFunction>(m_callableChainStack.back().back());
+            if(function) {
+                _checkNumberAndTypeOfParameters(function, m_argumentListStack.back());
+                std::cout << function->getName()->getValue() << std::endl;
+            } else {
+                std::cerr << "Cannot set argument to undefined function" << std::endl;
+            }
+
+            // Remove argument list from the stack
+            m_argumentListStack.pop_back();
+        }
+    };
+
+    /**************************************
      *          EXPRESSION
      **************************************/
 
@@ -585,7 +646,13 @@ void BashClass::initHandlers() {
     m_endExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             std::cout << "STOP EXPR" << std::endl;
-            m_expressionStack.pop_back();
+            m_expressionStack.back()->evaluate();
+        }
+    };
+
+    m_varAssign = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            std::cout << "ASSIGN" << std::endl;
         }
     };
 }

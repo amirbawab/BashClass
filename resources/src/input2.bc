@@ -1,3 +1,4 @@
-function int main() {
+function int main(var int cas) {
     var int a;
+    a =main(123+"a") + main(421);
 }

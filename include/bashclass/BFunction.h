@@ -50,6 +50,11 @@ public:
     void setTypeScope(std::shared_ptr<BScope> scope) {m_typeScope = scope;}
 
     /**
+     * Check if this function is a class member
+     */
+    bool isClassMember();
+
+    /**
      * Get function label
      */
     std::stringstream getLabel();
