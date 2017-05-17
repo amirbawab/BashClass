@@ -150,7 +150,8 @@ std::stringstream BScope::getStructure() {
             << castClass->getLabel().str() << std::endl;
         } else if(castFunction) {
             structure << "function: " << castFunction->getName()->getValue()
-            << " : " << castFunction->getType() << ". Label: " << castFunction->getLabel().str() << std::endl;
+            << " : " << castFunction->getType()->getValue() << ". Label: " << castFunction->getLabel().str()
+            << std::endl;
         } else if(castGlobal) {
             structure << "global" << std::endl;
         } else if(castWhile) {

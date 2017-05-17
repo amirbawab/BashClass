@@ -15,7 +15,7 @@
     "FUNCTION_PARAM" : ["EPSILON","VARIABLE #startParam# VARIABLE_TYPE #paramType# VARIABLE_NAME #paramName# #endParam# FUNCTION_PARAM_MORE"],
     "FUNCTION_PARAM_MORE" : ["EPSILON","COMMA VARIABLE #startParam# VARIABLE_TYPE #paramType# VARIABLE_NAME #paramName# #endParam# FUNCTION_PARAM_MORE"],
 
-    "VAR_ASSIGN_OR_FUNC_CALL" : ["#startCall# VAR_ASSIGN_OR_FUNC_CALL_A #endCall#"],
+    "VAR_ASSIGN_OR_FUNC_CALL" : ["#startOuterCall# VAR_ASSIGN_OR_FUNC_CALL_A #endOuterCall#"],
     "VAR_ASSIGN_OR_FUNC_CALL_A" : ["IDENTIFIER VAR_ASSIGN_OR_FUNC_CALL_B"],
     "VAR_ASSIGN_OR_FUNC_CALL_B" : ["#functionCall# IDENTIFIER_FUNCTION_CALL VAR_ASSIGN_OR_FUNC_CALL_C","#varCall# DOT VAR_ASSIGN_OR_FUNC_CALL_A","#varCall# ASSIGN EXPR_DEC SEMICOLON"],
     "VAR_ASSIGN_OR_FUNC_CALL_C" : ["SEMICOLON","DOT VAR_ASSIGN_OR_FUNC_CALL_A"],
@@ -76,8 +76,9 @@
     "EXPR_X" : ["EPSILON","OP_GROUP_L EXPR_Y EXPR_X"],
     "EXPR_Y" : ["OPEN_PAR EXPR_A CLOSE_PAR","ARITH_ID"],
 
-    "ARITH_ID" : ["#startCall# 'integer' #tokenCall# #endCall#","#startCall# 'string' #tokenCall# #endCall#","ARITH_VAR_OR_FUNC_CALL","BASH_SUB"],
-    "ARITH_VAR_OR_FUNC_CALL" : ["#startCall# ARITH_VAR_OR_FUNC_CALL_A #endCall#"],
+    "ARITH_ID" : ["'integer' #tokenCall#","'string' #tokenCall#","ARITH_VAR_OR_FUNC_CALL","BASH_SUB"],
+
+    "ARITH_VAR_OR_FUNC_CALL" : ["#startInnerCall# ARITH_VAR_OR_FUNC_CALL_A #endInnerCall#"],
     "ARITH_VAR_OR_FUNC_CALL_A" : ["IDENTIFIER ARITH_VAR_OR_FUNC_CALL_B"],
     "ARITH_VAR_OR_FUNC_CALL_B" : ["#varCall# EPSILON","#functionCall# IDENTIFIER_FUNCTION_CALL ARITH_VAR_OR_FUNC_CALL_C","#varCall# DOT ARITH_VAR_OR_FUNC_CALL_A"],
     "ARITH_VAR_OR_FUNC_CALL_C" : ["EPSILON","DOT ARITH_VAR_OR_FUNC_CALL_A"],

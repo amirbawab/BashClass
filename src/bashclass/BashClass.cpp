@@ -403,51 +403,6 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
-     *          VARIABLE AND FUNCTION CALL
-     **************************************/
-
-    m_startCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            m_callableChainStack.push_back({});
-        }
-    };
-
-    m_varCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            if(m_callableChainStack.back().empty()) {
-                _findFirstChainVariable(m_scopeStack.back(), m_callableChainStack.back(), lexicalVector[index]);
-            } else {
-                _findNextChainVariable(m_callableChainStack.back(), lexicalVector[index]);
-            }
-        }
-    };
-
-    m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            if(m_callableChainStack.back().empty()) {
-                _findFirstChainFunction(m_global, m_callableChainStack.back(), lexicalVector[index]);
-            } else {
-                _findNextChainFunction(m_callableChainStack.back(), lexicalVector[index]);
-            }
-        }
-    };
-
-    m_tokenCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            // Example token calls: integer
-            auto callableToken = std::make_shared<BCallableToken>();
-            callableToken->setLexicalToken(lexicalVector[index]);
-            m_callableChainStack.back().push_back(callableToken);
-        }
-    };
-
-    m_endCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            m_callableChainStack.pop_back();
-        }
-    };
-
-    /**************************************
      *          VARIABLES DECLARATION
      **************************************/
     m_startVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
@@ -553,17 +508,83 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
+     *          VARIABLE AND FUNCTION CALL
+     **************************************/
+
+    m_startOuterCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            std::cout << "START OUTER CALL" << std::endl;
+            m_callableChainStack.push_back({});
+        }
+    };
+
+    m_endOuterCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            std::cout << "STOP OUTER CALL" << std::endl;
+            m_callableChainStack.pop_back();
+        }
+    };
+
+    m_startInnerCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            std::cout << "START INNER CALL" << std::endl;
+            m_callableChainStack.push_back({});
+        }
+    };
+
+    m_endInnerCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            std::cout << "STOP INNER CALL" << std::endl;
+            m_expressionStack.back()->addOperand(m_callableChainStack.back());
+            m_callableChainStack.pop_back();
+        }
+    };
+
+    m_varCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            if(m_callableChainStack.back().empty()) {
+                _findFirstChainVariable(m_scopeStack.back(), m_callableChainStack.back(), lexicalVector[index]);
+            } else {
+                _findNextChainVariable(m_callableChainStack.back(), lexicalVector[index]);
+            }
+        }
+    };
+
+    m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            if(m_callableChainStack.back().empty()) {
+                _findFirstChainFunction(m_global, m_callableChainStack.back(), lexicalVector[index]);
+            } else {
+                _findNextChainFunction(m_callableChainStack.back(), lexicalVector[index]);
+            }
+        }
+    };
+
+    m_tokenCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            // Example token calls: integer
+            auto callableToken = std::make_shared<BCallableToken>();
+            callableToken->setLexicalToken(lexicalVector[index]);
+
+            // Add token to expression
+            m_expressionStack.back()->addOperand({callableToken});
+        }
+    };
+
+    /**************************************
      *          EXPRESSION
      **************************************/
 
     m_startExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
+            std::cout << "START EXPR" << std::endl;
             m_expressionStack.push_back(std::make_shared<BExpression>());
         }
     };
 
     m_endExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
+            std::cout << "STOP EXPR" << std::endl;
             m_expressionStack.pop_back();
         }
     };

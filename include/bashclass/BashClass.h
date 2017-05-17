@@ -44,8 +44,12 @@ public:
     SemanticActionHandler m_paramName;
     SemanticActionHandler m_endParam;
 
-    SemanticActionHandler m_startCall;
-    SemanticActionHandler m_endCall;
+    SemanticActionHandler m_startOuterCall;
+    SemanticActionHandler m_endOuterCall;
+
+    SemanticActionHandler m_startInnerCall;
+    SemanticActionHandler m_endInnerCall;
+
     SemanticActionHandler m_varCall;
     SemanticActionHandler m_functionCall;
     SemanticActionHandler m_tokenCall;
@@ -58,6 +62,7 @@ public:
 
     SemanticActionHandler m_startExpr;
     SemanticActionHandler m_endExpr;
+
 private:
     std::shared_ptr<BGlobal> m_global;
     std::vector<std::shared_ptr<BScope>> m_scopeStack;

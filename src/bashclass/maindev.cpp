@@ -44,11 +44,15 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#startIf#", bashClass.m_startIf);
     easyCC.registerSemanticAction("#endIf#", bashClass.m_endIf);
 
-    easyCC.registerSemanticAction("#startCall#", bashClass.m_startCall);
+    easyCC.registerSemanticAction("#startOuterCall#", bashClass.m_startOuterCall);
+    easyCC.registerSemanticAction("#endOuterCall#", bashClass.m_endOuterCall);
+
+    easyCC.registerSemanticAction("#startInnerCall#", bashClass.m_startInnerCall);
+    easyCC.registerSemanticAction("#endInnerCall#", bashClass.m_endInnerCall);
+
     easyCC.registerSemanticAction("#varCall#", bashClass.m_varCall);
     easyCC.registerSemanticAction("#functionCall#", bashClass.m_functionCall);
     easyCC.registerSemanticAction("#tokenCall#", bashClass.m_tokenCall);
-    easyCC.registerSemanticAction("#endCall#", bashClass.m_endCall);
 
     easyCC.registerSemanticAction("#startExpr#", bashClass.m_startExpr);
     easyCC.registerSemanticAction("#endExpr#", bashClass.m_endExpr);
