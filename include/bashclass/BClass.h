@@ -7,10 +7,19 @@
 
 class BClass : public BScope {
 private:
-    std::string m_name;
+    std::shared_ptr<ecc::LexicalToken> m_name;
 public:
-    std::string getName() const { return m_name;}
-    void setName(std::string name) {m_name = name;}
+    /**
+     * Get name lexical token
+     * @return token pointer
+     */
+    std::shared_ptr<ecc::LexicalToken> getName() const { return m_name;}
+
+    /**
+     * Set name lexical token
+     * @param name
+     */
+    void setName(std::shared_ptr<ecc::LexicalToken> name) {m_name = name;}
 
     /**
      * Get class label

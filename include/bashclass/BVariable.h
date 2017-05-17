@@ -11,39 +11,38 @@
 class BScope;
 class BVariable : public IBCallable {
 private:
-    std::string m_type;
+    std::shared_ptr<ecc::LexicalToken> m_type;
     std::shared_ptr<BScope> m_typeScope;
-    std::string m_name;
-    std::string m_value;
-    bool m_isParam;
+    std::shared_ptr<ecc::LexicalToken> m_name;
     std::shared_ptr<BScope> m_parentScope;
-    std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
+    std::shared_ptr<ecc::LexicalToken> m_referenceToken;
+    bool m_isParam;
 public:
     BVariable();
 
     /**
-     * Get variable name
+     * Get variable name token
      * @return name
      */
-    std::string getName() const {return m_name;}
+    std::shared_ptr<ecc::LexicalToken> getName() const {return m_name;}
 
     /**
-     * Set variable name
+     * Set variable name token
      * @param name
      */
-    void setName(std::string name) {m_name = name;}
+    void setName(std::shared_ptr<ecc::LexicalToken> name) {m_name = name;}
 
     /**
-     * Get variable type
+     * Get variable type token
      * @return type
      */
-    std::string getType() const {return m_type;}
+    std::shared_ptr<ecc::LexicalToken> getType() const {return m_type;}
 
     /**
-     * Set variable type
+     * Set variable type token
      * @param type
      */
-    void setType(std::string type) {m_type = type;}
+    void setType(std::shared_ptr<ecc::LexicalToken> type) {m_type = type;}
 
     /**
      * Get variable type scope
@@ -56,18 +55,6 @@ public:
      * @param type
      */
     void setTypeScope(std::shared_ptr<BScope> scope) {m_typeScope = scope;}
-
-    /**
-     * Get variable value
-     * @return value
-     */
-    std::string getValue() const {return m_value;}
-
-    /**
-     * Set variable value
-     * @param value
-     */
-    void setValue(std::string value) {m_value = value;}
 
     /**
      * Get parent scope
@@ -94,16 +81,16 @@ public:
     void setIsParam(bool isParam) {m_isParam = isParam;}
 
     /**
-     * Set lexical token that defines this variable
-     * @param lexicalToken
+     * Set lexical token used a reference
+     * @param pointer to the reference token
      */
-    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) { m_lexicalToken = lexicalToken;}
+    void setReferenceToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) { m_referenceToken = lexicalToken;}
 
     /**
-     * Get lexical token
-     * @return lexical token pointer
+     * Get reference token
+     * @return pointer to the reference token
      */
-    std::shared_ptr<ecc::LexicalToken> getLexicalToken() const {return m_lexicalToken;}
+    std::shared_ptr<ecc::LexicalToken> getReferenceToken() {return m_referenceToken;}
 
     /**
      * Get variable label

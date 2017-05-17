@@ -10,7 +10,7 @@
 std::shared_ptr<BScope> BScope::createClass(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
     auto classComp = std::make_shared<BClass>();
     classComp->setParentScope(shared_from_this());
-    classComp->setLexicalToken(lexicalToken);
+    classComp->setReferenceToken(lexicalToken);
     m_scopes[lexicalToken->getUID()]=classComp;
     return classComp;
 }
@@ -18,7 +18,7 @@ std::shared_ptr<BScope> BScope::createClass(std::shared_ptr<ecc::LexicalToken> l
 std::shared_ptr<BScope> BScope::createFunction(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
     auto functionComp = std::make_shared<BFunction>();
     functionComp->setParentScope(shared_from_this());
-    functionComp->setLexicalToken(lexicalToken);
+    functionComp->setReferenceToken(lexicalToken);
     m_scopes[lexicalToken->getUID()]=functionComp;
     return functionComp;
 }
@@ -26,7 +26,7 @@ std::shared_ptr<BScope> BScope::createFunction(std::shared_ptr<ecc::LexicalToken
 std::shared_ptr<BScope> BScope::createWhile(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
     auto whileComp = std::make_shared<BWhile>();
     whileComp->setParentScope(shared_from_this());
-    whileComp->setLexicalToken(lexicalToken);
+    whileComp->setReferenceToken(lexicalToken);
     m_scopes[lexicalToken->getUID()]=whileComp;
     return whileComp;
 }
@@ -34,7 +34,7 @@ std::shared_ptr<BScope> BScope::createWhile(std::shared_ptr<ecc::LexicalToken> l
 std::shared_ptr<BScope> BScope::createIf(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
     auto ifComp = std::make_shared<BIf>();
     ifComp->setParentScope(shared_from_this());
-    ifComp->setLexicalToken(lexicalToken);
+    ifComp->setReferenceToken(lexicalToken);
     m_scopes[lexicalToken->getUID()]=ifComp;
     return ifComp;
 }
@@ -42,7 +42,7 @@ std::shared_ptr<BScope> BScope::createIf(std::shared_ptr<ecc::LexicalToken> lexi
 std::shared_ptr<BVariable> BScope::createVariable(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
     auto variableComp = std::make_shared<BVariable>();
     variableComp->setParentScope(shared_from_this());
-    variableComp->setLexicalToken(lexicalToken);
+    variableComp->setReferenceToken(lexicalToken);
     m_variables[lexicalToken->getUID()]=variableComp;
     return variableComp;
 }
@@ -50,7 +50,7 @@ std::shared_ptr<BVariable> BScope::createVariable(std::shared_ptr<ecc::LexicalTo
 std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(const char* name) {
     std::vector<std::shared_ptr<BVariable>> variables;
     for(auto variable : m_variables) {
-        if(!name || variable.second->getName() == name) {
+        if(!name || variable.second->getName()->getValue() == name) {
             variables.push_back(variable.second);
         }
     }
@@ -60,7 +60,7 @@ std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(const char* nam
 std::vector<std::shared_ptr<BVariable>> BScope::findAllParameters(const char *name) {
     std::vector<std::shared_ptr<BVariable>> parameters;
     for(auto variable : m_variables) {
-        if(variable.second->isParam() && (!name || variable.second->getName() == name)) {
+        if(variable.second->isParam() && (!name || variable.second->getName()->getValue() == name)) {
             parameters.push_back(variable.second);
         }
     }
@@ -71,7 +71,7 @@ std::vector<std::shared_ptr<BScope>> BScope::findAllClasses(const char* name) {
     std::vector<std::shared_ptr<BScope>> classes;
     for(auto scope : m_scopes) {
         std::shared_ptr<BClass> classScope = std::dynamic_pointer_cast<BClass>(scope.second);
-        if(classScope && (!name || classScope->getName() == name)) {
+        if(classScope && (!name || classScope->getName()->getValue() == name)) {
             classes.push_back(classScope);
         }
     }
@@ -82,7 +82,7 @@ std::vector<std::shared_ptr<BScope>> BScope::findAllFunctions(const char *name) 
     std::vector<std::shared_ptr<BScope>> functions;
     for(auto scope : m_scopes) {
         std::shared_ptr<BFunction> functionScope = std::dynamic_pointer_cast<BFunction>(scope.second);
-        if(functionScope && (!name || functionScope->getName() == name)) {
+        if(functionScope && (!name || functionScope->getName()->getValue() == name)) {
             functions.push_back(functionScope);
         }
     }

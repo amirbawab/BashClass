@@ -11,15 +11,21 @@ private:
 public:
 
     /**
-     * Check for built-in types
+     * Tokens don't have a type tokens
+     * @return nullptr
      */
-    std::string getType() const;
+    std::shared_ptr<ecc::LexicalToken> getType() const {return nullptr;};
 
     /**
      * Tokens don't have type scope
      * @return nullptr
      */
     std::shared_ptr<BScope> getTypeScope() const {return nullptr;};
+
+    /**
+     * Conclude the type of the token based on it's value
+     */
+    std::string getTypeValue() const;
 
     /**
      * Get lexical token

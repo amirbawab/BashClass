@@ -8,34 +8,34 @@
 
 class BFunction : public BScope, public IBCallable {
 private:
-    std::string m_name;
-    std::string m_type;
+    std::shared_ptr<ecc::LexicalToken> m_name;
+    std::shared_ptr<ecc::LexicalToken> m_type;
     std::shared_ptr<BScope> m_typeScope;
 public:
 
     /**
-     * Get function name
+     * Get function name token
      * @return name
      */
-    std::string getName() const{return m_name;}
+    std::shared_ptr<ecc::LexicalToken> getName() const{return m_name;}
 
     /**
-     * Set function name
+     * Set function name token
      * @param name
      */
-    void setName(std::string name) { m_name = name;}
+    void setName(std::shared_ptr<ecc::LexicalToken> name) { m_name = name;}
 
     /**
-     * Get function type
+     * Get function type token
      * @return type
      */
-    std::string getType() const {return m_type; }
+    std::shared_ptr<ecc::LexicalToken> getType() const {return m_type; }
 
     /**
-     * Set function type
+     * Set function type token
      * @param type
      */
-    void setType(std::string type) { m_type = type;}
+    void setType(std::shared_ptr<ecc::LexicalToken> type) { m_type = type;}
 
     /**
      * Get variable type scope

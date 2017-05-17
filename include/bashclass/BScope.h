@@ -13,7 +13,7 @@ class BScope : public std::enable_shared_from_this<BScope> {
 protected:
     std::map<unsigned int,std::shared_ptr<BVariable>> m_variables;
     std::map<unsigned int,std::shared_ptr<BScope>> m_scopes;
-    std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
+    std::shared_ptr<ecc::LexicalToken> m_referenceToken;
     std::shared_ptr<BScope> m_parentScope;
 public:
     virtual ~BScope(){}
@@ -102,16 +102,16 @@ public:
     void setParentScope(std::shared_ptr<BScope> scope) { m_parentScope = scope;}
 
     /**
-     * Set lexical token that defines this scope
+     * Set reference token that defines this scope
      * @param lexicalToken
      */
-    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {m_lexicalToken=lexicalToken;}
+    void setReferenceToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {m_referenceToken=lexicalToken;}
 
     /**
-     * Get lexical token
+     * Get reference token
      * @return lexical token pointer
      */
-    std::shared_ptr<ecc::LexicalToken> getLexicalToken() const {return m_lexicalToken;}
+    std::shared_ptr<ecc::LexicalToken> getReferenceToken() const {return m_referenceToken;}
 
     /**
      * Get scope by lexical token

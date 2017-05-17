@@ -20,9 +20,9 @@ void BashClass::printStructure() {
 void _linkVariablesTypes(std::shared_ptr<BScope> scope, std::shared_ptr<BScope> globalScope) {
     // Evaluate all variables in that scope
     for(auto variable : scope->findAllVariables()) {
-        if(!BType::isBuiltInType(variable->getType())) {
+        if(!BType::isBuiltInType(variable->getType()->getName())) {
             // Find class scope of that type
-            auto cls = globalScope->findAllClasses(variable->getType().c_str());
+            auto cls = globalScope->findAllClasses(variable->getType()->getValue().c_str());
             if(cls.empty()) {
                 std::cerr << "Undefined type " << variable->getType() <<
                 " for variable " << variable->getName() << std::endl;
@@ -40,9 +40,9 @@ void _linkFunctionsTypes(std::shared_ptr<BScope> scope, std::shared_ptr<BScope> 
     // Evaluate all functions in that scope
     for(auto function : scope->findAllFunctions()) {
         auto castFunction = std::dynamic_pointer_cast<BFunction>(function);
-        if(!BType::isBuiltInType(castFunction->getType())) {
+        if(!BType::isBuiltInType(castFunction->getType()->getName())) {
             // Find class scope of that type
-            auto cls = globalScope->findAllClasses(castFunction->getType().c_str());
+            auto cls = globalScope->findAllClasses(castFunction->getType()->getValue().c_str());
             if(cls.empty()) {
                 std::cerr << "Undefined type " << castFunction->getType() <<
                 " for function " << castFunction->getName() << std::endl;
@@ -352,7 +352,7 @@ void BashClass::initHandlers() {
 
             // Set class name
             auto createdClass = std::dynamic_pointer_cast<BClass>(m_scopeStack.back());
-            createdClass->setName(lexicalVector[index]->getValue());
+            createdClass->setName(lexicalVector[index]);
         }
     };
 
@@ -378,7 +378,7 @@ void BashClass::initHandlers() {
     m_functionType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto createdFunction = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
-            createdFunction->setType(lexicalVector[index]->getValue());
+            createdFunction->setType(lexicalVector[index]);
         }
     };
 
@@ -389,7 +389,7 @@ void BashClass::initHandlers() {
             _checkDuplicateFunction(*lexicalVector[index],m_scopeStack);
 
             auto createdFunction = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
-            createdFunction->setName(lexicalVector[index]->getValue());
+            createdFunction->setName(lexicalVector[index]);
         }
     };
 
@@ -459,7 +459,7 @@ void BashClass::initHandlers() {
 
     m_varType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            m_focusVariable->setType(lexicalVector[index]->getValue());
+            m_focusVariable->setType(lexicalVector[index]);
         }
     };
 
@@ -469,7 +469,7 @@ void BashClass::initHandlers() {
             // Check if variable already exists in the current scope
             _checkDuplicateVariable(*lexicalVector[index], m_scopeStack);
 
-            m_focusVariable->setName(lexicalVector[index]->getValue());
+            m_focusVariable->setName(lexicalVector[index]);
         }
     };
 
@@ -492,7 +492,7 @@ void BashClass::initHandlers() {
 
     m_paramType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            m_focusVariable->setType(lexicalVector[index]->getValue());
+            m_focusVariable->setType(lexicalVector[index]);
         }
     };
 
@@ -502,7 +502,7 @@ void BashClass::initHandlers() {
             // Check if parameter already exists in the current scope
             _checkDuplicateParameter(*lexicalVector[index], m_scopeStack);
 
-            m_focusVariable->setName(lexicalVector[index]->getValue());
+            m_focusVariable->setName(lexicalVector[index]);
         }
     };
 

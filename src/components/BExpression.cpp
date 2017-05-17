@@ -9,14 +9,14 @@ void BExpression::addOperator(std::shared_ptr<ecc::LexicalToken> op)  {
 }
 
 void BExpression::evaluate() {
-    std::string type = "";
+    std::shared_ptr<ecc::LexicalToken> dominantType = nullptr;
     std::shared_ptr<BScope> typeScope = nullptr;
     if(m_operandStack.empty()) {
         m_valid = false;
     } else {
-        type = m_operandStack.back().back()->getType();
+        dominantType = m_operandStack.back().back()->getType();
     }
 
     // Set type
-    m_type = type;
+    m_dominantType = dominantType;
 }
