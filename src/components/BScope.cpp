@@ -146,10 +146,11 @@ std::stringstream BScope::getStructure() {
 
         // Get corresponding information
         if(castClass) {
-            structure << "class: " << castClass->getName() << ". Label: " << castClass->getLabel().str() << std::endl;
+            structure << "class: " << castClass->getName()->getValue() << ". Label: "
+            << castClass->getLabel().str() << std::endl;
         } else if(castFunction) {
-            structure << "function: " << castFunction->getName() << " : " << castFunction->getType() <<
-            ". Label: " << castFunction->getLabel().str() << std::endl;
+            structure << "function: " << castFunction->getName()->getValue()
+            << " : " << castFunction->getType() << ". Label: " << castFunction->getLabel().str() << std::endl;
         } else if(castGlobal) {
             structure << "global" << std::endl;
         } else if(castWhile) {
@@ -160,8 +161,8 @@ std::stringstream BScope::getStructure() {
 
         // Get all variables
         for(auto variable : top->findAllVariables()) {
-            structure << "variable" << (variable->isParam() ? "[P]" : "") << ": " << variable->getName()
-            << " : " << variable->getType() << ". Label: " << variable->getLabel().str() << std::endl;
+            structure << "variable" << (variable->isParam() ? "[P]" : "") << ": " << variable->getName()->getValue()
+            << " : " << variable->getType()->getValue() << ". Label: " << variable->getLabel().str() << std::endl;
         }
 
         if(castGlobal || castClass || castFunction || castWhile || castIf) {
