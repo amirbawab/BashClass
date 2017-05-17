@@ -50,7 +50,7 @@ std::shared_ptr<BVariable> BScope::createVariable(std::shared_ptr<ecc::LexicalTo
 std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(const char* name) {
     std::vector<std::shared_ptr<BVariable>> variables;
     for(auto variable : m_variables) {
-        if(!name || variable.second->getName()->getValue() == name) {
+        if(!name || (variable.second->getName() && variable.second->getName()->getValue() == name)) {
             variables.push_back(variable.second);
         }
     }
@@ -60,7 +60,8 @@ std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(const char* nam
 std::vector<std::shared_ptr<BVariable>> BScope::findAllParameters(const char *name) {
     std::vector<std::shared_ptr<BVariable>> parameters;
     for(auto variable : m_variables) {
-        if(variable.second->isParam() && (!name || variable.second->getName()->getValue() == name)) {
+        if(variable.second->isParam() && (!name ||
+                (variable.second->getName() && variable.second->getName()->getValue() == name))) {
             parameters.push_back(variable.second);
         }
     }
@@ -71,7 +72,8 @@ std::vector<std::shared_ptr<BScope>> BScope::findAllClasses(const char* name) {
     std::vector<std::shared_ptr<BScope>> classes;
     for(auto scope : m_scopes) {
         std::shared_ptr<BClass> classScope = std::dynamic_pointer_cast<BClass>(scope.second);
-        if(classScope && (!name || classScope->getName()->getValue() == name)) {
+        if(classScope && (!name ||
+                (classScope->getName() && classScope->getName()->getValue() == name))) {
             classes.push_back(classScope);
         }
     }
@@ -82,21 +84,22 @@ std::vector<std::shared_ptr<BScope>> BScope::findAllFunctions(const char *name) 
     std::vector<std::shared_ptr<BScope>> functions;
     for(auto scope : m_scopes) {
         std::shared_ptr<BFunction> functionScope = std::dynamic_pointer_cast<BFunction>(scope.second);
-        if(functionScope && (!name || functionScope->getName()->getValue() == name)) {
+        if(functionScope && (!name ||
+                (functionScope->getName() && functionScope->getName()->getValue() == name))) {
             functions.push_back(functionScope);
         }
     }
     return functions;
 }
 
-std::shared_ptr<BScope> BScope::getScope(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+std::shared_ptr<BScope> BScope::getScopeByToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
     if(m_scopes.find(lexicalToken->getUID()) != m_scopes.end()) {
         return m_scopes[lexicalToken->getUID()];
     }
     return nullptr;
 }
 
-std::shared_ptr<BVariable> BScope::getVariable(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+std::shared_ptr<BVariable> BScope::getVariableByToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
     if(m_variables.find(lexicalToken->getUID()) != m_variables.end()) {
         return m_variables[lexicalToken->getUID()];
     }

@@ -339,7 +339,7 @@ void BashClass::initHandlers() {
             auto newClass = m_scopeStack.back()->createClass(lexicalVector[index]);
             m_scopeStack.push_back(newClass);
         } else if(phase == BashClass::PHASE_EVAL) {
-            auto newClass = m_scopeStack.back()->getScope(lexicalVector[index]);
+            auto newClass = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
             m_scopeStack.push_back(newClass);
         }
     };
@@ -370,7 +370,7 @@ void BashClass::initHandlers() {
             auto newFunction = m_scopeStack.back()->createFunction(lexicalVector[index]);
             m_scopeStack.push_back(newFunction);
         } else if(phase == BashClass::PHASE_EVAL) {
-            auto newFunction = m_scopeStack.back()->getScope(lexicalVector[index]);
+            auto newFunction = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
             m_scopeStack.push_back(newFunction);
         }
     };
@@ -521,7 +521,7 @@ void BashClass::initHandlers() {
             auto newWhile = m_scopeStack.back()->createWhile(lexicalVector[index]);
             m_scopeStack.push_back(newWhile);
         } else if(phase == BashClass::PHASE_EVAL) {
-            auto newWhile = m_scopeStack.back()->getScope(lexicalVector[index]);
+            auto newWhile = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
             m_scopeStack.push_back(newWhile);
         }
     };
@@ -541,7 +541,7 @@ void BashClass::initHandlers() {
             auto newIf = m_scopeStack.back()->createIf(lexicalVector[index]);
             m_scopeStack.push_back(newIf);
         } else if(phase == BashClass::PHASE_EVAL) {
-            auto newIf = m_scopeStack.back()->getScope(lexicalVector[index]);
+            auto newIf = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
             m_scopeStack.push_back(newIf);
         }
     };

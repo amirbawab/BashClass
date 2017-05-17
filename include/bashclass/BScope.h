@@ -118,7 +118,7 @@ public:
      * @param lexicalToken
      * @return pointer to scope | nullptr
      */
-    std::shared_ptr<BScope> getScope(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+    std::shared_ptr<BScope> getScopeByToken(std::shared_ptr<ecc::LexicalToken> lexicalToken);
 
     /**
      * Get all scopes
@@ -131,7 +131,7 @@ public:
      * @param lexicalToken
      * @return pointer to variable | nullptr
      */
-    std::shared_ptr<BVariable> getVariable(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+    std::shared_ptr<BVariable> getVariableByToken(std::shared_ptr<ecc::LexicalToken> lexicalToken);
 
     /**
      * Get label for that scope

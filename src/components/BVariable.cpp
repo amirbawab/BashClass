@@ -6,6 +6,6 @@ BVariable::BVariable() {
 
 std::stringstream BVariable::getLabel() {
     std::stringstream stream = m_parentScope->getLabel();
-    stream << "_v_" << m_name;
+    stream << "_v_" << m_name->getValue();
     return stream;
 }
