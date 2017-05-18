@@ -54,6 +54,8 @@ public:
     SemanticActionHandler m_functionCall;
     SemanticActionHandler m_tokenCall;
 
+    SemanticActionHandler m_putOp;
+
     SemanticActionHandler m_startWhile;
     SemanticActionHandler m_endWhile;
 

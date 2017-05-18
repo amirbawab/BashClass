@@ -213,7 +213,6 @@ void _findFirstChainFunction(std::shared_ptr<BScope> globalScope, std::vector<st
     auto functions = globalScope->findAllFunctions(token->getValue().c_str());
     if(!functions.empty()) {
         auto function = std::dynamic_pointer_cast<BFunction>(functions.front());
-        // TODO Check for the correct number and type of parameters
         callableChain.push_back(function);
     } else {
         std::cerr << "Undefined function " << token->getValue()
@@ -281,7 +280,6 @@ void _findNextChainFunctionInPrevType(std::shared_ptr<BScope> typeScope,
         auto functions = typeScope->findAllFunctions(token->getValue().c_str());
         if(!functions.empty()) {
             auto function = std::dynamic_pointer_cast<BFunction>(functions.front());
-            // TODO Check for the correct number and type of parameters
             callableChain.push_back(function);
         } else {
             auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
@@ -635,6 +633,16 @@ void BashClass::initHandlers() {
 
             // Add token to expression
             m_expressionStack.back()->addOperand({callableToken});
+        }
+    };
+
+    /**************************************
+     *          OPERATOR
+     **************************************/
+
+    m_putOp = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            m_expressionStack.back()->addOperator(lexicalVector[index]);
         }
     };
 
