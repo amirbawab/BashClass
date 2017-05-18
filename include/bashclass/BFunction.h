@@ -11,6 +11,7 @@ private:
     std::shared_ptr<ecc::LexicalToken> m_name;
     std::shared_ptr<ecc::LexicalToken> m_type;
     std::shared_ptr<BScope> m_typeScope;
+    bool m_hasReturn = false;
     bool m_knownType = false;
 public:
 
@@ -75,6 +76,18 @@ public:
      * Check if the type of the function is known
      */
     bool hasKnowType() const { return m_knownType;}
+
+    /**
+     * Set if the function has a return
+     * @param true if a return statement has been set
+     */
+    void setHasReturn(bool hasReturn) {m_hasReturn = hasReturn;}
+
+    /**
+     * Check if the function has a return statement
+     * @return yes if the function has a return statement
+     */
+    bool hasReturn() {return m_hasReturn;}
 };
 
 #endif

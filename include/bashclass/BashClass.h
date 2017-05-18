@@ -34,6 +34,8 @@ public:
     SemanticActionHandler m_functionName;
     SemanticActionHandler m_endFunction;
 
+    SemanticActionHandler m_returnExpr;
+
     SemanticActionHandler m_startVar;
     SemanticActionHandler m_varType;
     SemanticActionHandler m_varName;

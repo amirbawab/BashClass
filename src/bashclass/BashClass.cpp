@@ -384,6 +384,42 @@ void _checkAssignType(std::shared_ptr<IBCallable> chainVariablePtr, std::shared_
 }
 
 /**
+ * Check if the return type matches the function signature
+ */
+void _checkReturnValue(std::shared_ptr<BScope> scope, std::shared_ptr<BExpression> expression) {
+    auto scopeFunction = std::dynamic_pointer_cast<BFunction>(scope);
+    if(scopeFunction->hasKnowType()) {
+
+        // If function is of type void, then a return statement is not expected
+        if(scopeFunction->getType()->getName() == BType::TYPE_NAME_VOID) {
+            std::cerr << "Function " << scopeFunction->getName()->getValue()
+            << " does not expect to return an expression" << std::endl;
+        } else {
+            std::string functionType = scopeFunction->getTypeValue();
+            std::string expressionType = expression->getDominantType();
+            if (!expression->isValid() || functionType != expressionType) {
+                std::cerr << "Function " << scopeFunction->getName()->getValue()
+                << " expects to return " << functionType << " instead of " << expressionType << std::endl;
+            }
+        }
+    } else {
+        std::cerr << "Cannot check if return value is correct because function "
+        << scopeFunction->getName()->getValue() << " has an undefined type" << std::endl;
+    }
+}
+
+/**
+ * Check if function is expecting a return statement
+ */
+void _checkNeedReturn(std::shared_ptr<BScope> scope) {
+    auto function = std::dynamic_pointer_cast<BFunction>(scope);
+    if(function->getType()->getName() != BType::TYPE_NAME_VOID && !function->hasReturn()) {
+        std::cerr << "Function " << function->getName()->getValue()
+        << " is missing a return statement" << std::endl;
+    }
+}
+
+/**
  * Initialize semantic action handlers
  */
 void BashClass::initHandlers() {
@@ -467,6 +503,7 @@ void BashClass::initHandlers() {
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_EVAL) {
             _requiredParam(m_scopeStack.back());
+            _checkNeedReturn(m_scopeStack.back());
             m_scopeStack.pop_back();
         }
     };
@@ -696,6 +733,15 @@ void BashClass::initHandlers() {
     m_varAssign = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             _checkAssignType(m_callableChainStack.back().back(), m_expressionStack.back());
+            m_expressionStack.pop_back();
+        }
+    };
+
+    m_returnExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            auto scopeFunction = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
+            _checkReturnValue(m_scopeStack.back(), m_expressionStack.back());
+            scopeFunction->setHasReturn(true);
             m_expressionStack.pop_back();
         }
     };
