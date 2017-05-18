@@ -11,7 +11,7 @@ private:
     std::shared_ptr<ecc::LexicalToken> m_name;
     std::shared_ptr<ecc::LexicalToken> m_type;
     std::shared_ptr<BScope> m_typeScope;
-    bool m_knownType = true;
+    bool m_knownType = false;
 public:
 
     /**
@@ -70,6 +70,11 @@ public:
      * Set if the function has a known type
      */
     void setKnownType(bool knownType) {m_knownType = knownType;}
+
+    /**
+     * Check if the type of the function is known
+     */
+    bool hasKnowType() const { return m_knownType;}
 };
 
 #endif

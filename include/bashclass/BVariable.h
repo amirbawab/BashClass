@@ -113,6 +113,11 @@ public:
      * Check if variable is a class member
      */
     bool isClassMember();
+
+    /**
+     * Check if variable has a known type
+     */
+    bool hasKnownType() const {return m_knownType;}
 };
 
 #endif

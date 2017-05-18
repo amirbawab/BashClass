@@ -12,7 +12,7 @@ void BExpression::addOperator(std::shared_ptr<ecc::LexicalToken> op)  {
 
 bool BExpression::evaluate() {
 
-    // If there are more than element in the expression,
+    // If there are more than one element in the expression,
     // then all of them should be integers
     if(m_operandStack.size() > 1) {
         for(auto operand : m_operandStack) {
@@ -26,8 +26,11 @@ bool BExpression::evaluate() {
         m_dominantType = BType::TYPE_VALUE_INT;
         return true;
     } else {
-        m_valid = true;
+
+        // If the type of the callable element is undefined,
+        // then the expression is not valid, but evaluates correctly
         m_dominantType = m_operandStack.back().back()->getTypeValue();
+        m_valid = m_dominantType != BType::UNDEFINED;
         return true;
     }
 }

@@ -24,8 +24,8 @@ void _linkVariablesTypes(std::shared_ptr<BScope> scope, std::shared_ptr<BScope> 
             // Find class scope of that type
             auto cls = globalScope->findAllClasses(variable->getType()->getValue().c_str());
             if(cls.empty()) {
-                std::cerr << "Undefined type " << variable->getType() <<
-                " for variable " << variable->getName() << std::endl;
+                std::cerr << "Undefined type " << variable->getType()->getValue() <<
+                " for variable " << variable->getName()->getValue() << std::endl;
                 variable->setKnownType(false);
             } else {
                 variable->setTypeScope(cls.front());
@@ -334,17 +334,24 @@ void _checkNumberAndTypeOfParameters(std::shared_ptr<BFunction> function,
         << argumentList.size() << " instead" << std::endl;
     } else {
         for(size_t i = startIndex; i < parameters.size(); i++) {
-            std::string argumentType = argumentList[i-startIndex]->getDominantType();
-            std::string parameterType = parameters[i]->getType()->getValue();
-            if(parameterType != argumentType || !argumentList[i-startIndex]->isValid()) {
-                std::cerr << "Function " << function->getName()->getValue()
-                << " expects argument " << (i - startIndex) + 1 << " to be of type " << parameterType
-                << " but given " << argumentType << std::endl;
+            if(!parameters[i]->hasKnownType()) {
+                std::cerr << "Cannot pass argument value to an undefined parameter type" << std::endl;
+            } else {
+                std::string argumentType = argumentList[i-startIndex]->getDominantType();
+                std::string parameterType = parameters[i]->getTypeValue();
+                if(!argumentList[i-startIndex]->isValid() || parameterType != argumentType) {
+                    std::cerr << "Function " << function->getName()->getValue()
+                    << " expects argument " << (i - startIndex) + 1 << " to be of type " << parameterType
+                    << " but given " << argumentType << std::endl;
+                }
             }
         }
     }
 }
 
+/**
+ * If function exists, then compare its signature with the function call
+ */
 void _compareFunctionCallAndSignature(std::shared_ptr<IBCallable> callable,
                                       std::vector<std::shared_ptr<BExpression>> &arguments) {
     // Get function from last callable chain
@@ -353,6 +360,28 @@ void _compareFunctionCallAndSignature(std::shared_ptr<IBCallable> callable,
         _checkNumberAndTypeOfParameters(function, arguments);
     } else {
         std::cerr << "Cannot set argument to undefined function" << std::endl;
+    }
+}
+
+/**
+ * Check if the variable and the assigned expression have the same type
+ */
+void _checkAssignType(std::shared_ptr<IBCallable> chainVariablePtr, std::shared_ptr<BExpression> expression) {
+    auto chainVariable = std::dynamic_pointer_cast<BVariable>(chainVariablePtr);
+    if(chainVariable) {
+        if(!chainVariable->hasKnownType()) {
+            std::cerr << "Cannot assign an expression to a variable of undefined type" << std::endl;
+        } else {
+            std::string expressionType = expression->getDominantType();
+            std::string variableType = chainVariable->getTypeValue();
+            if(!expression->isValid() || expressionType != variableType) {
+                std::cerr << "Variable " << chainVariable->getName()->getValue()
+                << " expects an expression of type " << variableType
+                << " but given " << expressionType << std::endl;
+            }
+        }
+    } else {
+        std::cerr << "Cannot assign expression to undefined variable" << std::endl;
     }
 }
 
@@ -658,7 +687,8 @@ void BashClass::initHandlers() {
 
     m_varAssign = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            std::cout << "ASSIGN" << std::endl;
+            _checkAssignType(m_callableChainStack.back().back(), m_expressionStack.back());
+            m_expressionStack.pop_back();
         }
     };
 }
