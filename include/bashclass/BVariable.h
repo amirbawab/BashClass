@@ -17,6 +17,7 @@ private:
     std::shared_ptr<BScope> m_parentScope;
     std::shared_ptr<ecc::LexicalToken> m_referenceToken;
     bool m_isParam;
+    bool m_knownType = true;
 public:
     BVariable();
 
@@ -55,6 +56,12 @@ public:
      * @param type
      */
     void setTypeScope(std::shared_ptr<BScope> scope) {m_typeScope = scope;}
+
+    /**
+     * Get type value as a string
+     * @return type string
+     */
+    std::string getTypeValue() const;
 
     /**
      * Get parent scope
@@ -96,6 +103,16 @@ public:
      * Get variable label
      */
     std::stringstream getLabel();
+
+    /**
+     * Set if the variable has a known type
+     */
+    void setKnownType(bool knownType) {m_knownType = knownType;}
+
+    /**
+     * Check if variable is a class member
+     */
+    bool isClassMember();
 };
 
 #endif

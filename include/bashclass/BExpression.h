@@ -11,20 +11,14 @@ class BExpression {
 private:
     std::vector<std::vector<std::shared_ptr<IBCallable>>> m_operandStack;
     std::vector<std::shared_ptr<ecc::LexicalToken>> m_operatorStack;
-    std::shared_ptr<ecc::LexicalToken> m_dominantType;
-    std::shared_ptr<BScope> m_typeScope;
+    std::string m_dominantType;
     bool m_valid;
 public:
 
     /**
      * Get dominant type token
      */
-    std::shared_ptr<ecc::LexicalToken> getDominantType() {return m_dominantType;}
-
-    /**
-     * Get dominant type token
-     */
-    std::shared_ptr<BScope> getDominantTypeScope() {return m_typeScope;}
+    std::string getDominantType() {return m_dominantType;}
 
     /**
      * Evaluate expression and generate final type

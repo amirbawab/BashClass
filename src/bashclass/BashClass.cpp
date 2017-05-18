@@ -26,9 +26,13 @@ void _linkVariablesTypes(std::shared_ptr<BScope> scope, std::shared_ptr<BScope> 
             if(cls.empty()) {
                 std::cerr << "Undefined type " << variable->getType() <<
                 " for variable " << variable->getName() << std::endl;
+                variable->setKnownType(false);
             } else {
                 variable->setTypeScope(cls.front());
+                variable->setKnownType(true);
             }
+        } else {
+            variable->setKnownType(true);
         }
     }
 }
@@ -46,9 +50,13 @@ void _linkFunctionsTypes(std::shared_ptr<BScope> scope, std::shared_ptr<BScope> 
             if(cls.empty()) {
                 std::cerr << "Undefined type " << castFunction->getType() <<
                 " for function " << castFunction->getName() << std::endl;
+                castFunction->setKnownType(false);
             } else {
                 castFunction->setTypeScope(cls.front());
+                castFunction->setKnownType(true);
             }
+        } else {
+            castFunction->setKnownType(true);
         }
     }
 }
@@ -159,11 +167,11 @@ void _checkDuplicateParameter(ecc::LexicalToken &token, std::vector<std::shared_
 void _requiredParam(std::shared_ptr<BScope> functionScope) {
 
     // Check if function is a member of a class
-    auto castClass = std::dynamic_pointer_cast<BClass>(functionScope->getParentScope());
-    if(castClass) {
+    auto castFunction = std::dynamic_pointer_cast<BFunction>(functionScope);
+    if(castFunction->isClassMember()) {
+        auto castClass = std::dynamic_pointer_cast<BClass>(functionScope->getParentScope());
         auto params = functionScope->findAllParameters();
         if(params.empty() || params[0]->getTypeScope() != castClass) {
-            auto castFunction = std::dynamic_pointer_cast<BFunction>(functionScope);
             std::cerr << "Function " << castFunction->getName() << " in class " << castClass->getName()
             <<" must have the first argument of type " << castClass->getName() << std::endl;
         }
@@ -177,10 +185,8 @@ void _findFirstChainVariable(std::shared_ptr<BScope> scope, std::vector<std::sha
                     std::shared_ptr<ecc::LexicalToken> token) {
     auto variable = scope->findClosestVariable(token->getValue());
     if(variable) {
-
         // Check if the variable is a class member
-        auto castParentClass = std::dynamic_pointer_cast<BClass>(variable->getParentScope());
-        if(castParentClass) {
+        if(variable->isClassMember()) {
             std::cerr << "Use the first parameter of the function to refer to the variable "
             << variable->getName() << " at line " << token->getLine() << " and column "
             << token->getColumn() << std::endl;
@@ -328,12 +334,11 @@ void _checkNumberAndTypeOfParameters(std::shared_ptr<BFunction> function,
         << argumentList.size() << " instead" << std::endl;
     } else {
         for(size_t i = startIndex; i < parameters.size(); i++) {
-            //FIXME Callable tokens cause nullptr on getDominantType()
             std::string parameterType = parameters[i]->getType()->getValue();
-            std::string argumentType = argumentList[i-startIndex]->getDominantType()->getValue();
+            std::string argumentType = argumentList[i-startIndex]->getDominantType();
             if(parameterType != argumentType) {
                 std::cerr << "Function " << function->getName()->getValue()
-                << " expects argument " << i << " to be of type " << parameterType
+                << " expects argument " << (i - startIndex) + 1 << " to be of type " << parameterType
                 << " but given " << argumentType << std::endl;
             }
         }

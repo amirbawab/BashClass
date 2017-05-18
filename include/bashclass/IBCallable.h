@@ -8,8 +8,7 @@
 class BScope;
 class IBCallable {
 public:
-    virtual std::shared_ptr<ecc::LexicalToken> getType() const=0;
-    virtual std::shared_ptr<BScope> getTypeScope() const=0;
+    virtual std::string getTypeValue() const=0;
 };
 
 #endif

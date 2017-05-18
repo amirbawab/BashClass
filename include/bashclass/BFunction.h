@@ -11,6 +11,7 @@ private:
     std::shared_ptr<ecc::LexicalToken> m_name;
     std::shared_ptr<ecc::LexicalToken> m_type;
     std::shared_ptr<BScope> m_typeScope;
+    bool m_knownType = true;
 public:
 
     /**
@@ -50,6 +51,12 @@ public:
     void setTypeScope(std::shared_ptr<BScope> scope) {m_typeScope = scope;}
 
     /**
+     * Get type value as a string
+     * @return type string
+     */
+    std::string getTypeValue() const;
+
+    /**
      * Check if this function is a class member
      */
     bool isClassMember();
@@ -58,6 +65,11 @@ public:
      * Get function label
      */
     std::stringstream getLabel();
+
+    /**
+     * Set if the function has a known type
+     */
+    void setKnownType(bool knownType) {m_knownType = knownType;}
 };
 
 #endif

@@ -5,14 +5,26 @@
 
 class BType{
 public:
-    // Language built-in types
-    static const std::string TYPE_INT;
-    static const std::string TYPE_STRING;
-    static const std::string TYPE_ANY;
-    static const std::string TYPE_VOID;
 
-    static bool isBuiltInType(std::string type) {
-        return type == TYPE_INT || type == TYPE_STRING || type == TYPE_ANY || type == TYPE_VOID;
-    }
+    /**
+     * Built int types
+     */
+    static const std::string TYPE_NAME_INT;
+    static const std::string TYPE_NAME_STRING;
+    static const std::string TYPE_NAME_ANY;
+    static const std::string TYPE_NAME_VOID;
+    static const std::string UNDEFINED;
+
+    /**
+     * Built in data type
+     */
+    static const std::string DATA_TYPE_NAME_INT;
+    static const std::string DATA_TYPE_NAME_STRING;
+
+    /**
+     * Check if the provided type name is built-in
+     * @param type name
+     */
+    static bool isBuiltInType(std::string type);
 };
 #endif
