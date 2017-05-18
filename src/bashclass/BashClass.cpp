@@ -2,6 +2,8 @@
 #include <bashclass/BTypes.h>
 #include <bashclass/BClass.h>
 #include <bashclass/BCallableToken.h>
+#include <bashclass/BIf.h>
+#include <bashclass/BWhile.h>
 #include <iostream>
 
 BashClass::BashClass() {
@@ -593,6 +595,14 @@ void BashClass::initHandlers() {
         }
     };
 
+    m_whileCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            auto whileScope = std::dynamic_pointer_cast<BWhile>(m_scopeStack.back());
+            whileScope->setCondition(m_expressionStack.back());
+            m_expressionStack.pop_back();
+        }
+    };
+
     /**************************************
      *          IF
      **************************************/
@@ -610,6 +620,14 @@ void BashClass::initHandlers() {
     m_endIf = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
             m_scopeStack.pop_back();
+        }
+    };
+
+    m_ifCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            auto ifScope = std::dynamic_pointer_cast<BIf>(m_scopeStack.back());
+            ifScope->setCondition(m_expressionStack.back());
+            m_expressionStack.pop_back();
         }
     };
 

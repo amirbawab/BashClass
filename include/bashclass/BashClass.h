@@ -62,6 +62,8 @@ public:
     SemanticActionHandler m_endWhile;
 
     SemanticActionHandler m_startIf;
+    SemanticActionHandler m_ifCond;
+    SemanticActionHandler m_whileCond;
     SemanticActionHandler m_endIf;
 
     SemanticActionHandler m_startExpr;

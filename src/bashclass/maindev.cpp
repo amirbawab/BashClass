@@ -39,9 +39,11 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#endParam#", bashClass.m_endParam);
 
     easyCC.registerSemanticAction("#startWhile#", bashClass.m_startWhile);
+    easyCC.registerSemanticAction("#whileCond#", bashClass.m_whileCond);
     easyCC.registerSemanticAction("#endWhile#", bashClass.m_endWhile);
 
     easyCC.registerSemanticAction("#startIf#", bashClass.m_startIf);
+    easyCC.registerSemanticAction("#ifCond#", bashClass.m_ifCond);
     easyCC.registerSemanticAction("#endIf#", bashClass.m_endIf);
 
     easyCC.registerSemanticAction("#startOuterCall#", bashClass.m_startOuterCall);
