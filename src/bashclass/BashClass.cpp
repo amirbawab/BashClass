@@ -327,22 +327,21 @@ void _findNextChainFunction(std::vector<std::shared_ptr<IBCallable>> &callableCh
 void _checkNumberAndTypeOfParameters(std::shared_ptr<BFunction> function,
                                      std::vector<std::shared_ptr<BExpression>> &argumentList) {
     auto parameters = function->findAllParameters();
-    size_t startIndex = function->isClassMember() ? 1 /*var Class this*/ : 0;
 
-    if(parameters.size() != argumentList.size() + startIndex) {
+    if(parameters.size() != argumentList.size()) {
         std::cerr << "Function " << function->getName()->getValue()
-        << " expects " << parameters.size() - startIndex << " arguments but given "
+        << " expects " << parameters.size() << " arguments but given "
         << argumentList.size() << " instead" << std::endl;
     } else {
-        for(size_t i = startIndex; i < parameters.size(); i++) {
+        for(size_t i = 0; i < parameters.size(); i++) {
             if(!parameters[i]->hasKnownType()) {
                 std::cerr << "Cannot pass argument value to an undefined parameter type" << std::endl;
             } else {
-                std::string argumentType = argumentList[i-startIndex]->getDominantType();
+                std::string argumentType = argumentList[i]->getDominantType();
                 std::string parameterType = parameters[i]->getTypeValue();
-                if(!argumentList[i-startIndex]->isValid() || parameterType != argumentType) {
+                if(!argumentList[i]->isValid() || parameterType != argumentType) {
                     std::cerr << "Function " << function->getName()->getValue()
-                    << " expects argument " << (i - startIndex) + 1 << " to be of type " << parameterType
+                    << " expects argument " << i + 1 << " to be of type " << parameterType
                     << " but given " << argumentType << std::endl;
                 }
             }
