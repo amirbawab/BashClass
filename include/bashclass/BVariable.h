@@ -17,7 +17,7 @@ private:
     std::shared_ptr<BScope> m_parentScope;
     std::shared_ptr<ecc::LexicalToken> m_referenceToken;
     bool m_isParam;
-    bool m_knownType = true;
+    bool m_knownType = false;
 public:
     BVariable();
 

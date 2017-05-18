@@ -12,7 +12,7 @@ private:
     std::vector<std::vector<std::shared_ptr<IBCallable>>> m_operandStack;
     std::vector<std::shared_ptr<ecc::LexicalToken>> m_operatorStack;
     std::string m_dominantType;
-    bool m_valid;
+    bool m_valid = false;
 public:
 
     /**
@@ -24,7 +24,7 @@ public:
      * Evaluate expression and generate final type
      * @return success
      */
-    void evaluate();
+    bool evaluate();
 
     /**
      * Check if the expression is valid

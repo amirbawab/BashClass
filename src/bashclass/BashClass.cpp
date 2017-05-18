@@ -330,18 +330,29 @@ void _checkNumberAndTypeOfParameters(std::shared_ptr<BFunction> function,
 
     if(parameters.size() != argumentList.size() + startIndex) {
         std::cerr << "Function " << function->getName()->getValue()
-        << " expects " << parameters.size() - startIndex << " but given "
+        << " expects " << parameters.size() - startIndex << " arguments but given "
         << argumentList.size() << " instead" << std::endl;
     } else {
         for(size_t i = startIndex; i < parameters.size(); i++) {
-            std::string parameterType = parameters[i]->getType()->getValue();
             std::string argumentType = argumentList[i-startIndex]->getDominantType();
-            if(parameterType != argumentType) {
+            std::string parameterType = parameters[i]->getType()->getValue();
+            if(parameterType != argumentType || !argumentList[i-startIndex]->isValid()) {
                 std::cerr << "Function " << function->getName()->getValue()
                 << " expects argument " << (i - startIndex) + 1 << " to be of type " << parameterType
                 << " but given " << argumentType << std::endl;
             }
         }
+    }
+}
+
+void _compareFunctionCallAndSignature(std::shared_ptr<IBCallable> callable,
+                                      std::vector<std::shared_ptr<BExpression>> &arguments) {
+    // Get function from last callable chain
+    auto function = std::dynamic_pointer_cast<BFunction>(callable);
+    if(function) {
+        _checkNumberAndTypeOfParameters(function, arguments);
+    } else {
+        std::cerr << "Cannot set argument to undefined function" << std::endl;
     }
 }
 
@@ -544,28 +555,24 @@ void BashClass::initHandlers() {
 
     m_startOuterCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            std::cout << "START OUTER CALL" << std::endl;
             m_callableChainStack.push_back({});
         }
     };
 
     m_endOuterCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            std::cout << "STOP OUTER CALL" << std::endl;
             m_callableChainStack.pop_back();
         }
     };
 
     m_startInnerCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            std::cout << "START INNER CALL" << std::endl;
             m_callableChainStack.push_back({});
         }
     };
 
     m_endInnerCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            std::cout << "STOP INNER CALL" << std::endl;
             m_expressionStack.back()->addOperand(m_callableChainStack.back());
             m_callableChainStack.pop_back();
         }
@@ -608,14 +615,12 @@ void BashClass::initHandlers() {
 
     m_startArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            std::cout << "START ARGUMENT" << std::endl;
             m_argumentListStack.push_back({});
         }
     };
 
     m_setArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            std::cout << "SET ARGUMENT" << std::endl;
             m_argumentListStack.back().push_back(m_expressionStack.back());
             m_expressionStack.pop_back();
         }
@@ -623,14 +628,9 @@ void BashClass::initHandlers() {
 
     m_endArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            std::cout << "END ARGUMENT" << std::endl;
-            // Get function from last callable chain
-            auto function = std::dynamic_pointer_cast<BFunction>(m_callableChainStack.back().back());
-            if(function) {
-//                _checkNumberAndTypeOfParameters(function, m_argumentListStack.back());
-            } else {
-                std::cerr << "Cannot set argument to undefined function" << std::endl;
-            }
+
+            // Check if the calls match the function definition: number and type of params
+            _compareFunctionCallAndSignature(m_callableChainStack.back().back(), m_argumentListStack.back());
 
             // Remove argument list from the stack
             m_argumentListStack.pop_back();
@@ -643,15 +643,16 @@ void BashClass::initHandlers() {
 
     m_startExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            std::cout << "START EXPR" << std::endl;
             m_expressionStack.push_back(std::make_shared<BExpression>());
         }
     };
 
     m_endExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            std::cout << "STOP EXPR" << std::endl;
-            m_expressionStack.back()->evaluate();
+            if(!m_expressionStack.back()->evaluate()) {
+                std::cerr << "Expression at line " << lexicalVector[index]->getLine()
+                << " did not evaluate successfully" << std::endl;
+            }
         }
     };
 
