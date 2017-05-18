@@ -172,8 +172,9 @@ void _requiredParam(std::shared_ptr<BScope> functionScope) {
         auto castClass = std::dynamic_pointer_cast<BClass>(functionScope->getParentScope());
         auto params = functionScope->findAllParameters();
         if(params.empty() || params[0]->getTypeScope() != castClass) {
-            std::cerr << "Function " << castFunction->getName() << " in class " << castClass->getName()
-            <<" must have the first argument of type " << castClass->getName() << std::endl;
+            std::cerr << "Function " << castFunction->getName()->getValue() << " in class "
+            << castClass->getName()->getValue() <<" must have the first argument of type "
+            << castClass->getName()->getValue() << std::endl;
         }
     }
 }
