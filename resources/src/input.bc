@@ -90,10 +90,10 @@ class Person {
 function int main(var string name) {
 
     // If name was not specified
-    if(name == "") {
-        print("Pleas enter a name as an argument when running this script");
-        return FAILURE_CODE;
-    }
+    //if(name == "") {
+    //    print("Pleas enter a name as an argument when running this script");
+    //    return FAILURE_CODE;
+    //}
 
     // Initialize global variables
     init();
@@ -102,17 +102,19 @@ function int main(var string name) {
     print(stringf1("Hello \"{}\", welcome to BashClass", name));
 
     // Create 10 teams
+    var any test;
+    test = "test";
     var int i;
     i=0;
     while(i < 10) {
         var Team team;
         team.name = "Bash team";
         team.p1.name = "One";
-        team.getP1().id = 1;
+        team.getP1(team).id = 1;
         team.p2.name = "Two";
-        team.getP2().id = 2;
+        team.getP2(team).id = 2;
         
-        team.printDetails();
+        team.printDetails(team);
 
         i=i+1;
     }

@@ -339,7 +339,8 @@ void _checkNumberAndTypeOfParameters(std::shared_ptr<BFunction> function,
             } else {
                 std::string argumentType = argumentList[i]->getDominantType();
                 std::string parameterType = parameters[i]->getTypeValue();
-                if(!argumentList[i]->isValid() || parameterType != argumentType) {
+                if(!argumentList[i]->isValid() ||
+                        (parameterType != BType::TYPE_VALUE_ANY && parameterType != argumentType)) {
                     std::cerr << "Function " << function->getName()->getValue()
                     << " expects argument " << i + 1 << " to be of type " << parameterType
                     << " but given " << argumentType << std::endl;
@@ -374,7 +375,8 @@ void _checkAssignType(std::shared_ptr<IBCallable> chainVariablePtr, std::shared_
         } else {
             std::string expressionType = expression->getDominantType();
             std::string variableType = chainVariable->getTypeValue();
-            if(!expression->isValid() || expressionType != variableType) {
+            if(!expression->isValid() ||
+                    (variableType != BType::TYPE_VALUE_ANY && expressionType != variableType)) {
                 std::cerr << "Variable " << chainVariable->getName()->getValue()
                 << " expects an expression of type " << variableType
                 << " but given " << expressionType << std::endl;
