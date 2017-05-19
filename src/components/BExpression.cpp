@@ -16,7 +16,7 @@ bool BExpression::evaluate() {
     // then all of them should be integers
     if(m_operandStack.size() > 1) {
         for(auto operand : m_operandStack) {
-            if(operand.back()->getTypeValue() != BType::TYPE_VALUE_INT) {
+            if(!operand.back() || operand.back()->getTypeValue() != BType::TYPE_VALUE_INT) {
                 m_valid = false;
                 m_dominantType = BType::UNDEFINED;
                 return false;

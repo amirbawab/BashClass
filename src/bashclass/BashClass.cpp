@@ -421,6 +421,13 @@ void _checkNeedReturn(std::shared_ptr<BScope> scope) {
     }
 }
 
+void _checkCondition(std::shared_ptr<BExpression> expression, std::shared_ptr<BScope> scope) {
+    if(!expression->isValid() || expression->getDominantType() != BType::TYPE_VALUE_INT) {
+        std::cerr << "Condition expression must evaluate to an integer at line "
+        << scope->getReferenceToken()->getLine() << std::endl;
+    }
+}
+
 /**
  * Initialize semantic action handlers
  */
@@ -599,6 +606,7 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_EVAL) {
             auto whileScope = std::dynamic_pointer_cast<BWhile>(m_scopeStack.back());
             whileScope->setCondition(m_expressionStack.back());
+            _checkCondition(m_expressionStack.back(), m_scopeStack.back());
             m_expressionStack.pop_back();
         }
     };
@@ -627,6 +635,7 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_EVAL) {
             auto ifScope = std::dynamic_pointer_cast<BIf>(m_scopeStack.back());
             ifScope->setCondition(m_expressionStack.back());
+            _checkCondition(m_expressionStack.back(), m_scopeStack.back());
             m_expressionStack.pop_back();
         }
     };
