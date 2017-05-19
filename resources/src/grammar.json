@@ -77,7 +77,7 @@
     "EXPR_X" : ["EPSILON","OP_GROUP_L #putOp# EXPR_Y EXPR_X"],
     "EXPR_Y" : ["OPEN_PAR EXPR_A CLOSE_PAR","ARITH_ID"],
 
-    "ARITH_ID" : ["'integer' #tokenCall#","'string' #tokenCall#","ARITH_VAR_OR_FUNC_CALL","BASH_SUB"],
+    "ARITH_ID" : ["'integer' #tokenCall#","'string' #tokenCall#","ARITH_VAR_OR_FUNC_CALL","BASH_SUB #tokenCall#"],
 
     "ARITH_VAR_OR_FUNC_CALL" : ["#startInnerCall# ARITH_VAR_OR_FUNC_CALL_A #endInnerCall#"],
     "ARITH_VAR_OR_FUNC_CALL_A" : ["IDENTIFIER ARITH_VAR_OR_FUNC_CALL_B"],

@@ -4,6 +4,7 @@ const std::string BType::TYPE_NAME_INT = "int_type";
 const std::string BType::TYPE_NAME_STRING = "string_type";
 const std::string BType::TYPE_NAME_ANY = "any_type";
 const std::string BType::TYPE_NAME_VOID = "void_type";
+const std::string BType::TYPE_NAME_BASH_SUB = "bash_sub";
 
 const std::string BType::TYPE_VALUE_INT = "int";
 const std::string BType::TYPE_VALUE_STRING = "string";
