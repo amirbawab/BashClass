@@ -9,7 +9,7 @@
     
     "FUNCTION_DEC" : ["FUNCTION #startFunction# FUNCTION_TYPE #functionType# FUNCTION_NAME #functionName# OPEN_PAR FUNCTION_PARAM_DEC CLOSE_PAR OPEN_CUR FUNCTION_BODY CLOSE_CUR #endFunction#"],
     "FUNCTION": ["'function'"],
-    "FUNCTION_TYPE" : ["'identifier'","'int_type'","'string_type'","'void_type'","'any_type'"],
+    "FUNCTION_TYPE" : ["'identifier'","'int_type'","'boolean_type'","'char_type'","'string_type'","'void_type'","'any_type'"],
     "FUNCTION_NAME" : ["'identifier'"],
     "FUNCTION_BODY" : ["EPSILON","VARIABLE_DEC FUNCTION_BODY","VAR_ASSIGN_OR_FUNC_CALL FUNCTION_BODY","STATEMENT FUNCTION_BODY","RETURN EXPR_DEC #returnExpr# SEMICOLON","BASH_SUB FUNCTION_BODY","BASH_INLINE FUNCTION_BODY","BASH_BLOCK FUNCTION_BODY"],
     "FUNCTION_PARAM_DEC" : ["EPSILON","FUNCTION_PARAM_A"],
@@ -23,7 +23,7 @@
     
     "VARIABLE_DEC" : ["VARIABLE #startVar# VARIABLE_TYPE #varType# VARIABLE_NAME #varName# SEMICOLON #endVar#"],
     "VARIABLE" : ["'var'"],
-    "VARIABLE_TYPE" : ["'identifier'","'int_type'","'string_type'","'any_type'"],
+    "VARIABLE_TYPE" : ["'identifier'","'int_type'","'boolean_type'","'char_type'","'string_type'","'any_type'"],
     "VARIABLE_NAME" : ["'identifier'"],
 
     "STATEMENT" : ["IF #startIf# OPEN_PAR EXPR_DEC #ifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endIf#",
@@ -77,7 +77,7 @@
     "EXPR_X" : ["EPSILON","OP_GROUP_L #putOp# EXPR_Y EXPR_X"],
     "EXPR_Y" : ["OPEN_PAR EXPR_A CLOSE_PAR","ARITH_ID"],
 
-    "ARITH_ID" : ["'integer' #tokenCall#","'string' #tokenCall#","ARITH_VAR_OR_FUNC_CALL","BASH_SUB #tokenCall#"],
+    "ARITH_ID" : ["'integer' #tokenCall#","'character' #tokenCall#","'truefalse' #tokenCall#","'string' #tokenCall#","ARITH_VAR_OR_FUNC_CALL","BASH_SUB #tokenCall#"],
 
     "ARITH_VAR_OR_FUNC_CALL" : ["#startInnerCall# ARITH_VAR_OR_FUNC_CALL_A #endInnerCall#"],
     "ARITH_VAR_OR_FUNC_CALL_A" : ["IDENTIFIER ARITH_VAR_OR_FUNC_CALL_B"],
