@@ -335,6 +335,30 @@
         {
             "type": "NORMAL",
             "id": 62
+        },
+        {
+            "type": "NORMAL",
+            "id": 63
+        },
+        {
+            "type": "NORMAL",
+            "id": 64
+        },
+        {
+            "type": "NORMAL",
+            "id": 65
+        },
+        {
+            "type": "FINAL",
+            "id": 66,
+            "token": "character",
+            "backtrack": false
+        },
+        {
+            "type": "FINAL",
+            "id": 67,
+            "token": "error_character",
+            "backtrack": true
         }
     ],
     "transitions": [
@@ -921,6 +945,64 @@
         {
             "from": 62,
             "to": 47,
+            "chars": [
+                "EOF",
+                "NEW_LINE"
+            ]
+        },
+        {
+            "from": 0,
+            "to": 63,
+            "chars": [
+                "'"
+            ]
+        },
+        {
+            "from": 63,
+            "to": 64,
+            "chars": [
+                "OTHER"
+            ]
+        },
+        {
+            "from": 64,
+            "to": 66,
+            "chars": [
+                "'"
+            ]
+        },
+        {
+            "from": 63,
+            "to": 65,
+            "chars": [
+                "\\"
+            ]
+        },
+        {
+            "from": 65,
+            "to": 64,
+            "chars": [
+                "OTHER"
+            ]
+        },
+        {
+            "from": 63,
+            "to": 67,
+            "chars": [
+                "EOF",
+                "NEW_LINE"
+            ]
+        },
+        {
+            "from": 64,
+            "to": 67,
+            "chars": [
+                "OTHER"
+            ]
+        },
+        {
+            "from": 65,
+            "to": 67,
             "chars": [
                 "EOF",
                 "NEW_LINE"

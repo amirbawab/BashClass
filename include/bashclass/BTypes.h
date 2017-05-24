@@ -10,6 +10,8 @@ public:
     // var [int] a;
     // lexicalToken->getName()
     static const std::string TYPE_NAME_INT;
+    static const std::string TYPE_NAME_CHAR;
+    static const std::string TYPE_NAME_BOOLEAN;
     static const std::string TYPE_NAME_STRING;
     static const std::string TYPE_NAME_ANY;
     static const std::string TYPE_NAME_VOID;
@@ -19,6 +21,8 @@ public:
     // var [int] a;
     // lexicalToken->getValue()
     static const std::string TYPE_VALUE_INT;
+    static const std::string TYPE_VALUE_CHAR;
+    static const std::string TYPE_VALUE_BOOLEAN;
     static const std::string TYPE_VALUE_STRING;
     static const std::string TYPE_VALUE_ANY;
     static const std::string TYPE_VALUE_VOID;
@@ -33,6 +37,8 @@ public:
     // lexicalToken->getName()
     static const std::string DATA_TYPE_NAME_INT;
     static const std::string DATA_TYPE_NAME_STRING;
+    static const std::string DATA_TYPE_NAME_CHAR;
+    static const std::string DATA_TYPE_NAME_BOOLEAN;
 
     /**
      * Check if the provided type name is built-in

@@ -27,6 +27,10 @@
             "string" : "string_type",
             "void" : "void_type",
             "any" : "any_type",
+            "char" : "char_type",
+            "boolean" : "boolean_type",
+            "true" : "truefalse",
+            "false" : "truefalse",
             "undefined": "undefined"
         }
     }
