@@ -9,7 +9,7 @@
 #include <bashclass/IBCallable.h>
 
 class BScope;
-class BVariable : public IBCallable {
+class BVariable {
 private:
     std::shared_ptr<ecc::LexicalToken> m_type;
     std::shared_ptr<BScope> m_typeScope;

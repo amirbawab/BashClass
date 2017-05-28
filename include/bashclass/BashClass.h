@@ -6,7 +6,6 @@
 #include <memory>
 #include <bashclass/BGlobal.h>
 #include <bashclass/IBCallable.h>
-#include <bashclass/BExpression.h>
 
 typedef std::vector<std::shared_ptr<ecc::LexicalToken>> LexicalTokens;
 typedef std::function<void(int, LexicalTokens&, int, bool)> SemanticActionHandler;
@@ -82,21 +81,11 @@ private:
     // Hold nesting scopes
     std::vector<std::shared_ptr<BScope>> m_scopeStack;
 
-    // Hold chain of callable elements and their nesting ones
-    // For example, a.b(c.d() + e.f()) is represented in three steps:
-    // [[a,b()]] => [[a,b()],[c,d()]] => [[a,b()][e,f()]]
-    std::vector<std::vector<std::shared_ptr<IBCallable>>> m_callableChainStack;
-
-    // Hold expressions with their nesting ones
-    // For example, a.b(c.d() + e.f()) is represented:
-    // [{operands: [[c,d()],[e.f()]], operators: [+]}]
-    std::vector<std::shared_ptr<BExpression>> m_expressionStack;
+    // Item being called
+    std::shared_ptr<IBCallable> m_callable;
 
     // Hold variable currently being defined
     std::shared_ptr<BVariable> m_focusVariable;
-
-    // Hold arguments for a function to be called soon
-    std::vector<std::vector<std::shared_ptr<BExpression>>> m_argumentListStack;
 
     /**
      * Initialize semantic action handlers

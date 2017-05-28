@@ -1,7 +1,6 @@
 #include <bashclass/BashClass.h>
 #include <bashclass/BTypes.h>
 #include <bashclass/BClass.h>
-#include <bashclass/BCallableToken.h>
 #include <bashclass/BIf.h>
 #include <bashclass/BWhile.h>
 #include <iostream>
@@ -182,255 +181,6 @@ void _requiredParam(std::shared_ptr<BScope> functionScope) {
 }
 
 /**
- * Find first variable, and add it to the callable chain
- */
-void _findFirstChainVariable(std::shared_ptr<BScope> scope, std::vector<std::shared_ptr<IBCallable>> &callableChain,
-                    std::shared_ptr<ecc::LexicalToken> token) {
-    auto variable = scope->findClosestVariable(token->getValue());
-    if(variable) {
-        // Check if the variable is a class member
-        if(variable->isClassMember()) {
-            std::cerr << "Use the first parameter of the function to refer to the variable "
-            << variable->getName() << " at line " << token->getLine() << " and column "
-            << token->getColumn() << std::endl;
-
-            // Push variable instead of nullptr because the meaning is correct
-            callableChain.push_back(variable);
-        } else {
-            callableChain.push_back(variable);
-        }
-    } else {
-        std::cerr << "Undefined variable " << token->getValue()
-        << " at line " << token->getLine() << " and column "
-        << token->getColumn() << std::endl;
-        callableChain.push_back(nullptr);
-    }
-}
-
-/**
- * Find first function, and add it to the callable chain
- */
-void _findFirstChainFunction(std::shared_ptr<BScope> globalScope, std::vector<std::shared_ptr<IBCallable>> &callableChain,
-                             std::shared_ptr<ecc::LexicalToken> token) {
-    auto functions = globalScope->findAllFunctions(token->getValue().c_str());
-    if(!functions.empty()) {
-        auto function = std::dynamic_pointer_cast<BFunction>(functions.front());
-        callableChain.push_back(function);
-    } else {
-        std::cerr << "Undefined function " << token->getValue()
-        << " at line " << token->getLine() << " and column "
-        << token->getColumn() << std::endl;
-        callableChain.push_back(nullptr);
-    }
-}
-
-/**
- * Find next variable as a member of the type of the previous element in the chain
- */
-void _findNextChainVariableInPrevType(std::shared_ptr<BScope> typeScope,
-                                              std::vector<std::shared_ptr<IBCallable>> &callableChain,
-                                              std::shared_ptr<ecc::LexicalToken> token) {
-    if(typeScope) {
-        auto variables = typeScope->findAllVariables(token->getValue().c_str());
-        if(!variables.empty()) {
-            callableChain.push_back(variables.front());
-        } else {
-            auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
-            std::cerr << "Class " << castClass->getName() << " does not have a variable member "
-            << token->getValue() << " at line "
-            << token->getLine() << " and column "
-            << token->getColumn() << std::endl;
-            callableChain.push_back(nullptr);
-        }
-    } else {
-        std::cerr << "Variable member " << token->getValue()
-        << " at line " << token->getLine()
-        << " and column " << token->getColumn()
-        << " does not exist. Previous element type does not have any known members." << std::endl;
-        callableChain.push_back(nullptr);
-    }
-}
-
-/**
- * Find next variable, and add it to the callable chain
- */
-void _findNextChainVariable(std::vector<std::shared_ptr<IBCallable>> &callableChain,
-                            std::shared_ptr<ecc::LexicalToken> token) {
-
-    if(!callableChain.back()) {
-        std::cerr << "Cannot access variable member " << token->getValue()
-        << " of undefined at line " << token->getLine() << " and column "
-        << token->getColumn() << std::endl;
-    } else {
-        auto castPrevVariable = std::dynamic_pointer_cast<BVariable>(callableChain.back());
-        auto castPrevFunction = std::dynamic_pointer_cast<BFunction>(callableChain.back());
-        if(castPrevVariable) {
-            _findNextChainVariableInPrevType(castPrevVariable->getTypeScope(), callableChain, token);
-        } else if(castPrevFunction) {
-            _findNextChainVariableInPrevType(castPrevFunction->getTypeScope(), callableChain, token);
-        }
-    }
-}
-
-/**
- * Find next function as a member of the type of the previous element in the chain
- */
-void _findNextChainFunctionInPrevType(std::shared_ptr<BScope> typeScope,
-                                      std::vector<std::shared_ptr<IBCallable>> &callableChain,
-                                      std::shared_ptr<ecc::LexicalToken> token) {
-    if(typeScope) {
-        auto functions = typeScope->findAllFunctions(token->getValue().c_str());
-        if(!functions.empty()) {
-            auto function = std::dynamic_pointer_cast<BFunction>(functions.front());
-            callableChain.push_back(function);
-        } else {
-            auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
-            std::cerr << "Class " << castClass->getName() << " does not have a function member "
-            << token->getValue() << " at line "
-            << token->getLine() << " and column "
-            << token->getColumn() << std::endl;
-            callableChain.push_back(nullptr);
-        }
-    } else {
-        std::cerr << "Function member " << token->getValue()
-        << " at line " << token->getLine()
-        << " and column " << token->getColumn()
-        << " does not exist. Previous element type does not have any known members." << std::endl;
-        callableChain.push_back(nullptr);
-    }
-}
-
-/**
- * Find next function, and add it to the callable chain
- */
-void _findNextChainFunction(std::vector<std::shared_ptr<IBCallable>> &callableChain,
-                            std::shared_ptr<ecc::LexicalToken> token) {
-
-    if(!callableChain.back()) {
-        std::cerr << "Cannot access function member " << token->getValue()
-        << " of undefined at line " << token->getLine() << " and column "
-        << token->getColumn() << std::endl;
-    } else {
-        auto castPrevVariable = std::dynamic_pointer_cast<BVariable>(callableChain.back());
-        auto castPrevFunction = std::dynamic_pointer_cast<BFunction>(callableChain.back());
-        if(castPrevVariable) {
-            _findNextChainFunctionInPrevType(castPrevVariable->getTypeScope(), callableChain, token);
-        } else if(castPrevFunction) {
-            _findNextChainFunctionInPrevType(castPrevFunction->getTypeScope(), callableChain, token);
-        }
-    }
-}
-
-/**
- * Check if the number and type of parameters is correct
- */
-void _checkNumberAndTypeOfParameters(std::shared_ptr<BFunction> function,
-                                     std::vector<std::shared_ptr<BExpression>> &argumentList) {
-    auto parameters = function->findAllParameters();
-
-    if(parameters.size() != argumentList.size()) {
-        std::cerr << "Function " << function->getName()->getValue()
-        << " expects " << parameters.size() << " arguments but given "
-        << argumentList.size() << " instead" << std::endl;
-    } else {
-        for(size_t i = 0; i < parameters.size(); i++) {
-            if(!parameters[i]->hasKnownType()) {
-                std::cerr << "Cannot pass argument value to an undefined parameter type" << std::endl;
-            } else {
-                std::string argumentType = argumentList[i]->getDominantType();
-                std::string parameterType = parameters[i]->getTypeValue();
-                if(!argumentList[i]->isValid() ||
-                        (parameterType != BType::TYPE_VALUE_ANY && parameterType != argumentType)) {
-                    std::cerr << "Function " << function->getName()->getValue()
-                    << " expects argument " << i + 1 << " to be of type " << parameterType
-                    << " but given " << argumentType << std::endl;
-                }
-            }
-        }
-    }
-}
-
-/**
- * If function exists, then compare its signature with the function call
- */
-void _compareFunctionCallAndSignature(std::shared_ptr<IBCallable> callable,
-                                      std::vector<std::shared_ptr<BExpression>> &arguments) {
-    // Get function from last callable chain
-    auto function = std::dynamic_pointer_cast<BFunction>(callable);
-    if(function) {
-        _checkNumberAndTypeOfParameters(function, arguments);
-    } else {
-        std::cerr << "Cannot set argument to undefined function" << std::endl;
-    }
-}
-
-/**
- * Check if the variable and the assigned expression have the same type
- */
-void _checkAssignType(std::shared_ptr<IBCallable> chainVariablePtr, std::shared_ptr<BExpression> expression) {
-    auto chainVariable = std::dynamic_pointer_cast<BVariable>(chainVariablePtr);
-    if(chainVariable) {
-        if(!chainVariable->hasKnownType()) {
-            std::cerr << "Cannot assign an expression to a variable of undefined type" << std::endl;
-        } else {
-            std::string expressionType = expression->getDominantType();
-            std::string variableType = chainVariable->getTypeValue();
-            if(!expression->isValid() ||
-                    (variableType != BType::TYPE_VALUE_ANY && expressionType != variableType)) {
-                std::cerr << "Variable " << chainVariable->getName()->getValue()
-                << " expects an expression of type " << variableType
-                << " but given " << expressionType << std::endl;
-            }
-        }
-    } else {
-        std::cerr << "Cannot assign expression to undefined variable" << std::endl;
-    }
-}
-
-/**
- * Check if the return type matches the function signature
- */
-void _checkReturnValue(std::shared_ptr<BScope> scope, std::shared_ptr<BExpression> expression) {
-    auto scopeFunction = std::dynamic_pointer_cast<BFunction>(scope);
-    if(scopeFunction->hasKnowType()) {
-
-        // If function is of type void, then a return statement is not expected
-        if(scopeFunction->getType()->getName() == BType::TYPE_NAME_VOID) {
-            std::cerr << "Function " << scopeFunction->getName()->getValue()
-            << " does not expect to return an expression" << std::endl;
-        } else {
-            std::string functionType = scopeFunction->getTypeValue();
-            std::string expressionType = expression->getDominantType();
-            if (!expression->isValid() || functionType != expressionType) {
-                std::cerr << "Function " << scopeFunction->getName()->getValue()
-                << " expects to return " << functionType << " instead of " << expressionType << std::endl;
-            }
-        }
-    } else {
-        std::cerr << "Cannot check if return value is correct because function "
-        << scopeFunction->getName()->getValue() << " has an undefined type" << std::endl;
-    }
-}
-
-/**
- * Check if function is expecting a return statement
- */
-void _checkNeedReturn(std::shared_ptr<BScope> scope) {
-    auto function = std::dynamic_pointer_cast<BFunction>(scope);
-    if(function->getType()->getName() != BType::TYPE_NAME_VOID && !function->hasReturn()) {
-        std::cerr << "Function " << function->getName()->getValue()
-        << " is missing a return statement" << std::endl;
-    }
-}
-
-void _checkCondition(std::shared_ptr<BExpression> expression, std::shared_ptr<BScope> scope) {
-    if(!expression->isValid() || expression->getDominantType() != BType::TYPE_VALUE_INT) {
-        std::cerr << "Condition expression must evaluate to an integer at line "
-        << scope->getReferenceToken()->getLine() << std::endl;
-    }
-}
-
-/**
  * Initialize semantic action handlers
  */
 void BashClass::initHandlers() {
@@ -514,7 +264,6 @@ void BashClass::initHandlers() {
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_EVAL) {
             _requiredParam(m_scopeStack.back());
-            _checkNeedReturn(m_scopeStack.back());
             m_scopeStack.pop_back();
         }
     };
@@ -606,10 +355,7 @@ void BashClass::initHandlers() {
 
     m_whileCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            auto whileScope = std::dynamic_pointer_cast<BWhile>(m_scopeStack.back());
-            whileScope->setCondition(m_expressionStack.back());
-            _checkCondition(m_expressionStack.back(), m_scopeStack.back());
-            m_expressionStack.pop_back();
+            // TODO
         }
     };
 
@@ -635,10 +381,7 @@ void BashClass::initHandlers() {
 
     m_ifCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            auto ifScope = std::dynamic_pointer_cast<BIf>(m_scopeStack.back());
-            ifScope->setCondition(m_expressionStack.back());
-            _checkCondition(m_expressionStack.back(), m_scopeStack.back());
-            m_expressionStack.pop_back();
+            // TODO
         }
     };
 
@@ -648,57 +391,43 @@ void BashClass::initHandlers() {
 
     m_startOuterCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_callableChainStack.push_back({});
+            // TODO
         }
     };
 
     m_endOuterCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_callableChainStack.pop_back();
+            // TODO
         }
     };
 
     m_startInnerCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_callableChainStack.push_back({});
+            // TODO
         }
     };
 
     m_endInnerCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_expressionStack.back()->addOperand(m_callableChainStack.back());
-            m_callableChainStack.pop_back();
+            // TODO
         }
     };
 
     m_varCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            if(m_callableChainStack.back().empty()) {
-                _findFirstChainVariable(m_scopeStack.back(), m_callableChainStack.back(), lexicalVector[index]);
-            } else {
-                _findNextChainVariable(m_callableChainStack.back(), lexicalVector[index]);
-            }
+            // TODO
         }
     };
 
     m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            if(m_callableChainStack.back().empty()) {
-                _findFirstChainFunction(m_global, m_callableChainStack.back(), lexicalVector[index]);
-            } else {
-                _findNextChainFunction(m_callableChainStack.back(), lexicalVector[index]);
-            }
+            // TODO
         }
     };
 
     m_tokenCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // Example token calls: integer
-            auto callableToken = std::make_shared<BCallableToken>();
-            callableToken->setLexicalToken(lexicalVector[index]);
-
-            // Add token to expression
-            m_expressionStack.back()->addOperand({callableToken});
+            // TODO
         }
     };
 
@@ -708,7 +437,7 @@ void BashClass::initHandlers() {
 
     m_putOp = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_expressionStack.back()->addOperator(lexicalVector[index]);
+            // TODO
         }
     };
 
@@ -718,25 +447,19 @@ void BashClass::initHandlers() {
 
     m_startArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_argumentListStack.push_back({});
+            // TODO
         }
     };
 
     m_setArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_argumentListStack.back().push_back(m_expressionStack.back());
-            m_expressionStack.pop_back();
+            // TODO
         }
     };
 
     m_endArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-
-            // Check if the calls match the function definition: number and type of params
-            _compareFunctionCallAndSignature(m_callableChainStack.back().back(), m_argumentListStack.back());
-
-            // Remove argument list from the stack
-            m_argumentListStack.pop_back();
+            // TODO
         }
     };
 
@@ -746,32 +469,25 @@ void BashClass::initHandlers() {
 
     m_startExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_expressionStack.push_back(std::make_shared<BExpression>());
+            // TODO
         }
     };
 
     m_endExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            if(!m_expressionStack.back()->evaluate()) {
-                std::cerr << "Expression at line " << lexicalVector[index]->getLine()
-                << " did not evaluate successfully" << std::endl;
-            }
+            // TODO
         }
     };
 
     m_varAssign = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            _checkAssignType(m_callableChainStack.back().back(), m_expressionStack.back());
-            m_expressionStack.pop_back();
+            // TODO
         }
     };
 
     m_returnExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            auto scopeFunction = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
-            _checkReturnValue(m_scopeStack.back(), m_expressionStack.back());
-            scopeFunction->setHasReturn(true);
-            m_expressionStack.pop_back();
+            // TODO
         }
     };
 }

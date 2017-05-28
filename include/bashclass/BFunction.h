@@ -6,7 +6,7 @@
 #include <bashclass/BScope.h>
 #include <bashclass/IBCallable.h>
 
-class BFunction : public BScope, public IBCallable {
+class BFunction : public BScope {
 private:
     std::shared_ptr<ecc::LexicalToken> m_name;
     std::shared_ptr<ecc::LexicalToken> m_type;
