@@ -391,43 +391,47 @@ void BashClass::initHandlers() {
 
     m_startOuterCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+            m_chainBuilderStack.push_back(std::make_shared<BChainCall>());
         }
     };
 
     m_endOuterCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+            m_chainBuilderStack.pop_back();
         }
     };
 
     m_startInnerCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+            m_chainBuilderStack.push_back(std::make_shared<BChainCall>());
         }
     };
 
     m_endInnerCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+            m_chainBuilderStack.pop_back();
         }
     };
 
     m_varCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+            auto variable = std::make_shared<BVariableCall>();
+            m_chainBuilderStack.back()->add(variable);
         }
     };
 
     m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+            auto function = std::make_shared<BFunctionCall>();
+            m_chainBuilderStack.back()->add(function);
         }
     };
 
     m_tokenCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+            auto token = std::make_shared<BTokenCall>();
+            token->setLexicalToken(lexicalVector[index]);
+            m_chainBuilderStack.back()->add(token);
         }
     };
 

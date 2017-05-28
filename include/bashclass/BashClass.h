@@ -5,7 +5,10 @@
 #include <stack>
 #include <memory>
 #include <bashclass/BGlobal.h>
-#include <bashclass/IBCallable.h>
+#include <bashclass/BChainCall.h>
+#include <bashclass/BVariableCall.h>
+#include <bashclass/BFunctionCall.h>
+#include <bashclass/BTokenCall.h>
 
 typedef std::vector<std::shared_ptr<ecc::LexicalToken>> LexicalTokens;
 typedef std::function<void(int, LexicalTokens&, int, bool)> SemanticActionHandler;
@@ -81,8 +84,10 @@ private:
     // Hold nesting scopes
     std::vector<std::shared_ptr<BScope>> m_scopeStack;
 
-    // Item being called
-    std::shared_ptr<IBCallable> m_callable;
+    // Hold in order to build them
+    // e.g. a.b(c.d(e.f())) => [a, b], [b, c], [e, f]
+    // e.g. a.b = 123;      => [a, b], [123]
+    std::vector<std::shared_ptr<BChainCall>> m_chainBuilderStack;
 
     // Hold variable currently being defined
     std::shared_ptr<BVariable> m_focusVariable;
