@@ -9,6 +9,7 @@
 #include <bashclass/BVariableCall.h>
 #include <bashclass/BFunctionCall.h>
 #include <bashclass/BTokenCall.h>
+#include <bashclass/BExpressionCall.h>
 
 typedef std::vector<std::shared_ptr<ecc::LexicalToken>> LexicalTokens;
 typedef std::function<void(int, LexicalTokens&, int, bool)> SemanticActionHandler;
@@ -69,6 +70,7 @@ public:
     SemanticActionHandler m_endIf;
 
     SemanticActionHandler m_startExpr;
+    SemanticActionHandler m_createExpr;
     SemanticActionHandler m_endExpr;
 
     SemanticActionHandler m_varAssign;
@@ -84,13 +86,19 @@ private:
     // Hold nesting scopes
     std::vector<std::shared_ptr<BScope>> m_scopeStack;
 
-    // Hold in order to build them
+    // Hold calls in order to build chains
     // e.g. a.b(c.d(e.f())) => [a, b], [b, c], [e, f]
     // e.g. a.b = 123;      => [a, b], [123]
     std::vector<std::shared_ptr<BChainCall>> m_chainBuilderStack;
 
     // Hold variable currently being defined
     std::shared_ptr<BVariable> m_focusVariable;
+
+    // Hold chains and expressions operands
+    std::vector<std::shared_ptr<IBCallable>> m_expressionOperandStack;
+
+    // Hold operators
+    std::vector<std::shared_ptr<ecc::LexicalToken>> m_expressionOperatorStack;
 
     /**
      * Initialize semantic action handlers

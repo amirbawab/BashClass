@@ -536,6 +536,7 @@ void BashClass::initHandlers() {
 
     m_endInnerCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
+            m_expressionOperandStack.push_back(m_chainBuilderStack.back());
             m_chainBuilderStack.pop_back();
         }
     };
@@ -574,7 +575,7 @@ void BashClass::initHandlers() {
 
     m_putOp = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+            m_expressionOperatorStack.push_back(lexicalVector[index]);
         }
     };
 
@@ -590,7 +591,15 @@ void BashClass::initHandlers() {
 
     m_setArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+
+            // Get function that is currently being built
+            auto functionCall = std::dynamic_pointer_cast<BFunctionCall>(m_chainBuilderStack.back()->last());
+
+            // Add the argument to it
+            functionCall->addArgument(m_expressionOperandStack.back());
+
+            // Remove consumed expression
+            m_expressionOperandStack.pop_back();
         }
     };
 
@@ -607,6 +616,28 @@ void BashClass::initHandlers() {
     m_startExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             // TODO
+        }
+    };
+
+    m_createExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+
+            // Get all expression elements
+            auto rightOperand = m_expressionOperandStack.back();
+            m_expressionOperandStack.pop_back();
+            auto leftOperand = m_expressionOperandStack.back();
+            m_expressionOperandStack.pop_back();
+            auto operatorToken = m_expressionOperatorStack.back();
+            m_expressionOperatorStack.pop_back();
+
+            // Create expression
+            auto expression = std::make_shared<BExpressionCall>();
+            expression->setRightOperand(rightOperand);
+            expression->setLeftOperand(leftOperand);
+            expression->setOperator(operatorToken);
+
+            // Push expression again as an operand
+            m_expressionOperandStack.push_back(expression);
         }
     };
 

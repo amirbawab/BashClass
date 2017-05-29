@@ -23,6 +23,12 @@ public:
      * @param function
      */
     void setFunction(std::shared_ptr<BFunction> function) {m_function = function;}
+
+    /**
+     * Add argument
+     * @param argument
+     */
+    void addArgument(std::shared_ptr<IBCallable> argument) {m_arguments.push_back(argument);};
 };
 
 #endif
