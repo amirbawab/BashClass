@@ -19,6 +19,22 @@ public:
     }
 
     /**
+     * Get chain size
+     * @return size
+     */
+    int size() {
+        return m_callables.size();
+    }
+
+    /**
+     * Check if chain is empty
+     * @return true if empty
+     */
+    bool empty() {
+        return m_callables.empty();
+    }
+
+    /**
      * Get the last element or nullptr
      * @return last or nullptr
      */

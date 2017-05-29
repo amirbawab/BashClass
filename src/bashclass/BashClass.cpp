@@ -181,6 +181,73 @@ void _requiredParam(std::shared_ptr<BScope> functionScope) {
 }
 
 /**
+ * Find first variable, and add it to the callable chain
+ */
+void _findFirstChainVariable(std::shared_ptr<BScope> scope, std::shared_ptr<BChainCall> chainCall,
+                             std::shared_ptr<ecc::LexicalToken> token) {
+    std::shared_ptr<BVariableCall> variableCall = std::make_shared<BVariableCall>();
+    auto variable = scope->findClosestVariable(token->getValue());
+    if(variable) {
+        // Check if the variable is a class member
+        if(variable->isClassMember()) {
+            std::cerr << "Use the first parameter of the function to refer to the variable "
+                      << variable->getName() << " at line " << token->getLine() << " and column "
+                      << token->getColumn() << std::endl;
+        }
+
+        // Set variable anyway since it's clear what the user wants
+        variableCall->setVariable(variable);
+    } else {
+        std::cerr << "Undefined variable " << token->getValue()
+                  << " at line " << token->getLine() << " and column "
+                  << token->getColumn() << std::endl;
+    }
+    chainCall->add(variableCall);
+}
+
+/**
+ * Find next variable, and add it to the callable chain
+ */
+void _findNextChainVariable(std::shared_ptr<BChainCall> chainCall, std::shared_ptr<ecc::LexicalToken> token) {
+    auto variableCall = std::make_shared<BVariableCall>();
+    auto prevVariableCall = std::dynamic_pointer_cast<BVariableCall>(chainCall->last());
+    auto prevFunctionCall = std::dynamic_pointer_cast<BFunctionCall>(chainCall->last());
+    if((prevVariableCall && !prevVariableCall->getVariable()) || (prevFunctionCall && !prevFunctionCall->getFunction())) {
+        std::cerr << "Cannot access variable member " << token->getValue()
+                  << " of undefined at line " << token->getLine() << " and column "
+                  << token->getColumn() << std::endl;
+    } else {
+        std::shared_ptr<BScope> typeScope;
+        if(prevVariableCall) {
+            typeScope = prevVariableCall->getVariable()->getTypeScope();
+        } else if(prevFunctionCall) {
+            typeScope = prevFunctionCall->getFunction()->getTypeScope();
+        } else {
+            throw std::runtime_error("Undefined call on an unknown instance. Please report this error.");
+        }
+
+        if(typeScope) {
+            auto variables = typeScope->findAllVariables(token->getValue().c_str());
+            if(!variables.empty()) {
+                variableCall->setVariable(variables.front());
+            } else {
+                auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
+                std::cerr << "Class " << castClass->getName() << " does not have a variable member "
+                          << token->getValue() << " at line "
+                          << token->getLine() << " and column "
+                          << token->getColumn() << std::endl;
+            }
+        } else {
+            std::cerr << "Variable member " << token->getValue()
+                      << " at line " << token->getLine()
+                      << " and column " << token->getColumn()
+                      << " does not exist. Previous element type does not have any known members." << std::endl;
+        }
+    }
+    chainCall->add(variableCall);
+}
+
+/**
  * Initialize semantic action handlers
  */
 void BashClass::initHandlers() {
@@ -415,8 +482,11 @@ void BashClass::initHandlers() {
 
     m_varCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            auto variable = std::make_shared<BVariableCall>();
-            m_chainBuilderStack.back()->add(variable);
+            if(m_chainBuilderStack.back()->empty()) {
+                _findFirstChainVariable(m_scopeStack.back(), m_chainBuilderStack.back(), lexicalVector[index]);
+            } else {
+                _findNextChainVariable(m_chainBuilderStack.back(), lexicalVector[index]);
+            }
         }
     };
 
