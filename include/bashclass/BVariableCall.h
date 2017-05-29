@@ -8,6 +8,7 @@
 class BVariableCall : public IBCallable {
 private:
     std::shared_ptr<BVariable> m_variable;
+    std::shared_ptr<IBCallable> m_expression;
 public:
 
     /**
@@ -21,6 +22,18 @@ public:
      * @param variable
      */
     void setVariable(std::shared_ptr<BVariable> variable) {m_variable = variable;}
+
+    /**
+     * Get expression
+     * @return expression
+     */
+    std::shared_ptr<IBCallable> getExpression() {return m_expression;}
+
+    /**
+     * Set expression
+     * @param expression
+     */
+    void setExpression(std::shared_ptr<IBCallable> expression) {m_expression = expression;}
 };
 
 

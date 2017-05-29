@@ -482,7 +482,9 @@ void BashClass::initHandlers() {
 
     m_whileCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+            auto whileScope = std::dynamic_pointer_cast<BWhile>(m_scopeStack.back());
+            whileScope->setCondition(m_expressionOperandStack.back());
+            m_expressionOperandStack.pop_back();
         }
     };
 
@@ -508,7 +510,9 @@ void BashClass::initHandlers() {
 
     m_ifCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+            auto ifScope = std::dynamic_pointer_cast<BIf>(m_scopeStack.back());
+            ifScope->setCondition(m_expressionOperandStack.back());
+            m_expressionOperandStack.pop_back();
         }
     };
 
@@ -524,7 +528,7 @@ void BashClass::initHandlers() {
 
     m_endOuterCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_chainBuilderStack.pop_back();
+            // Do nothing ...
         }
     };
 
@@ -649,13 +653,18 @@ void BashClass::initHandlers() {
 
     m_varAssign = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+            auto variableCall = std::dynamic_pointer_cast<BVariableCall>(m_chainBuilderStack.back()->last());
+            m_chainBuilderStack.pop_back();
+            variableCall->setExpression(m_expressionOperandStack.back());
+            m_expressionOperandStack.pop_back();
         }
     };
 
     m_returnExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+            auto functionScope = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
+            functionScope->setReturnExpression(m_expressionOperandStack.back());
+            m_expressionOperandStack.pop_back();
         }
     };
 }

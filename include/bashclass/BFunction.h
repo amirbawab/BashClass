@@ -11,7 +11,7 @@ private:
     std::shared_ptr<ecc::LexicalToken> m_name;
     std::shared_ptr<ecc::LexicalToken> m_type;
     std::shared_ptr<BScope> m_typeScope;
-    bool m_hasReturn = false;
+    std::shared_ptr<IBCallable> m_returnExpression;
     bool m_knownType = false;
 public:
 
@@ -78,16 +78,16 @@ public:
     bool hasKnowType() const { return m_knownType;}
 
     /**
-     * Set if the function has a return
-     * @param true if a return statement has been set
+     * Set return expression
+     * @param returnExpression
      */
-    void setHasReturn(bool hasReturn) {m_hasReturn = hasReturn;}
+    void setReturnExpression(std::shared_ptr<IBCallable> returnExpression) {m_returnExpression = returnExpression;}
 
     /**
-     * Check if the function has a return statement
-     * @return yes if the function has a return statement
+     * Get return expression
+     * @return expression
      */
-    bool hasReturn() {return m_hasReturn;}
+    std::shared_ptr<IBCallable> getExpression() {return m_returnExpression;}
 };
 
 #endif
