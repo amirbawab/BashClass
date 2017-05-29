@@ -248,6 +248,66 @@ void _findNextChainVariable(std::shared_ptr<BChainCall> chainCall, std::shared_p
 }
 
 /**
+ * Find first function, and add it to the callable chain
+ */
+void _findFirstChainFunction(std::shared_ptr<BScope> globalScope, std::shared_ptr<BChainCall> chainCall,
+                             std::shared_ptr<ecc::LexicalToken> token) {
+    auto functionCall = std::make_shared<BFunctionCall>();
+    auto functions = globalScope->findAllFunctions(token->getValue().c_str());
+    if(!functions.empty()) {
+        functionCall->setFunction(std::dynamic_pointer_cast<BFunction>(functions.front()));
+    } else {
+        std::cerr << "Undefined function " << token->getValue()
+                  << " at line " << token->getLine() << " and column "
+                  << token->getColumn() << std::endl;
+    }
+    chainCall->add(functionCall);
+}
+
+/**
+ * Find next function, and add it to the callable chain
+ */
+void _findNextChainFunction(std::shared_ptr<BChainCall> chainCall, std::shared_ptr<ecc::LexicalToken> token) {
+    auto functionCall = std::make_shared<BFunctionCall>();
+    auto prevVariableCall = std::dynamic_pointer_cast<BVariableCall>(chainCall->last());
+    auto prevFunctionCall = std::dynamic_pointer_cast<BFunctionCall>(chainCall->last());
+    if((prevVariableCall && !prevVariableCall->getVariable()) || (prevFunctionCall && !prevFunctionCall->getFunction())) {
+        std::cerr << "Cannot access function member " << token->getValue()
+                  << " of undefined at line " << token->getLine() << " and column "
+                  << token->getColumn() << std::endl;
+    } else {
+        std::shared_ptr<BScope> typeScope;
+        if(prevVariableCall) {
+            typeScope = prevVariableCall->getVariable()->getTypeScope();
+        } else if(prevFunctionCall) {
+            typeScope = prevFunctionCall->getFunction()->getTypeScope();
+        } else {
+            throw std::runtime_error("Undefined call on an unknown instance. Please report this error.");
+        }
+
+        if(typeScope) {
+            auto functions = typeScope->findAllFunctions(token->getValue().c_str());
+            if(!functions.empty()) {
+                auto function = std::dynamic_pointer_cast<BFunction>(functions.front());
+                functionCall->setFunction(function);
+            } else {
+                auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
+                std::cerr << "Class " << castClass->getName() << " does not have a function member "
+                          << token->getValue() << " at line "
+                          << token->getLine() << " and column "
+                          << token->getColumn() << std::endl;
+            }
+        } else {
+            std::cerr << "Function member " << token->getValue()
+                      << " at line " << token->getLine()
+                      << " and column " << token->getColumn()
+                      << " does not exist. Previous element type does not have any known members." << std::endl;
+        }
+    }
+    chainCall->add(functionCall);
+}
+
+/**
  * Initialize semantic action handlers
  */
 void BashClass::initHandlers() {
@@ -492,8 +552,11 @@ void BashClass::initHandlers() {
 
     m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            auto function = std::make_shared<BFunctionCall>();
-            m_chainBuilderStack.back()->add(function);
+            if(m_chainBuilderStack.back()->empty()) {
+                _findFirstChainFunction(m_global, m_chainBuilderStack.back(), lexicalVector[index]);
+            } else {
+                _findNextChainFunction(m_chainBuilderStack.back(), lexicalVector[index]);
+            }
         }
     };
 
