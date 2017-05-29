@@ -5,7 +5,7 @@
 #include <vector>
 #include <bashclass/IBCallable.h>
 
-class BChainCall {
+class BChainCall : public IBCallable {
 private:
     std::vector<std::shared_ptr<IBCallable>> m_callables;
 public:
