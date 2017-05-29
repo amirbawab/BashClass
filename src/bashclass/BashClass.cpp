@@ -49,8 +49,8 @@ void _linkFunctionsTypes(std::shared_ptr<BScope> scope, std::shared_ptr<BScope> 
             // Find class scope of that type
             auto cls = globalScope->findAllClasses(castFunction->getType()->getValue().c_str());
             if(cls.empty()) {
-                std::cerr << "Undefined type " << castFunction->getType() <<
-                " for function " << castFunction->getName() << std::endl;
+                std::cerr << "Undefined type " << castFunction->getType()->getValue() <<
+                " for function " << castFunction->getName()->getValue() << std::endl;
                 castFunction->setKnownType(false);
             } else {
                 castFunction->setTypeScope(cls.front());
@@ -109,7 +109,7 @@ void _detectCircularReference(std::shared_ptr<BScope> scope) {
                         scopeStack.push(variable->getTypeScope());
                     } else {
                         auto castClass = std::dynamic_pointer_cast<BClass>(cls);
-                        std::cerr << "Circular reference detected from class " << castClass->getName() << std::endl;
+                        std::cerr << "Circular reference detected from class " << castClass->getName()->getValue() << std::endl;
                     }
                 }
             }
@@ -124,7 +124,7 @@ void _detectCircularReference(std::shared_ptr<BScope> scope) {
 void _checkDuplicateClass(ecc::LexicalToken &token, std::vector<std::shared_ptr<BScope>> &scopeStack) {
     auto getClass = scopeStack.back()->getParentScope()->findAllClasses(token.getValue().c_str());
     if(!getClass.empty()) {
-        std::cerr << "Class '" << token.getValue() << "' at line " << token.getLine()
+        std::cerr << "Class " << token.getValue() << " at line " << token.getLine()
         << " was defined previously" << std::endl;
     }
 }
@@ -191,7 +191,7 @@ void _findFirstChainVariable(std::shared_ptr<BScope> scope, std::shared_ptr<BCha
         // Check if the variable is a class member
         if(variable->isClassMember()) {
             std::cerr << "Use the first parameter of the function to refer to the variable "
-                      << variable->getName() << " at line " << token->getLine() << " and column "
+                      << variable->getName()->getValue() << " at line " << token->getLine() << " and column "
                       << token->getColumn() << std::endl;
         }
 
@@ -232,7 +232,7 @@ void _findNextChainVariable(std::shared_ptr<BChainCall> chainCall, std::shared_p
                 variableCall->setVariable(variables.front());
             } else {
                 auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
-                std::cerr << "Class " << castClass->getName() << " does not have a variable member "
+                std::cerr << "Class " << castClass->getName()->getValue() << " does not have a variable member "
                           << token->getValue() << " at line "
                           << token->getLine() << " and column "
                           << token->getColumn() << std::endl;
@@ -292,7 +292,7 @@ void _findNextChainFunction(std::shared_ptr<BChainCall> chainCall, std::shared_p
                 functionCall->setFunction(function);
             } else {
                 auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
-                std::cerr << "Class " << castClass->getName() << " does not have a function member "
+                std::cerr << "Class " << castClass->getName()->getValue() << " does not have a function member "
                           << token->getValue() << " at line "
                           << token->getLine() << " and column "
                           << token->getColumn() << std::endl;
