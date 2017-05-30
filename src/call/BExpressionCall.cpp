@@ -31,6 +31,11 @@ std::string BExpressionCall::getTypeValueAsString() {
         std::string leftType = m_leftOperand->getTypeValueAsString();
         std::string rightType = m_rightOperand->getTypeValueAsString();
 
+        // UNDEFINED
+        if(leftType == BType::UNDEFINED || rightType == BType::UNDEFINED) {
+            return BType::UNDEFINED;
+        }
+
         // ==, !=
         if(m_operatorToken->getName() == BOOL_IS_EQUAL || m_operatorToken->getName() == BOOL_IS_NOT_EQUAL) {
             if(leftType == rightType) {
@@ -99,11 +104,16 @@ std::string BExpressionCall::getTypeValueAsString() {
 
         throw std::runtime_error("Undefined operator in an expression with two operands. Please report this error.");
     } else {
-        std::string singleOperand = m_leftOperand->getTypeValueAsString();
+        std::string singleOperandType = m_leftOperand->getTypeValueAsString();
+
+        // UNDEFINED
+        if(singleOperandType == BType::UNDEFINED) {
+            return BType::UNDEFINED;
+        }
 
         // !
         if(m_operatorToken->getName() == BOOL_NOT) {
-            if(singleOperand == BType::TYPE_VALUE_BOOLEAN) {
+            if(singleOperandType == BType::TYPE_VALUE_BOOLEAN) {
                 return BType::TYPE_VALUE_BOOLEAN;
             }
 
