@@ -10,6 +10,31 @@ private:
     std::shared_ptr<IBCallable> m_leftOperand;
     std::shared_ptr<IBCallable> m_rightOperand;
     std::shared_ptr<ecc::LexicalToken> m_operatorToken;
+
+    // Boolean expression
+    static const std::string BOOL_LOGICAL_OR;
+    static const std::string BOOL_LOGICAL_AND;
+    static const std::string BOOL_IS_EQUAL;
+    static const std::string BOOL_IS_NOT_EQUAL;
+    static const std::string BOOL_LESS_THAN;
+    static const std::string BOOL_GREATER_THAN;
+    static const std::string BOOL_LESS_OR_EQUAL;
+    static const std::string BOOL_GREATER_OR_EQUAL;
+    static const std::string BOOL_NOT;
+
+    // Integer expression
+    static const std::string INT_BIT_OR;
+    static const std::string INT_BIT_XOR;
+    static const std::string INT_BIT_AND;
+    static const std::string INT_LEFT_SHIFT;
+    static const std::string INT_RIGHT_SHIFT;
+    static const std::string INT_PLUS;
+    static const std::string INT_MINUS;
+    static const std::string INT_MULTIPLY;
+    static const std::string INT_DIVIDE;
+    static const std::string INT_MOD;
+    static const std::string INT_EXPONENTIAL;
+
 public:
 
     /**
@@ -47,6 +72,12 @@ public:
      * @return operator
      */
     std::shared_ptr<ecc::LexicalToken> getOperator() {return m_operatorToken;}
+
+    /**
+     * Get expression type
+     * @return expression type
+     */
+    std::string getTypeValueAsString();
 };
 
 #endif

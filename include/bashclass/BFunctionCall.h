@@ -29,6 +29,12 @@ public:
      * @param argument
      */
     void addArgument(std::shared_ptr<IBCallable> argument) {m_arguments.push_back(argument);};
+
+    /**
+     * Get function type
+     * @return function type
+     */
+    std::string getTypeValueAsString();
 };
 
 #endif

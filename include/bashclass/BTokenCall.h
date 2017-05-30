@@ -21,6 +21,16 @@ public:
      * @param lexicalToken
      */
     void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) { m_lexicalToken = lexicalToken;}
+
+    /**
+     * Get the type of token
+     * @return  BType::TYPE_VALUE_INT
+     *          BType::TYPE_VALUE_STRING
+     *          BType::TYPE_VALUE_CHAR
+     *          BType::TYPE_VALUE_BOOLEAN
+     *          BType::UNDEFINED
+     */
+    std::string getTypeValueAsString();
 };
 
 

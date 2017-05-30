@@ -27,13 +27,9 @@ void _linkVariablesTypes(std::shared_ptr<BScope> scope, std::shared_ptr<BScope> 
             if(cls.empty()) {
                 std::cerr << "Undefined type " << variable->getType()->getValue() <<
                 " for variable " << variable->getName()->getValue() << std::endl;
-                variable->setKnownType(false);
             } else {
                 variable->setTypeScope(cls.front());
-                variable->setKnownType(true);
             }
-        } else {
-            variable->setKnownType(true);
         }
     }
 }
@@ -51,13 +47,9 @@ void _linkFunctionsTypes(std::shared_ptr<BScope> scope, std::shared_ptr<BScope> 
             if(cls.empty()) {
                 std::cerr << "Undefined type " << castFunction->getType()->getValue() <<
                 " for function " << castFunction->getName()->getValue() << std::endl;
-                castFunction->setKnownType(false);
             } else {
                 castFunction->setTypeScope(cls.front());
-                castFunction->setKnownType(true);
             }
-        } else {
-            castFunction->setKnownType(true);
         }
     }
 }

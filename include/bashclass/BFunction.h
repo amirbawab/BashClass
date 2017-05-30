@@ -12,7 +12,6 @@ private:
     std::shared_ptr<ecc::LexicalToken> m_type;
     std::shared_ptr<BScope> m_typeScope;
     std::shared_ptr<IBCallable> m_returnExpression;
-    bool m_knownType = false;
 public:
 
     /**
@@ -52,12 +51,6 @@ public:
     void setTypeScope(std::shared_ptr<BScope> scope) {m_typeScope = scope;}
 
     /**
-     * Get type value as a string
-     * @return type string
-     */
-    std::string getTypeValue() const;
-
-    /**
      * Check if this function is a class member
      */
     bool isClassMember();
@@ -68,14 +61,9 @@ public:
     std::stringstream getLabel();
 
     /**
-     * Set if the function has a known type
-     */
-    void setKnownType(bool knownType) {m_knownType = knownType;}
-
-    /**
      * Check if the type of the function is known
      */
-    bool hasKnowType() const { return m_knownType;}
+    bool hasKnowType() const;
 
     /**
      * Set return expression

@@ -12,13 +12,10 @@ std::stringstream BVariable::getLabel() {
     return stream;
 }
 
-std::string BVariable::getTypeValue() const {
-    if(!m_knownType) {
-        return BType::UNDEFINED;
-    }
-    return m_type->getValue();
-}
-
 bool BVariable::isClassMember() {
     return m_parentScope && std::dynamic_pointer_cast<BClass>(m_parentScope);
+}
+
+bool BVariable::hasKnownType() const {
+    return BType::isBuiltInType(m_type->getName()) || m_typeScope;
 }

@@ -34,6 +34,12 @@ public:
      * @param expression
      */
     void setExpression(std::shared_ptr<IBCallable> expression) {m_expression = expression;}
+
+    /**
+     * Get type of the variable
+     * @return
+     */
+    std::string getTypeValueAsString();
 };
 
 

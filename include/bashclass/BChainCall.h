@@ -39,10 +39,17 @@ public:
      * @return last or nullptr
      */
     std::shared_ptr<IBCallable> last() {
-        if(m_callables.empty())
-            return nullptr;
+        if(m_callables.empty()) {
+            throw std::runtime_error("Accessing last element of an empty chain");
+        }
         return m_callables.back();
     }
+
+    /**
+     * Get chain type
+     * @return chain type
+     */
+    std::string getTypeValueAsString();
 };
 
 #endif
