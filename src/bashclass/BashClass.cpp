@@ -395,15 +395,13 @@ void BashClass::initHandlers() {
 
     m_varCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            auto chainCall = std::dynamic_pointer_cast<BChainCall>(m_chainBuilderStack.back());
-            chainCall->addVariable(m_scopeStack.back(), lexicalVector[index]);
+            m_chainBuilderStack.back()->addVariable(m_scopeStack.back(), lexicalVector[index]);
         }
     };
 
     m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            auto chainCall = std::dynamic_pointer_cast<BChainCall>(m_chainBuilderStack.back());
-            chainCall->addFunction(m_global, lexicalVector[index]);
+            m_chainBuilderStack.back()->addFunction(m_global, lexicalVector[index]);
         }
     };
 
