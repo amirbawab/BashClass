@@ -23,18 +23,6 @@ public:
     std::stringstream getStructure();
 
     /**
-     * Add a child class to this scope
-     * @param scope
-     */
-    void addClass(std::shared_ptr<BScope> scope);
-
-    /**
-     * Add a variable to this scope
-     * @param variable
-     */
-    void addVariable(std::shared_ptr<BVariable> variable);
-
-    /**
      * Find all variables
      * @param name Name of the variable | nullptr
      * @return if name is a nullptr, then return all the variables
