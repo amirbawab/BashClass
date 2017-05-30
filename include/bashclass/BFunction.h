@@ -76,6 +76,11 @@ public:
      * @return expression
      */
     std::shared_ptr<IBCallable> getExpression() {return m_returnExpression;}
+
+    /**
+     * A function member of a class must have the class as the type of the first argument
+     */
+    void verifyParameters();
 };
 
 #endif

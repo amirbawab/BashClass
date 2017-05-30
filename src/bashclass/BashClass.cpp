@@ -155,151 +155,6 @@ void _checkDuplicateParameter(ecc::LexicalToken &token, std::vector<std::shared_
 }
 
 /**
- * Make sure that functions, members of classes, have at least one param
- */
-void _requiredParam(std::shared_ptr<BScope> functionScope) {
-
-    // Check if function is a member of a class
-    auto castFunction = std::dynamic_pointer_cast<BFunction>(functionScope);
-    if(castFunction->isClassMember()) {
-        auto castClass = std::dynamic_pointer_cast<BClass>(functionScope->getParentScope());
-        auto params = functionScope->findAllParameters();
-        if(params.empty() || params[0]->getTypeScope() != castClass) {
-            std::cerr << "Function " << castFunction->getName()->getValue() << " in class "
-            << castClass->getName()->getValue() <<" must have the first argument of type "
-            << castClass->getName()->getValue() << std::endl;
-        }
-    }
-}
-
-/**
- * Find first variable, and add it to the callable chain
- */
-void _findFirstChainVariable(std::shared_ptr<BScope> scope, std::shared_ptr<BChainCall> chainCall,
-                             std::shared_ptr<ecc::LexicalToken> token) {
-    std::shared_ptr<BVariableCall> variableCall = std::make_shared<BVariableCall>();
-    auto variable = scope->findClosestVariable(token->getValue());
-    if(variable) {
-        // Check if the variable is a class member
-        if(variable->isClassMember()) {
-            std::cerr << "Use the first parameter of the function to refer to the variable "
-                      << variable->getName()->getValue() << " at line " << token->getLine() << " and column "
-                      << token->getColumn() << std::endl;
-        }
-
-        // Set variable anyway since it's clear what the user wants
-        variableCall->setVariable(variable);
-    } else {
-        std::cerr << "Undefined variable " << token->getValue()
-                  << " at line " << token->getLine() << " and column "
-                  << token->getColumn() << std::endl;
-    }
-    chainCall->add(variableCall);
-}
-
-/**
- * Find next variable, and add it to the callable chain
- */
-void _findNextChainVariable(std::shared_ptr<BChainCall> chainCall, std::shared_ptr<ecc::LexicalToken> token) {
-    auto variableCall = std::make_shared<BVariableCall>();
-    auto prevVariableCall = std::dynamic_pointer_cast<BVariableCall>(chainCall->last());
-    auto prevFunctionCall = std::dynamic_pointer_cast<BFunctionCall>(chainCall->last());
-    if((prevVariableCall && !prevVariableCall->getVariable()) || (prevFunctionCall && !prevFunctionCall->getFunction())) {
-        std::cerr << "Cannot access variable member " << token->getValue()
-                  << " of undefined at line " << token->getLine() << " and column "
-                  << token->getColumn() << std::endl;
-    } else {
-        std::shared_ptr<BScope> typeScope;
-        if(prevVariableCall) {
-            typeScope = prevVariableCall->getVariable()->getTypeScope();
-        } else if(prevFunctionCall) {
-            typeScope = prevFunctionCall->getFunction()->getTypeScope();
-        } else {
-            throw std::runtime_error("Undefined call on an unknown instance. Please report this error.");
-        }
-
-        if(typeScope) {
-            auto variables = typeScope->findAllVariables(token->getValue().c_str());
-            if(!variables.empty()) {
-                variableCall->setVariable(variables.front());
-            } else {
-                auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
-                std::cerr << "Class " << castClass->getName()->getValue() << " does not have a variable member "
-                          << token->getValue() << " at line "
-                          << token->getLine() << " and column "
-                          << token->getColumn() << std::endl;
-            }
-        } else {
-            std::cerr << "Variable member " << token->getValue()
-                      << " at line " << token->getLine()
-                      << " and column " << token->getColumn()
-                      << " does not exist. Previous element type does not have any known members." << std::endl;
-        }
-    }
-    chainCall->add(variableCall);
-}
-
-/**
- * Find first function, and add it to the callable chain
- */
-void _findFirstChainFunction(std::shared_ptr<BScope> globalScope, std::shared_ptr<BChainCall> chainCall,
-                             std::shared_ptr<ecc::LexicalToken> token) {
-    auto functionCall = std::make_shared<BFunctionCall>();
-    auto functions = globalScope->findAllFunctions(token->getValue().c_str());
-    if(!functions.empty()) {
-        functionCall->setFunction(std::dynamic_pointer_cast<BFunction>(functions.front()));
-    } else {
-        std::cerr << "Undefined function " << token->getValue()
-                  << " at line " << token->getLine() << " and column "
-                  << token->getColumn() << std::endl;
-    }
-    chainCall->add(functionCall);
-}
-
-/**
- * Find next function, and add it to the callable chain
- */
-void _findNextChainFunction(std::shared_ptr<BChainCall> chainCall, std::shared_ptr<ecc::LexicalToken> token) {
-    auto functionCall = std::make_shared<BFunctionCall>();
-    auto prevVariableCall = std::dynamic_pointer_cast<BVariableCall>(chainCall->last());
-    auto prevFunctionCall = std::dynamic_pointer_cast<BFunctionCall>(chainCall->last());
-    if((prevVariableCall && !prevVariableCall->getVariable()) || (prevFunctionCall && !prevFunctionCall->getFunction())) {
-        std::cerr << "Cannot access function member " << token->getValue()
-                  << " of undefined at line " << token->getLine() << " and column "
-                  << token->getColumn() << std::endl;
-    } else {
-        std::shared_ptr<BScope> typeScope;
-        if(prevVariableCall) {
-            typeScope = prevVariableCall->getVariable()->getTypeScope();
-        } else if(prevFunctionCall) {
-            typeScope = prevFunctionCall->getFunction()->getTypeScope();
-        } else {
-            throw std::runtime_error("Undefined call on an unknown instance. Please report this error.");
-        }
-
-        if(typeScope) {
-            auto functions = typeScope->findAllFunctions(token->getValue().c_str());
-            if(!functions.empty()) {
-                auto function = std::dynamic_pointer_cast<BFunction>(functions.front());
-                functionCall->setFunction(function);
-            } else {
-                auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
-                std::cerr << "Class " << castClass->getName()->getValue() << " does not have a function member "
-                          << token->getValue() << " at line "
-                          << token->getLine() << " and column "
-                          << token->getColumn() << std::endl;
-            }
-        } else {
-            std::cerr << "Function member " << token->getValue()
-                      << " at line " << token->getLine()
-                      << " and column " << token->getColumn()
-                      << " does not exist. Previous element type does not have any known members." << std::endl;
-        }
-    }
-    chainCall->add(functionCall);
-}
-
-/**
  * Initialize semantic action handlers
  */
 void BashClass::initHandlers() {
@@ -382,7 +237,8 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_CREATE) {
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_EVAL) {
-            _requiredParam(m_scopeStack.back());
+            auto functionScope = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
+            functionScope->verifyParameters();
             m_scopeStack.pop_back();
         }
     };
@@ -539,21 +395,15 @@ void BashClass::initHandlers() {
 
     m_varCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            if(m_chainBuilderStack.back()->empty()) {
-                _findFirstChainVariable(m_scopeStack.back(), m_chainBuilderStack.back(), lexicalVector[index]);
-            } else {
-                _findNextChainVariable(m_chainBuilderStack.back(), lexicalVector[index]);
-            }
+            auto chainCall = std::dynamic_pointer_cast<BChainCall>(m_chainBuilderStack.back());
+            chainCall->addVariable(m_scopeStack.back(), lexicalVector[index]);
         }
     };
 
     m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            if(m_chainBuilderStack.back()->empty()) {
-                _findFirstChainFunction(m_global, m_chainBuilderStack.back(), lexicalVector[index]);
-            } else {
-                _findNextChainFunction(m_chainBuilderStack.back(), lexicalVector[index]);
-            }
+            auto chainCall = std::dynamic_pointer_cast<BChainCall>(m_chainBuilderStack.back());
+            chainCall->addFunction(m_global, lexicalVector[index]);
         }
     };
 
@@ -561,7 +411,7 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_EVAL) {
             auto token = std::make_shared<BTokenCall>();
             token->setLexicalToken(lexicalVector[index]);
-            m_chainBuilderStack.back()->add(token);
+            m_chainBuilderStack.back()->addToken(token);
         }
     };
 

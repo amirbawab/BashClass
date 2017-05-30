@@ -1,6 +1,7 @@
 #include <bashclass/BFunction.h>
 #include <bashclass/BClass.h>
 #include <bashclass/BTypes.h>
+#include <iostream>
 
 std::stringstream BFunction::getLabel() {
     std::stringstream stream = m_parentScope->getLabel();
@@ -14,4 +15,16 @@ bool BFunction::isClassMember() {
 
 bool BFunction::hasKnowType() const {
     return BType::isBuiltInType(m_type->getName()) || m_typeScope;
+}
+
+void BFunction::verifyParameters() {
+    if(isClassMember()) {
+        auto castClass = std::dynamic_pointer_cast<BClass>(m_parentScope);
+        auto params = findAllParameters();
+        if(params.empty() || params[0]->getTypeScope() != castClass) {
+            std::cerr << "Function " << getName()->getValue() << " in class "
+                      << castClass->getName()->getValue() <<" must have the first argument of type "
+                      << castClass->getName()->getValue() << std::endl;
+        }
+    }
 }

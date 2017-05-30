@@ -4,19 +4,13 @@
 #include <memory>
 #include <vector>
 #include <bashclass/IBCallable.h>
+#include <bashclass/BScope.h>
+#include <bashclass/BTokenCall.h>
 
 class BChainCall : public IBCallable {
 private:
     std::vector<std::shared_ptr<IBCallable>> m_callables;
 public:
-
-    /**
-     * Get a call to the chain
-     * @param call
-     */
-    void add(std::shared_ptr<IBCallable> call) {
-        m_callables.push_back(call);
-    }
 
     /**
      * Get chain size
@@ -50,6 +44,26 @@ public:
      * @return chain type
      */
     std::string getTypeValueAsString();
+
+    /**
+     * Add variable to the chain
+     * @param scope
+     * @param token
+     */
+    void addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token);
+
+    /**
+     * Add function to the chain
+     * @param scope
+     * @param token
+     */
+    void addFunction(std::shared_ptr<BScope> globalScope, std::shared_ptr<ecc::LexicalToken> token);
+
+    /**
+     * Add token to the chain
+     * @param token
+     */
+    void addToken(std::shared_ptr<BTokenCall> token);
 };
 
 #endif
