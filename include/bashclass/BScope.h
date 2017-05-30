@@ -13,7 +13,6 @@ class BScope : public std::enable_shared_from_this<BScope> {
 protected:
     std::map<unsigned int,std::shared_ptr<BVariable>> m_variables;
     std::map<unsigned int,std::shared_ptr<BScope>> m_scopes;
-    std::shared_ptr<ecc::LexicalToken> m_referenceToken;
     std::shared_ptr<BScope> m_parentScope;
 public:
     virtual ~BScope(){}
@@ -27,31 +26,31 @@ public:
      * Create a class that belong to this scope
      * @return pointer to the create class
      */
-    std::shared_ptr<BScope> createClass(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+    std::shared_ptr<BScope> createClass();
 
     /**
      * Create a function that belong to this scope
      * @return pointer to the create function
      */
-    std::shared_ptr<BScope> createFunction(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+    std::shared_ptr<BScope> createFunction();
 
     /**
      * Create a while that belong to this scope
      * @return pointer to the create while
      */
-    std::shared_ptr<BScope> createWhile(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+    std::shared_ptr<BScope> createWhile();
 
     /**
      * Create an if that belong to this scope
      * @return pointer to the create if
      */
-    std::shared_ptr<BScope> createIf(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+    std::shared_ptr<BScope> createIf();
 
     /**
      * Create a variable that belong to this scope
      * @return pointer to the create variable
      */
-    std::shared_ptr<BVariable> createVariable(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+    std::shared_ptr<BVariable> createVariable();
 
     /**
      * Find all variables
@@ -102,18 +101,6 @@ public:
     void setParentScope(std::shared_ptr<BScope> scope) { m_parentScope = scope;}
 
     /**
-     * Set reference token that defines this scope
-     * @param lexicalToken
-     */
-    void setReferenceToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {m_referenceToken=lexicalToken;}
-
-    /**
-     * Get reference token
-     * @return lexical token pointer
-     */
-    std::shared_ptr<ecc::LexicalToken> getReferenceToken() const {return m_referenceToken;}
-
-    /**
      * Get scope by lexical token
      * @param lexicalToken
      * @return pointer to scope | nullptr
@@ -144,6 +131,20 @@ public:
      * @return closest variable pointer | nullptr if not found
      */
     std::shared_ptr<BVariable> findClosestVariable(std::string name);
+
+    /**
+     * Bind a token to a scope
+     * @param token
+     * @param scope
+     */
+    void bind(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> scope);
+
+    /**
+     * Bind a token to a variable
+     * @param token
+     * @param variable
+     */
+    void bind(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BVariable> variable);
 };
 
 #endif

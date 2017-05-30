@@ -15,7 +15,6 @@ private:
     std::shared_ptr<BScope> m_typeScope;
     std::shared_ptr<ecc::LexicalToken> m_name;
     std::shared_ptr<BScope> m_parentScope;
-    std::shared_ptr<ecc::LexicalToken> m_referenceToken;
     bool m_isParam;
 public:
     BVariable();
@@ -79,18 +78,6 @@ public:
      * @param isParam True if the variable is a function parameter
      */
     void setIsParam(bool isParam) {m_isParam = isParam;}
-
-    /**
-     * Set lexical token used a reference
-     * @param pointer to the reference token
-     */
-    void setReferenceToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) { m_referenceToken = lexicalToken;}
-
-    /**
-     * Get reference token
-     * @return pointer to the reference token
-     */
-    std::shared_ptr<ecc::LexicalToken> getReferenceToken() {return m_referenceToken;}
 
     /**
      * Get variable label

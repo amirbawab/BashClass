@@ -7,43 +7,33 @@
 #include <bashclass/BashClass.h>
 #include <sstream>
 
-std::shared_ptr<BScope> BScope::createClass(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+std::shared_ptr<BScope> BScope::createClass() {
     auto classComp = std::make_shared<BClass>();
     classComp->setParentScope(shared_from_this());
-    classComp->setReferenceToken(lexicalToken);
-    m_scopes[lexicalToken->getUID()]=classComp;
     return classComp;
 }
 
-std::shared_ptr<BScope> BScope::createFunction(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+std::shared_ptr<BScope> BScope::createFunction() {
     auto functionComp = std::make_shared<BFunction>();
     functionComp->setParentScope(shared_from_this());
-    functionComp->setReferenceToken(lexicalToken);
-    m_scopes[lexicalToken->getUID()]=functionComp;
     return functionComp;
 }
 
-std::shared_ptr<BScope> BScope::createWhile(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+std::shared_ptr<BScope> BScope::createWhile() {
     auto whileComp = std::make_shared<BWhile>();
     whileComp->setParentScope(shared_from_this());
-    whileComp->setReferenceToken(lexicalToken);
-    m_scopes[lexicalToken->getUID()]=whileComp;
     return whileComp;
 }
 
-std::shared_ptr<BScope> BScope::createIf(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+std::shared_ptr<BScope> BScope::createIf() {
     auto ifComp = std::make_shared<BIf>();
     ifComp->setParentScope(shared_from_this());
-    ifComp->setReferenceToken(lexicalToken);
-    m_scopes[lexicalToken->getUID()]=ifComp;
     return ifComp;
 }
 
-std::shared_ptr<BVariable> BScope::createVariable(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+std::shared_ptr<BVariable> BScope::createVariable() {
     auto variableComp = std::make_shared<BVariable>();
     variableComp->setParentScope(shared_from_this());
-    variableComp->setReferenceToken(lexicalToken);
-    m_variables[lexicalToken->getUID()]=variableComp;
     return variableComp;
 }
 
@@ -174,4 +164,12 @@ std::stringstream BScope::getStructure() {
         }
     }
     return structure;
+}
+
+void BScope::bind(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> scope) {
+    m_scopes[token->getUID()] = scope;
+}
+
+void BScope::bind(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BVariable> variable) {
+    m_variables[token->getUID()] = variable;
 }
