@@ -19,9 +19,9 @@ bool BFunction::hasKnowType() const {
 
 void BFunction::verifyParameters() {
     if(isClassMember()) {
-        auto castClass = std::dynamic_pointer_cast<BClass>(m_parentScope);
         auto params = findAllParameters();
-        if(params.empty() || params[0]->getTypeScope() != castClass) {
+        if(params.empty() || params.front()->getTypeScope() != m_parentScope) {
+            auto castClass = std::dynamic_pointer_cast<BClass>(m_parentScope);
             std::cerr << "Function " << getName()->getValue() << " in class "
                       << castClass->getName()->getValue() <<" must have the first argument of type "
                       << castClass->getName()->getValue() << std::endl;

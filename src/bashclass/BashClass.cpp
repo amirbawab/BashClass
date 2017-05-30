@@ -111,50 +111,6 @@ void _detectCircularReference(std::shared_ptr<BScope> scope) {
 }
 
 /**
- * Check if class was already defined
- */
-void _checkDuplicateClass(ecc::LexicalToken &token, std::vector<std::shared_ptr<BScope>> &scopeStack) {
-    auto getClass = scopeStack.back()->getParentScope()->findAllClasses(token.getValue().c_str());
-    if(!getClass.empty()) {
-        std::cerr << "Class " << token.getValue() << " at line " << token.getLine()
-        << " was defined previously" << std::endl;
-    }
-}
-
-/**
- * Check if function was already defined in the scope
- */
-void _checkDuplicateFunction(ecc::LexicalToken &token, std::vector<std::shared_ptr<BScope>> &scopeStack) {
-    auto getFunc = scopeStack.back()->getParentScope()->findAllFunctions(token.getValue().c_str());
-    if(!getFunc.empty()) {
-        std::cerr << "Function " << token.getValue() << " at line " << token.getLine()
-        <<" was defined previously in the same scope" << std::endl;
-    }
-}
-
-/**
- * Check if variable was already defined in the scope
- */
-void _checkDuplicateVariable(ecc::LexicalToken &token, std::vector<std::shared_ptr<BScope>> &scopeStack) {
-    auto getVar = scopeStack.back()->findAllVariables(token.getValue().c_str());
-    if(!getVar.empty()) {
-        std::cerr << "Variable " << token.getValue() << " at line " << token.getLine()
-        << " was defined previously in the same scope" << std::endl;
-    }
-}
-
-/**
- * Check if parameter was already defined in the scope
- */
-void _checkDuplicateParameter(ecc::LexicalToken &token, std::vector<std::shared_ptr<BScope>> &scopeStack) {
-    auto getVar = scopeStack.back()->findAllParameters(token.getValue().c_str());
-    if(!getVar.empty()) {
-        std::cerr << "Parameter " << token.getValue() << " at line " << token.getLine()
-        << " was defined previously in the same scope" << std::endl;
-    }
-}
-
-/**
  * Initialize semantic action handlers
  */
 void BashClass::initHandlers() {
@@ -178,24 +134,29 @@ void BashClass::initHandlers() {
      **************************************/
     m_startClass = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            auto newClass = m_scopeStack.back()->createClass();
-            m_scopeStack.back()->bind(lexicalVector[index], newClass);
-            m_scopeStack.push_back(newClass);
-        } else if(phase == BashClass::PHASE_EVAL) {
-            auto newClass = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
-            m_scopeStack.push_back(newClass);
+            m_focusClass = std::make_shared<BClass>();
         }
     };
 
     m_className = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
 
-            // Check if class already exists
-            _checkDuplicateClass(*lexicalVector[index], m_scopeStack);
-
             // Set class name
-            auto createdClass = std::dynamic_pointer_cast<BClass>(m_scopeStack.back());
-            createdClass->setName(lexicalVector[index]);
+            m_focusClass->setName(lexicalVector[index]);
+
+            // Register class
+            m_scopeStack.back()->registerClass(lexicalVector[index], m_focusClass);
+
+            // Push class scope
+            m_scopeStack.push_back(m_focusClass);
+
+            // Clear focus
+            m_focusClass = nullptr;
+        } else if(phase == BashClass::PHASE_EVAL) {
+
+            // Push class scope
+            auto classScope = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
+            m_scopeStack.push_back(classScope);
         }
     };
 
@@ -210,30 +171,35 @@ void BashClass::initHandlers() {
      **************************************/
     m_startFunction = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            auto newFunction = m_scopeStack.back()->createFunction();
-            m_scopeStack.back()->bind(lexicalVector[index], newFunction);
-            m_scopeStack.push_back(newFunction);
-        } else if(phase == BashClass::PHASE_EVAL) {
-            auto newFunction = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
-            m_scopeStack.push_back(newFunction);
+            m_focusFunction = std::make_shared<BFunction>();
         }
     };
 
     m_functionType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            auto createdFunction = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
-            createdFunction->setType(lexicalVector[index]);
+            m_focusFunction->setType(lexicalVector[index]);
         }
     };
 
     m_functionName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
 
-            // Check if function already exists in the current scope
-            _checkDuplicateFunction(*lexicalVector[index],m_scopeStack);
+            // Set function name
+            m_focusFunction->setName(lexicalVector[index]);
 
-            auto createdFunction = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
-            createdFunction->setName(lexicalVector[index]);
+            // Register function
+            m_scopeStack.back()->registerFunction(lexicalVector[index], m_focusFunction);
+
+            // Push function scope
+            m_scopeStack.push_back(m_focusFunction);
+
+            // Clear focus
+            m_focusFunction = nullptr;
+        } else if(phase == BashClass::PHASE_EVAL) {
+
+            // Push function scope
+            auto createdFunction = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
+            m_scopeStack.push_back(createdFunction);
         }
     };
 
@@ -252,9 +218,7 @@ void BashClass::initHandlers() {
      **************************************/
     m_startVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            auto variable = m_scopeStack.back()->createVariable();
-            m_scopeStack.back()->bind(lexicalVector[index], variable);
-            m_focusVariable = variable;
+            m_focusVariable = std::make_shared<BVariable>();
         }
     };
 
@@ -267,17 +231,19 @@ void BashClass::initHandlers() {
     m_varName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
 
-            // Check if variable already exists in the current scope
-            _checkDuplicateVariable(*lexicalVector[index], m_scopeStack);
-
+            // Set variable name
             m_focusVariable->setName(lexicalVector[index]);
+
+            // Register variable
+            m_scopeStack.back()->registerVariable(lexicalVector[index], m_focusVariable);
+
+            // Clear focus
+            m_focusVariable = nullptr;
         }
     };
 
     m_endVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE) {
-            m_focusVariable = nullptr;
-        }
+        // Do nothing ...
     };
 
     /**************************************
@@ -285,10 +251,8 @@ void BashClass::initHandlers() {
      **************************************/
     m_startParam = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            auto createdVar = m_scopeStack.back()->createVariable();
-            m_scopeStack.back()->bind(lexicalVector[index], createdVar);
-            createdVar->setIsParam(true);
-            m_focusVariable = createdVar;
+            m_focusVariable = std::make_shared<BVariable>();
+            m_focusVariable->setIsParam(true);
         }
     };
 
@@ -301,17 +265,19 @@ void BashClass::initHandlers() {
     m_paramName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
 
-            // Check if parameter already exists in the current scope
-            _checkDuplicateParameter(*lexicalVector[index], m_scopeStack);
-
+            // Set parameter name
             m_focusVariable->setName(lexicalVector[index]);
+
+            // Register parameter
+            m_scopeStack.back()->registerVariable(lexicalVector[index], m_focusVariable);
+
+            // Clear focus
+            m_focusVariable = nullptr;
         }
     };
 
     m_endParam = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE) {
-            m_focusVariable = nullptr;
-        }
+        // Do nothing ...
     };
 
     /**************************************
@@ -320,12 +286,12 @@ void BashClass::initHandlers() {
 
     m_startWhile = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            auto newWhile = m_scopeStack.back()->createWhile();
-            m_scopeStack.back()->bind(lexicalVector[index], newWhile);
+            auto newWhile = std::make_shared<BWhile>();
+            m_scopeStack.back()->registerScope(lexicalVector[index], newWhile);
             m_scopeStack.push_back(newWhile);
         } else if(phase == BashClass::PHASE_EVAL) {
-            auto newWhile = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
-            m_scopeStack.push_back(newWhile);
+            auto createdWhile = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
+            m_scopeStack.push_back(createdWhile);
         }
     };
 
@@ -349,12 +315,12 @@ void BashClass::initHandlers() {
 
     m_startIf = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            auto newIf = m_scopeStack.back()->createIf();
-            m_scopeStack.back()->bind(lexicalVector[index], newIf);
+            auto newIf = std::make_shared<BIf>();
+            m_scopeStack.back()->registerScope(lexicalVector[index], newIf);
             m_scopeStack.push_back(newIf);
         } else if(phase == BashClass::PHASE_EVAL) {
-            auto newIf = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
-            m_scopeStack.push_back(newIf);
+            auto createdIf = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
+            m_scopeStack.push_back(createdIf);
         }
     };
 

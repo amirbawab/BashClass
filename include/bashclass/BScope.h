@@ -23,34 +23,16 @@ public:
     std::stringstream getStructure();
 
     /**
-     * Create a class that belong to this scope
-     * @return pointer to the create class
+     * Add a child class to this scope
+     * @param scope
      */
-    std::shared_ptr<BScope> createClass();
+    void addClass(std::shared_ptr<BScope> scope);
 
     /**
-     * Create a function that belong to this scope
-     * @return pointer to the create function
+     * Add a variable to this scope
+     * @param variable
      */
-    std::shared_ptr<BScope> createFunction();
-
-    /**
-     * Create a while that belong to this scope
-     * @return pointer to the create while
-     */
-    std::shared_ptr<BScope> createWhile();
-
-    /**
-     * Create an if that belong to this scope
-     * @return pointer to the create if
-     */
-    std::shared_ptr<BScope> createIf();
-
-    /**
-     * Create a variable that belong to this scope
-     * @return pointer to the create variable
-     */
-    std::shared_ptr<BVariable> createVariable();
+    void addVariable(std::shared_ptr<BVariable> variable);
 
     /**
      * Find all variables
@@ -133,18 +115,32 @@ public:
     std::shared_ptr<BVariable> findClosestVariable(std::string name);
 
     /**
-     * Bind a token to a scope
+     * Register class
+     * @param token
+     * @param classScope
+     */
+    void registerClass(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> classScope);
+
+    /**
+     * Register function
+     * @param token
+     * @param functionScope
+     */
+    void registerFunction(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> functionScope);
+
+    /**
+     * Register scope
      * @param token
      * @param scope
      */
-    void bind(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> scope);
+    void registerScope(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> scope);
 
     /**
-     * Bind a token to a variable
+     * Register variable
      * @param token
      * @param variable
      */
-    void bind(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BVariable> variable);
+    void registerVariable(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BVariable> variable);
 };
 
 #endif

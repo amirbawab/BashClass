@@ -5,37 +5,8 @@
 #include <bashclass/BWhile.h>
 #include <bashclass/BIf.h>
 #include <bashclass/BashClass.h>
+#include <iostream>
 #include <sstream>
-
-std::shared_ptr<BScope> BScope::createClass() {
-    auto classComp = std::make_shared<BClass>();
-    classComp->setParentScope(shared_from_this());
-    return classComp;
-}
-
-std::shared_ptr<BScope> BScope::createFunction() {
-    auto functionComp = std::make_shared<BFunction>();
-    functionComp->setParentScope(shared_from_this());
-    return functionComp;
-}
-
-std::shared_ptr<BScope> BScope::createWhile() {
-    auto whileComp = std::make_shared<BWhile>();
-    whileComp->setParentScope(shared_from_this());
-    return whileComp;
-}
-
-std::shared_ptr<BScope> BScope::createIf() {
-    auto ifComp = std::make_shared<BIf>();
-    ifComp->setParentScope(shared_from_this());
-    return ifComp;
-}
-
-std::shared_ptr<BVariable> BScope::createVariable() {
-    auto variableComp = std::make_shared<BVariable>();
-    variableComp->setParentScope(shared_from_this());
-    return variableComp;
-}
 
 std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(const char* name) {
     std::vector<std::shared_ptr<BVariable>> variables;
@@ -86,14 +57,14 @@ std::shared_ptr<BScope> BScope::getScopeByToken(std::shared_ptr<ecc::LexicalToke
     if(m_scopes.find(lexicalToken->getUID()) != m_scopes.end()) {
         return m_scopes[lexicalToken->getUID()];
     }
-    return nullptr;
+    throw std::runtime_error("Requesting scope with an unrecognized token key");
 }
 
 std::shared_ptr<BVariable> BScope::getVariableByToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
     if(m_variables.find(lexicalToken->getUID()) != m_variables.end()) {
         return m_variables[lexicalToken->getUID()];
     }
-    return nullptr;
+    throw std::runtime_error("Requesting variable with an unrecognized token key");
 }
 
 std::vector<std::shared_ptr<BScope>> BScope::getAllScopes() {
@@ -166,10 +137,70 @@ std::stringstream BScope::getStructure() {
     return structure;
 }
 
-void BScope::bind(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> scope) {
-    m_scopes[token->getUID()] = scope;
+void BScope::registerClass(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> classScope) {
+
+    // Cast class
+    auto classScopeCast = std::dynamic_pointer_cast<BClass>(classScope);
+
+    // Class name is required
+    if(!classScopeCast->getName()) {
+        throw std::runtime_error("Cannot register a class without specifying its name first");
+    }
+
+    // Check if class was added previously
+    auto getClass = findAllClasses(classScopeCast->getName()->getValue().c_str());
+    if(!getClass.empty()) {
+        std::cerr << "Class " << classScopeCast->getName()->getValue() << " at line "
+                  << classScopeCast->getName()->getLine() << " was defined previously" << std::endl;
+    }
+
+    // Register class in this scope
+    registerScope(token, classScope);
 }
 
-void BScope::bind(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BVariable> variable) {
+void BScope::registerFunction(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> functionScope) {
+
+    // Cast function
+    auto functionScopeCast = std::dynamic_pointer_cast<BFunction>(functionScope);
+
+    // Function name is required
+    if(!functionScopeCast->getName()) {
+        throw std::runtime_error("Cannot register a function without specifying its name first");
+    }
+
+    // Check if function was added previously
+    auto getFunc = findAllFunctions(functionScopeCast->getName()->getValue().c_str());
+    if(!getFunc.empty()) {
+        std::cerr << "Function " << functionScopeCast->getName()->getValue() << " at line "
+                  << functionScopeCast->getName()->getLine()
+                  <<" was defined previously in the same scope" << std::endl;
+    }
+
+    // Register function in this scope
+    registerScope(token, functionScope);
+}
+
+void BScope::registerScope(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> scope) {
+    m_scopes[token->getUID()] = scope;
+    scope->setParentScope(shared_from_this());
+}
+
+void BScope::registerVariable(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BVariable> variable) {
+
+    // Variable name is required
+    if(!variable->getName()) {
+        throw std::runtime_error("Cannot register a variable without specifying its name");
+    }
+
+    // Check if variable was added previously
+    auto getVar = findAllVariables(variable->getName()->getValue().c_str());
+    if(!getVar.empty()) {
+        std::cerr << (variable->isParam() ? "Parameter " : "Variable ")
+                  << variable->getName()->getValue() << " at line " << variable->getName()->getLine()
+                  << " was defined previously in the same scope" << std::endl;
+    }
+
+    // Register variable in this scope
     m_variables[token->getUID()] = variable;
+    variable->setParentScope(shared_from_this());
 }

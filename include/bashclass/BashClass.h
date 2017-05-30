@@ -10,6 +10,7 @@
 #include <bashclass/BFunctionCall.h>
 #include <bashclass/BTokenCall.h>
 #include <bashclass/BExpressionCall.h>
+#include <bashclass/BClass.h>
 
 typedef std::vector<std::shared_ptr<ecc::LexicalToken>> LexicalTokens;
 typedef std::function<void(int, LexicalTokens&, int, bool)> SemanticActionHandler;
@@ -93,6 +94,12 @@ private:
 
     // Hold variable currently being defined
     std::shared_ptr<BVariable> m_focusVariable;
+
+    // Hold function currently being defined
+    std::shared_ptr<BFunction> m_focusFunction;
+
+    // Hold class currently being defined
+    std::shared_ptr<BClass> m_focusClass;
 
     // Hold chains and expressions operands
     std::vector<std::shared_ptr<IBCallable>> m_expressionOperandStack;
