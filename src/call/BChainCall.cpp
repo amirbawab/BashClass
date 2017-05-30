@@ -29,6 +29,7 @@ void BChainCall::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc:
 
     // Prepare variable call
     std::shared_ptr<BVariableCall> variableCall = std::make_shared<BVariableCall>();
+    variableCall->setLexicalToken(token);
 
     // Check if the variable is the first callable item to be added
     if(m_callables.empty()) {
@@ -86,6 +87,7 @@ void BChainCall::addFunction(std::shared_ptr<BScope> globalScope, std::shared_pt
 
     // Prepare function call
     auto functionCall = std::make_shared<BFunctionCall>();
+    functionCall->setLexicalToken(token);
 
     // Check if the function is the first callable item to be added
     if(m_callables.empty()) {

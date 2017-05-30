@@ -10,6 +10,7 @@ class BFunctionCall : public IBCallable {
 private:
     std::shared_ptr<BFunction> m_function;
     std::vector<std::shared_ptr<IBCallable>> m_arguments;
+    std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
 public:
 
     /**
@@ -35,6 +36,23 @@ public:
      * @return function type
      */
     std::string getTypeValueAsString();
+
+    /**
+     * Arguments must match function parameters
+     */
+    void verifyArguments();
+
+    /**
+     * Set lexical token
+     * @param lexicalToken
+     */
+    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {m_lexicalToken = lexicalToken;}
+
+    /**
+     * Get lexical token
+     * @return lexical token
+     */
+    std::shared_ptr<ecc::LexicalToken> getLexicalToken() {return m_lexicalToken;}
 };
 
 #endif

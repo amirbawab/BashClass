@@ -9,6 +9,7 @@ class BVariableCall : public IBCallable {
 private:
     std::shared_ptr<BVariable> m_variable;
     std::shared_ptr<IBCallable> m_expression;
+    std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
 public:
 
     /**
@@ -40,6 +41,18 @@ public:
      * @return
      */
     std::string getTypeValueAsString();
+
+    /**
+     * Set lexical token
+     * @param lexicalToken
+     */
+    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) { m_lexicalToken = lexicalToken;}
+
+    /**
+     * Get lexical token
+     * @return lexical token
+     */
+    std::shared_ptr<ecc::LexicalToken> getLexicalToken() {return m_lexicalToken;}
 };
 
 

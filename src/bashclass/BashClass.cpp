@@ -423,7 +423,12 @@ void BashClass::initHandlers() {
 
     m_endArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+
+            // Get function call
+            auto functionCall = std::dynamic_pointer_cast<BFunctionCall>(m_chainBuilderStack.back()->last());
+
+            // Verify provided arguments
+            functionCall->verifyArguments();
         }
     };
 
