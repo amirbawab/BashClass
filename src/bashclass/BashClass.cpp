@@ -14,101 +14,6 @@ void BashClass::printStructure() {
     std::cout << m_global->getStructure().str() << std::endl;
 }
 
-/**
- * Link variable types in the provided scope
- */
-void _linkVariablesTypes(std::shared_ptr<BScope> scope, std::shared_ptr<BScope> globalScope) {
-    // Evaluate all variables in that scope
-    for(auto variable : scope->findAllVariables()) {
-        if(!BType::isBuiltInType(variable->getType()->getName())) {
-            // Find class scope of that type
-            auto cls = globalScope->findAllClasses(variable->getType()->getValue().c_str());
-            if(cls.empty()) {
-                std::cerr << "Undefined type " << variable->getType()->getValue() <<
-                " for variable " << variable->getName()->getValue() << std::endl;
-            } else {
-                variable->setTypeScope(cls.front());
-            }
-        }
-    }
-}
-
-/**
- * Link functions types in the provided scope
- */
-void _linkFunctionsTypes(std::shared_ptr<BScope> scope, std::shared_ptr<BScope> globalScope) {
-    // Evaluate all functions in that scope
-    for(auto function : scope->findAllFunctions()) {
-        auto castFunction = std::dynamic_pointer_cast<BFunction>(function);
-        if(!BType::isBuiltInType(castFunction->getType()->getName())) {
-            // Find class scope of that type
-            auto cls = globalScope->findAllClasses(castFunction->getType()->getValue().c_str());
-            if(cls.empty()) {
-                std::cerr << "Undefined type " << castFunction->getType()->getValue() <<
-                " for function " << castFunction->getName()->getValue() << std::endl;
-            } else {
-                castFunction->setTypeScope(cls.front());
-            }
-        }
-    }
-}
-
-/**
- * Run a depth-first traversal and link all the variables
- * to their types
- */
-void _linkTypes(std::shared_ptr<BScope> globalScope) {
-
-    std::stack<std::shared_ptr<BScope>> scopeStack;
-    scopeStack.push(globalScope);
-    while(!scopeStack.empty()) {
-
-        auto top = scopeStack.top();
-        scopeStack.pop();
-
-        _linkVariablesTypes(top,globalScope);
-        _linkFunctionsTypes(top,globalScope);
-
-        for(auto scope : top->getAllScopes()) {
-            scopeStack.push(scope);
-        }
-    }
-}
-
-/**
- * Run a depth-first traversal on variable types and detect
- * all circular references
- */
-void _detectCircularReference(std::shared_ptr<BScope> scope) {
-    for(auto cls : scope->findAllClasses()) {
-        std::stack<std::shared_ptr<BScope>> scopeStack;
-        scopeStack.push(cls);
-        std::set<std::shared_ptr<BScope>> visited;
-        while(!scopeStack.empty()) {
-
-            // Get top class scope
-            auto top = scopeStack.top();
-            scopeStack.pop();
-
-            // Mark class as visited
-            visited.insert(top);
-
-            // Evaluate all variables in the class scope
-            for(auto variable : top->findAllVariables()) {
-                if(variable->getTypeScope()) {
-                    if(visited.find(variable->getTypeScope()) == visited.end()) {
-                        scopeStack.push(variable->getTypeScope());
-                    } else {
-                        auto castClass = std::dynamic_pointer_cast<BClass>(cls);
-                        std::cerr << "Circular reference detected from class " << castClass->getName()->getValue() << std::endl;
-                    }
-                }
-            }
-        }
-
-    }
-}
-
 void BashClass::onPhaseStartCheck() {
     if(!m_chainBuilderStack.empty()) {
         throw std::runtime_error("Chain builder stack is not empty. Please report this error.");
@@ -148,9 +53,11 @@ void BashClass::initHandlers() {
             // Push global scope
             m_scopeStack.push_back(m_global);
 
-            // TODO Move those functions to the global class
-            _linkTypes(m_global);
-            _detectCircularReference(m_global);
+            // Link types of functions and variables
+            m_global->linkTypes();
+
+            // Detect circular references
+            m_global->detectCircularReference();
         } else if(phase == BashClass::PHASE_GENERATE) {
 
             // Run checks
