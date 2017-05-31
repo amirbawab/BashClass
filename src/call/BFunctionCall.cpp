@@ -28,7 +28,6 @@ void BFunctionCall::verifyArguments() {
 
         // Arguments type must match function parameters
         for(size_t i = 0; i < parameters.size(); i++) {
-            std::cout << m_arguments[i]->getTypeValueAsString() << std::endl;
             if(!parameters[i]->hasKnownType()) {
                 std::cerr << "Cannot pass argument value to an undefined type for parameter "
                           << parameters[i]->getName()->getValue() << " in function "

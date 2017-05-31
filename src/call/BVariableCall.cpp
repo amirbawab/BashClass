@@ -5,5 +5,5 @@ std::string BVariableCall::getTypeValueAsString() {
     if(!m_variable || !m_variable->hasKnownType()) {
         return BType::UNDEFINED;
     }
-    m_variable->getType()->getValue();
+    return m_variable->getType()->getValue();
 }
