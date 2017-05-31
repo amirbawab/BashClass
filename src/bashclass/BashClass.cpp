@@ -209,6 +209,7 @@ void BashClass::initHandlers() {
         } else if(phase == BashClass::PHASE_EVAL) {
             auto functionScope = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
             functionScope->verifyParameters();
+            functionScope->verifyReturns();
             m_scopeStack.pop_back();
         }
     };
@@ -398,6 +399,41 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
+     *          RETURN
+     **************************************/
+
+    m_startReturn = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable) {
+        if(phase == BashClass::PHASE_EVAL) {
+            m_focusReturnToken = lexicalVector[index];
+        }
+    };
+
+    m_returnExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+
+            // Get current function scope
+            auto functionScope = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
+
+            // Create and configure return statement
+            auto returnComp = std::make_shared<BReturn>();
+            returnComp->setExpression(m_expressionOperandStack.back());
+
+            // Register return statement
+            functionScope->registerReturn(m_focusReturnToken, returnComp);
+
+            // Remove consumed expression
+            m_expressionOperandStack.pop_back();
+
+            // Clear focus
+            m_focusReturnToken = nullptr;
+        }
+    };
+
+    m_endReturn = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        // Do nothing ...
+    };
+
+    /**************************************
      *          ARGUMENT
      **************************************/
 
@@ -476,14 +512,6 @@ void BashClass::initHandlers() {
             m_chainBuilderStack.pop_back();
             variableCall->setExpression(m_expressionOperandStack.back());
             variableCall->verifyAssign();
-            m_expressionOperandStack.pop_back();
-        }
-    };
-
-    m_returnExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            auto functionScope = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
-            functionScope->setReturnExpression(m_expressionOperandStack.back());
             m_expressionOperandStack.pop_back();
         }
     };

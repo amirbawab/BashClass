@@ -5,13 +5,14 @@
 #include <memory>
 #include <bashclass/BScope.h>
 #include <bashclass/IBCallable.h>
+#include <bashclass/BReturn.h>
 
 class BFunction : public BScope {
 private:
     std::shared_ptr<ecc::LexicalToken> m_name;
     std::shared_ptr<ecc::LexicalToken> m_type;
     std::shared_ptr<BScope> m_typeScope;
-    std::shared_ptr<IBCallable> m_returnExpression;
+    std::map<unsigned int,std::shared_ptr<BReturn>> m_returns;
 public:
 
     /**
@@ -66,21 +67,40 @@ public:
     bool hasKnowType() const;
 
     /**
-     * Set return expression
-     * @param returnExpression
-     */
-    void setReturnExpression(std::shared_ptr<IBCallable> returnExpression) {m_returnExpression = returnExpression;}
-
-    /**
-     * Get return expression
-     * @return expression
-     */
-    std::shared_ptr<IBCallable> getExpression() {return m_returnExpression;}
-
-    /**
      * A function member of a class must have the class as the type of the first argument
      */
     void verifyParameters();
+
+    /**
+     * Check if function requires a return expression
+     * @return true if function requires a return expression
+     */
+    bool requiresReturn();
+
+    /**
+     * Check if the function has a return statement
+     * @return true if the function has a return statement
+     */
+    bool hasReturn();
+
+    /**
+     * Register return statement
+     * @param token
+     * @param ret
+     */
+    void registerReturn(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BReturn> ret);
+
+    /**
+     * Get registered return expression
+     * @param lexicalToken
+     * @return return
+     */
+    std::shared_ptr<BReturn> getReturnByToken(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+
+    /**
+     * A void function should not a return statement
+     */
+    void verifyReturns();
 };
 
 #endif

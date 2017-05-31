@@ -38,7 +38,9 @@ public:
     SemanticActionHandler m_functionName;
     SemanticActionHandler m_endFunction;
 
+    SemanticActionHandler m_startReturn;
     SemanticActionHandler m_returnExpr;
+    SemanticActionHandler m_endReturn;
 
     SemanticActionHandler m_startVar;
     SemanticActionHandler m_varType;
@@ -100,6 +102,9 @@ private:
 
     // Hold class currently being defined
     std::shared_ptr<BClass> m_focusClass;
+
+    // Hold return being defined
+    std::shared_ptr<ecc::LexicalToken> m_focusReturnToken;
 
     // Hold chains and expressions operands
     std::vector<std::shared_ptr<IBCallable>> m_expressionOperandStack;
