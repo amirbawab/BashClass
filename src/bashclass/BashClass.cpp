@@ -334,7 +334,7 @@ void BashClass::initHandlers() {
     m_ifCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto ifScope = std::dynamic_pointer_cast<BIf>(m_scopeStack.back());
-            ifScope->setCondition(m_expressionOperandStack.back());
+            ifScope->setExpression(m_expressionOperandStack.back());
             m_expressionOperandStack.pop_back();
         }
     };

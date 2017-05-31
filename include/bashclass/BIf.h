@@ -5,7 +5,7 @@
 
 class BIf : public BScope {
 private:
-    std::shared_ptr<IBCallable> m_condition;
+    std::shared_ptr<IBCallable> m_expression; // Expression is the condition statement
 public:
     /**
      * Get if label
@@ -13,16 +13,16 @@ public:
     std::stringstream getLabel();
 
     /**
-     * Get condition
-     * @return condition
+     * Get expression/condition
+     * @return expression
      */
-    std::shared_ptr<IBCallable> getCondition() {return m_condition;}
+    std::shared_ptr<IBCallable> getExpression() {return m_expression;}
 
     /**
-     * Set condition
-     * @param condition
+     * Set expression/condition
+     * @param expression
      */
-    void setCondition(std::shared_ptr<IBCallable> condition) {m_condition = condition;}
+    void setExpression(std::shared_ptr<IBCallable> expression);
 };
 
 #endif
