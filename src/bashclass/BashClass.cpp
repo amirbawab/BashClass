@@ -305,7 +305,7 @@ void BashClass::initHandlers() {
     m_whileCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto whileScope = std::dynamic_pointer_cast<BWhile>(m_scopeStack.back());
-            whileScope->setCondition(m_expressionOperandStack.back());
+            whileScope->setExpression(m_expressionOperandStack.back());
             m_expressionOperandStack.pop_back();
         }
     };
