@@ -77,6 +77,8 @@ public:
     SemanticActionHandler m_endExpr;
 
     SemanticActionHandler m_varAssign;
+    SemanticActionHandler m_functionExec;
+
     SemanticActionHandler m_setArgument;
     SemanticActionHandler m_startArgument;
     SemanticActionHandler m_endArgument;
@@ -111,6 +113,11 @@ private:
 
     // Hold operators
     std::vector<std::shared_ptr<ecc::LexicalToken>> m_expressionOperatorStack;
+
+    /**
+     * Couple of checks required at each beginning of a phase
+     */
+    void onPhaseStartCheck();
 
     /**
      * Initialize semantic action handlers

@@ -34,7 +34,7 @@ public:
      * Set expression
      * @param expression
      */
-    void setExpression(std::shared_ptr<IBCallable> expression) {m_expression = expression;}
+    void setExpression(std::shared_ptr<IBCallable> expression);
 
     /**
      * Get type of the variable
@@ -53,11 +53,6 @@ public:
      * @return lexical token
      */
     std::shared_ptr<ecc::LexicalToken> getLexicalToken() {return m_lexicalToken;}
-
-    /**
-     * Expression type should match variable type
-     */
-    void verifyAssign();
 };
 
 

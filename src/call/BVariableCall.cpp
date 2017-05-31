@@ -9,11 +9,7 @@ std::string BVariableCall::getTypeValueAsString() {
     return m_variable->getType()->getValue();
 }
 
-void BVariableCall::verifyAssign() {
-    if(!m_expression) {
-        throw std::runtime_error("Expression must be assigned to the variable to verify the types. "
-                                         "Please report this error." );
-    }
+void BVariableCall::setExpression(std::shared_ptr<IBCallable> expression) {
 
     if(!m_variable) {
         std::cerr << "Expression cannot be assigned to the undefined variable "
@@ -22,7 +18,7 @@ void BVariableCall::verifyAssign() {
     }
 
     // Compare types
-    std::string expressionType = m_expression->getTypeValueAsString();
+    std::string expressionType = expression->getTypeValueAsString();
     std::string variableType = m_variable->getType()->getValue();
     if(!m_variable->hasKnownType()) {
         std::cerr << "Cannot assign expression to an undefined type for variable "
@@ -34,4 +30,7 @@ void BVariableCall::verifyAssign() {
         std::cerr << "Variable " << m_variable->getName()->getValue() << " expects an expression of type "
                   << variableType << " but given " << expressionType << std::endl;
     }
+
+    // Set expression
+    m_expression = expression;
 }

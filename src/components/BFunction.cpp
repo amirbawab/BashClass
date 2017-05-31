@@ -65,7 +65,7 @@ std::shared_ptr<BReturn> BFunction::getReturnByToken(std::shared_ptr<ecc::Lexica
     if(m_returns.find(lexicalToken->getUID()) != m_returns.end()) {
         return m_returns[lexicalToken->getUID()];
     }
-    throw std::runtime_error("Requesting scope with an unrecognized token key");
+    throw std::runtime_error("Requesting return statement with an unrecognized token key");
 }
 
 bool BFunction::hasReturn() {

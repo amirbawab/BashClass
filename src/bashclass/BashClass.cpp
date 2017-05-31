@@ -7,7 +7,6 @@
 
 BashClass::BashClass() {
     m_global = std::make_shared<BGlobal>();
-    m_scopeStack.push_back(m_global);
     initHandlers();
 }
 
@@ -110,6 +109,24 @@ void _detectCircularReference(std::shared_ptr<BScope> scope) {
     }
 }
 
+void BashClass::onPhaseStartCheck() {
+    if(!m_chainBuilderStack.empty()) {
+        throw std::runtime_error("Chain builder stack is not empty. Please report this error.");
+    }
+
+    if(!m_expressionOperandStack.empty()) {
+        throw std::runtime_error("Expression operand stack is not empty. Please report this error.");
+    }
+
+    if(!m_expressionOperatorStack.empty()) {
+        throw std::runtime_error("Expression operator stack is not empty. Please report this error.");
+    }
+
+    if(!m_scopeStack.empty()) {
+        throw std::runtime_error("Scope stack size is not empty. Please report this error.");
+    }
+}
+
 /**
  * Initialize semantic action handlers
  */
@@ -119,14 +136,35 @@ void BashClass::initHandlers() {
      *          PROGRAM
      **************************************/
     m_start = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
+        if(phase == BashClass::PHASE_CREATE) {
+
+            // Push global scope
+            m_scopeStack.push_back(m_global);
+        } else if(phase == BashClass::PHASE_EVAL) {
+
+            // Run checks
+            onPhaseStartCheck();
+
+            // Push global scope
+            m_scopeStack.push_back(m_global);
+
+            // TODO Move those functions to the global class
             _linkTypes(m_global);
             _detectCircularReference(m_global);
+        } else if(phase == BashClass::PHASE_GENERATE) {
+
+            // Run checks
+            onPhaseStartCheck();
+
+            // Push global scope
+            m_scopeStack.push_back(m_global);
         }
     };
 
     m_end = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        // Do nothing ...
+
+        // Pop the global scope in all phases
+        m_scopeStack.pop_back();
     };
 
     /**************************************
@@ -351,7 +389,7 @@ void BashClass::initHandlers() {
 
     m_endOuterCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // Do nothing ...
+            m_chainBuilderStack.pop_back();
         }
     };
 
@@ -508,11 +546,23 @@ void BashClass::initHandlers() {
 
     m_varAssign = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
+
+            // Configure variable call
             auto variableCall = std::dynamic_pointer_cast<BVariableCall>(m_chainBuilderStack.back()->last());
-            m_chainBuilderStack.pop_back();
             variableCall->setExpression(m_expressionOperandStack.back());
-            variableCall->verifyAssign();
+
+            // Pop consumed expression
             m_expressionOperandStack.pop_back();
+
+            // Register variable chain call
+            m_scopeStack.back()->registerChainCall(lexicalVector[index], m_chainBuilderStack.back());
+        }
+    };
+
+    m_functionExec = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            // Register function chain call
+            m_scopeStack.back()->registerChainCall(lexicalVector[index], m_chainBuilderStack.back());
         }
     };
 }

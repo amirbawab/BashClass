@@ -204,3 +204,15 @@ void BScope::registerVariable(std::shared_ptr<ecc::LexicalToken> token, std::sha
     m_variables[token->getUID()] = variable;
     variable->setParentScope(shared_from_this());
 }
+
+void BScope::registerChainCall(std::shared_ptr<ecc::LexicalToken> token,
+                                  std::shared_ptr<BChainCall> chainCall) {
+    m_chainCalls[token->getUID()] = chainCall;
+}
+
+std::shared_ptr<BChainCall> BScope::getChainCallByToken(std::shared_ptr<ecc::LexicalToken> token) {
+    if(m_chainCalls.find(token->getUID()) == m_chainCalls.end()) {
+        throw std::runtime_error("Requesting chain call with an unrecognized token key");
+    }
+    return m_chainCalls[token->getUID()];
+}

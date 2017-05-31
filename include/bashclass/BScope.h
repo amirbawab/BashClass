@@ -9,10 +9,12 @@
 #include <easycc/LexicalToken.h>
 
 class BVariable;
+class BChainCall;
 class BScope : public std::enable_shared_from_this<BScope> {
 protected:
     std::map<unsigned int,std::shared_ptr<BVariable>> m_variables;
     std::map<unsigned int,std::shared_ptr<BScope>> m_scopes;
+    std::map<unsigned int,std::shared_ptr<BChainCall>> m_chainCalls;
     std::shared_ptr<BScope> m_parentScope;
 public:
     virtual ~BScope(){}
@@ -129,6 +131,20 @@ public:
      * @param variable
      */
     void registerVariable(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BVariable> variable);
+
+    /**
+     * Register a chain call
+     * @param token
+     * @param chainCall
+     */
+    void registerChainCall(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BChainCall> chainCall);
+
+    /**
+     * Get chain call by token
+     * @param token
+     * @return chainCall
+     */
+    std::shared_ptr<BChainCall> getChainCallByToken(std::shared_ptr<ecc::LexicalToken> token);
 };
 
 #endif
