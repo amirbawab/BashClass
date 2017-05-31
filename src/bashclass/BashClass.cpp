@@ -32,9 +32,6 @@ void BashClass::onPhaseStartCheck() {
     }
 }
 
-/**
- * Initialize semantic action handlers
- */
 void BashClass::initHandlers() {
 
     /**************************************
@@ -75,7 +72,7 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
-     *          CLASSES
+     *          CLASS DECLARATION
      **************************************/
     m_startClass = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
@@ -112,7 +109,7 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
-     *          FUNCTIONS DECLARATION
+     *          FUNCTION DECLARATION
      **************************************/
     m_startFunction = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
@@ -160,7 +157,7 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
-     *          VARIABLES DECLARATION
+     *          VARIABLE DECLARATION
      **************************************/
     m_startVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
@@ -193,7 +190,7 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
-     *          PARAMETERS
+     *          PARAMETER DECLARATION
      **************************************/
     m_startParam = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
@@ -227,7 +224,7 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
-     *          WHILE
+     *          WHILE STATEMENT
      **************************************/
 
     m_startWhile = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
@@ -241,12 +238,6 @@ void BashClass::initHandlers() {
         }
     };
 
-    m_endWhile = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
-            m_scopeStack.pop_back();
-        }
-    };
-
     m_whileCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto whileScope = std::dynamic_pointer_cast<BWhile>(m_scopeStack.back());
@@ -255,8 +246,14 @@ void BashClass::initHandlers() {
         }
     };
 
+    m_endWhile = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
+            m_scopeStack.pop_back();
+        }
+    };
+
     /**************************************
-     *          IF
+     *          IF STATEMENT
      **************************************/
 
     m_startIf = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
@@ -270,12 +267,6 @@ void BashClass::initHandlers() {
         }
     };
 
-    m_endIf = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
-            m_scopeStack.pop_back();
-        }
-    };
-
     m_ifCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto ifScope = std::dynamic_pointer_cast<BIf>(m_scopeStack.back());
@@ -284,8 +275,14 @@ void BashClass::initHandlers() {
         }
     };
 
+    m_endIf = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
+            m_scopeStack.pop_back();
+        }
+    };
+
     /**************************************
-     *          VARIABLE AND FUNCTION CALL
+     *     VARIABLE AND FUNCTION CALL
      **************************************/
 
     m_startOuterCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
@@ -333,18 +330,30 @@ void BashClass::initHandlers() {
         }
     };
 
-    /**************************************
-     *          OPERATOR
-     **************************************/
-
-    m_putOp = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_varAssign = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_expressionOperatorStack.push_back(lexicalVector[index]);
+
+            // Configure variable call
+            auto variableCall = std::dynamic_pointer_cast<BVariableCall>(m_chainBuilderStack.back()->last());
+            variableCall->setExpression(m_expressionOperandStack.back());
+
+            // Pop consumed expression
+            m_expressionOperandStack.pop_back();
+
+            // Register variable chain call
+            m_scopeStack.back()->registerChainCall(lexicalVector[index], m_chainBuilderStack.back());
+        }
+    };
+
+    m_functionExec = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            // Register function chain call
+            m_scopeStack.back()->registerChainCall(lexicalVector[index], m_chainBuilderStack.back());
         }
     };
 
     /**************************************
-     *          RETURN
+     *          RETURN STATEMENT
      **************************************/
 
     m_startReturn = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable) {
@@ -379,7 +388,7 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
-     *          ARGUMENT
+     *          ARGUMENT PASS
      **************************************/
 
     m_startArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
@@ -445,31 +454,15 @@ void BashClass::initHandlers() {
         }
     };
 
+    m_putOp = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            m_expressionOperatorStack.push_back(lexicalVector[index]);
+        }
+    };
+
     m_endExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             // TODO
-        }
-    };
-
-    m_varAssign = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-
-            // Configure variable call
-            auto variableCall = std::dynamic_pointer_cast<BVariableCall>(m_chainBuilderStack.back()->last());
-            variableCall->setExpression(m_expressionOperandStack.back());
-
-            // Pop consumed expression
-            m_expressionOperandStack.pop_back();
-
-            // Register variable chain call
-            m_scopeStack.back()->registerChainCall(lexicalVector[index], m_chainBuilderStack.back());
-        }
-    };
-
-    m_functionExec = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            // Register function chain call
-            m_scopeStack.back()->registerChainCall(lexicalVector[index], m_chainBuilderStack.back());
         }
     };
 }
