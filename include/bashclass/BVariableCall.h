@@ -53,6 +53,11 @@ public:
      * @return lexical token
      */
     std::shared_ptr<ecc::LexicalToken> getLexicalToken() {return m_lexicalToken;}
+
+    /**
+     * Expression type should match variable type
+     */
+    void verifyAssign();
 };
 
 

@@ -475,6 +475,7 @@ void BashClass::initHandlers() {
             auto variableCall = std::dynamic_pointer_cast<BVariableCall>(m_chainBuilderStack.back()->last());
             m_chainBuilderStack.pop_back();
             variableCall->setExpression(m_expressionOperandStack.back());
+            variableCall->verifyAssign();
             m_expressionOperandStack.pop_back();
         }
     };

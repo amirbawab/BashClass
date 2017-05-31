@@ -22,28 +22,26 @@ void BFunctionCall::verifyArguments() {
     // Arguments number must match function parameters
     if(parameters.size() != m_arguments.size()) {
         std::cerr << "Function " << m_function->getName()->getValue()
-                  << " expects " << parameters.size() << " arguments but given "
+                  << " expects the number of arguments to be " << parameters.size() << " but given "
                   << m_arguments.size() << " instead" << std::endl;
     } else {
 
         // Arguments type must match function parameters
         for(size_t i = 0; i < parameters.size(); i++) {
+            std::string argumentType = m_arguments[i]->getTypeValueAsString();
+            std::string parameterType = parameters[i]->getType()->getValue();
             if(!parameters[i]->hasKnownType()) {
                 std::cerr << "Cannot pass argument value to an undefined type for parameter "
                           << parameters[i]->getName()->getValue() << " in function "
                           << m_function->getName()->getValue() << std::endl;
-            } else if(m_arguments[i]->getTypeValueAsString() == BType::UNDEFINED) {
+            } else if(argumentType == BType::UNDEFINED) {
                 std::cerr << "Parameter " << parameters[i]->getName()->getValue()
                           << " in function " << m_function->getName()->getValue()
                           << " is given an undefined argument" << std::endl;
-            } else {
-                std::string argumentType = m_arguments[i]->getTypeValueAsString();
-                std::string parameterType = parameters[i]->getType()->getValue();
-                if(parameterType != BType::TYPE_VALUE_ANY && parameterType != argumentType) {
-                    std::cerr << "Function " << m_function->getName()->getValue()
-                              << " expects argument " << i + 1 << " to be of type " << parameterType
-                              << " but given " << argumentType << std::endl;
-                }
+            } else if(parameterType != BType::TYPE_VALUE_ANY && parameterType != argumentType) {
+                std::cerr << "Function " << m_function->getName()->getValue()
+                          << " expects argument " << i + 1 << " to be of type " << parameterType
+                          << " but given " << argumentType << std::endl;
             }
         }
     }
