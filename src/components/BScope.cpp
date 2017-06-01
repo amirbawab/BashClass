@@ -7,6 +7,7 @@
 #include <bashclass/BashClass.h>
 #include <iostream>
 #include <sstream>
+#include <bashclass/BException.h>
 
 std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(const char* name) {
     std::vector<std::shared_ptr<BVariable>> variables;
@@ -57,14 +58,14 @@ std::shared_ptr<BScope> BScope::getScopeByToken(std::shared_ptr<ecc::LexicalToke
     if(m_scopes.find(lexicalToken->getUID()) != m_scopes.end()) {
         return m_scopes[lexicalToken->getUID()];
     }
-    throw std::runtime_error("Requesting scope with an unrecognized token key");
+    throw BException("Requesting scope with an unrecognized token key");
 }
 
 std::shared_ptr<BVariable> BScope::getVariableByToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
     if(m_variables.find(lexicalToken->getUID()) != m_variables.end()) {
         return m_variables[lexicalToken->getUID()];
     }
-    throw std::runtime_error("Requesting variable with an unrecognized token key");
+    throw BException("Requesting variable with an unrecognized token key");
 }
 
 std::vector<std::shared_ptr<BScope>> BScope::getAllScopes() {
@@ -144,7 +145,7 @@ void BScope::registerClass(std::shared_ptr<ecc::LexicalToken> token, std::shared
 
     // Class name is required
     if(!classScopeCast->getName()) {
-        throw std::runtime_error("Cannot register a class without specifying its name first");
+        throw BException("Cannot register a class without specifying its name first");
     }
 
     // Check if class was added previously
@@ -165,7 +166,7 @@ void BScope::registerFunction(std::shared_ptr<ecc::LexicalToken> token, std::sha
 
     // Function name is required
     if(!functionScopeCast->getName()) {
-        throw std::runtime_error("Cannot register a function without specifying its name first");
+        throw BException("Cannot register a function without specifying its name first");
     }
 
     // Check if function was added previously
@@ -189,7 +190,7 @@ void BScope::registerVariable(std::shared_ptr<ecc::LexicalToken> token, std::sha
 
     // Variable name is required
     if(!variable->getName()) {
-        throw std::runtime_error("Cannot register a variable without specifying its name");
+        throw BException("Cannot register a variable without specifying its name");
     }
 
     // Check if variable was added previously
@@ -212,7 +213,7 @@ void BScope::registerChainCall(std::shared_ptr<ecc::LexicalToken> token,
 
 std::shared_ptr<BChainCall> BScope::getChainCallByToken(std::shared_ptr<ecc::LexicalToken> token) {
     if(m_chainCalls.find(token->getUID()) == m_chainCalls.end()) {
-        throw std::runtime_error("Requesting chain call with an unrecognized token key");
+        throw BException("Requesting chain call with an unrecognized token key");
     }
     return m_chainCalls[token->getUID()];
 }

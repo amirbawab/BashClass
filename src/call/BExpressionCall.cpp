@@ -1,6 +1,7 @@
 #include <bashclass/BExpressionCall.h>
 #include <bashclass/BTypes.h>
 #include <iostream>
+#include <bashclass/BException.h>
 
 const std::string BExpressionCall::BOOL_LOGICAL_OR = "logical_or";
 const std::string BExpressionCall::BOOL_LOGICAL_AND = "logical_and";
@@ -102,7 +103,7 @@ std::string BExpressionCall::getTypeValueAsString() {
             return BType::UNDEFINED;
         }
 
-        throw std::runtime_error("Undefined operator in an expression with two operands. Please report this error.");
+        throw BException("Undefined operator in an expression with two operands");
     } else {
         std::string singleOperandType = m_leftOperand->getTypeValueAsString();
 
@@ -122,6 +123,6 @@ std::string BExpressionCall::getTypeValueAsString() {
             return BType::UNDEFINED;
         }
 
-        throw std::runtime_error("Undefined operator in an expression with one operand. Please report this error.");
+        throw BException("Undefined operator in an expression with one operand");
     }
 }

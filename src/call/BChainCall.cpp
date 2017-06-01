@@ -3,6 +3,7 @@
 #include <bashclass/BFunctionCall.h>
 #include <bashclass/BClass.h>
 #include <iostream>
+#include <bashclass/BException.h>
 
 std::string BChainCall::getTypeValueAsString() {
     return last()->getTypeValueAsString();
@@ -21,7 +22,7 @@ std::shared_ptr<BScope> getPrevItemTypeScope(std::shared_ptr<BVariableCall> prev
     } else if(prevFunctionCall) {
         return prevFunctionCall->getFunction()->getTypeScope();
     } else {
-        throw std::runtime_error("Undefined call on an unknown instance. Please report this error.");
+        throw BException("Undefined call on an unknown instance");
     }
 }
 

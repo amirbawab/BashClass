@@ -2,6 +2,7 @@
 #include <bashclass/BClass.h>
 #include <bashclass/BTypes.h>
 #include <iostream>
+#include <bashclass/BException.h>
 
 std::stringstream BFunction::getLabel() {
     std::stringstream stream = m_parentScope->getLabel();
@@ -36,7 +37,7 @@ bool BFunction::requiresReturn() {
 void BFunction::registerReturn(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BReturn> ret) {
 
     if(!ret->getExpression()) {
-        throw std::runtime_error("Cannot register a return statement without an expression. Please report this error.");
+        throw BException("Cannot register a return statement without an expression");
     }
 
     // If function is of type void, then a return statement is not expected
@@ -65,7 +66,7 @@ std::shared_ptr<BReturn> BFunction::getReturnByToken(std::shared_ptr<ecc::Lexica
     if(m_returns.find(lexicalToken->getUID()) != m_returns.end()) {
         return m_returns[lexicalToken->getUID()];
     }
-    throw std::runtime_error("Requesting return statement with an unrecognized token key");
+    throw BException("Requesting return statement with an unrecognized token key");
 }
 
 bool BFunction::hasReturn() {

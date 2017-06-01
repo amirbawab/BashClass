@@ -2,6 +2,7 @@
 #include <bashclass/BIf.h>
 #include <bashclass/BWhile.h>
 #include <iostream>
+#include <bashclass/BException.h>
 
 BashClass::BashClass() {
     m_global = std::make_shared<BGlobal>();
@@ -14,19 +15,19 @@ void BashClass::printStructure() {
 
 void BashClass::onPhaseStartCheck() {
     if(!m_chainBuilderStack.empty()) {
-        throw std::runtime_error("Chain builder stack is not empty. Please report this error.");
+        throw BException("Chain builder stack is not empty");
     }
 
     if(!m_expressionOperandStack.empty()) {
-        throw std::runtime_error("Expression operand stack is not empty. Please report this error.");
+        throw BException("Expression operand stack is not empty");
     }
 
     if(!m_expressionOperatorStack.empty()) {
-        throw std::runtime_error("Expression operator stack is not empty. Please report this error.");
+        throw BException("Expression operator stack is not empty");
     }
 
     if(!m_scopeStack.empty()) {
-        throw std::runtime_error("Scope stack size is not empty. Please report this error.");
+        throw BException("Scope stack size is not empty");
     }
 }
 
