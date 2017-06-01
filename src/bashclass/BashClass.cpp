@@ -3,6 +3,7 @@
 #include <bashclass/BWhile.h>
 #include <iostream>
 #include <bashclass/BException.h>
+#include <bashclass/BGenerateCode.h>
 
 BashClass::BashClass() {
     m_global = BGlobal::getInstance();
@@ -55,6 +56,10 @@ void BashClass::initHandlers() {
 
             // Detect circular references
             m_global->detectCircularReference();
+        } else if(phase == BashClass::PHASE_GENERATE) {
+
+            // Generate code required before any input
+            BGenerateCode::get().writePreCode();
         }
     };
 
