@@ -6,7 +6,24 @@
 #include <bashclass/BFunction.h>
 
 class BGlobal : public BScope {
+private:
+
+    // Disable constructor
+    BGlobal(){}
 public:
+
+    /**
+     * Get single instance of this class
+     * @return pointer to a singleton instance
+     */
+    static std::shared_ptr<BGlobal> getInstance() {
+        static std::shared_ptr<BGlobal> instance(new BGlobal());
+        return instance;
+    }
+
+    // Delete constructor and operator
+    BGlobal(BGlobal const&) = delete;
+    void operator=(BGlobal const&) = delete;
 
     /**
      * Get global label

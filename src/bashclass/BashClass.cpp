@@ -5,7 +5,7 @@
 #include <bashclass/BException.h>
 
 BashClass::BashClass() {
-    m_global = std::make_shared<BGlobal>();
+    m_global = BGlobal::getInstance();
     initHandlers();
 }
 
