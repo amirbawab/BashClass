@@ -29,6 +29,11 @@ public:
     void writePreCode();
 
     /**
+     * Code generated after parsing the input
+     */
+    void writePostCode();
+
+    /**
      * Write code
      * @param code
      */

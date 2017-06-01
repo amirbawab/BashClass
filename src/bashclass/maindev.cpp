@@ -80,8 +80,13 @@ int main(int argc, char *argv[]) {
     for(int phase : phases) {
 
         // Generate code only if no semantic errors were reported
-        if(phase == BashClass::PHASE_GENERATE && BReport::getInstance().hasError()) {
-            return BashClass::ERR_CODE_SEMANTIC;
+        if(phase == BashClass::PHASE_GENERATE) {
+            if(BReport::getInstance().hasError()) {
+                return BashClass::ERR_CODE_SEMANTIC;
+            }
+
+            // Print structure of the compiled files
+            bashClass.printStructure();
         }
 
         // Set the phase number
@@ -98,7 +103,4 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-
-    // Print structure of the compiled files
-    bashClass.printStructure();
 }

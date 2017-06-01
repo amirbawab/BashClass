@@ -67,6 +67,12 @@ void BashClass::initHandlers() {
 
         // Pop the global scope in all phases
         m_scopeStack.pop_back();
+
+        if(phase == BashClass::PHASE_GENERATE) {
+
+            // Generate code required after the input
+            BGenerateCode::get().writePostCode();
+        }
     };
 
     /**************************************
