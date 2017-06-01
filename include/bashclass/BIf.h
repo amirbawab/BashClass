@@ -5,7 +5,8 @@
 
 class BIf : public BScope {
 private:
-    std::shared_ptr<IBCallable> m_expression; // Expression is the condition statement
+    // Condition/Expression for this if statement
+    std::shared_ptr<IBCallable> m_expression;
 public:
     /**
      * Get if label

@@ -5,6 +5,8 @@
 
 class BWhile : public BScope {
 private:
+
+    // Condition/Expression for this if statement
     std::shared_ptr<IBCallable> m_expression;
 public:
     /**

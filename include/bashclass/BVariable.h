@@ -11,12 +11,28 @@
 class BScope;
 class BVariable {
 private:
-    std::shared_ptr<ecc::LexicalToken> m_type;
-    std::shared_ptr<BScope> m_typeScope;
+
+    // Name of this variable
     std::shared_ptr<ecc::LexicalToken> m_name;
+
+    // Type of this variable
+    std::shared_ptr<ecc::LexicalToken> m_type;
+
+    // Link to the type of this variable.
+    // Check hasKnownType() function for more details
+    std::shared_ptr<BScope> m_typeScope;
+
+    // Parent scope of this variable
     std::shared_ptr<BScope> m_parentScope;
+
+    // A parameter variable has this flag set to true
     bool m_isParam;
+
 public:
+
+    /**
+     * Initialize member variables
+     */
     BVariable();
 
     /**

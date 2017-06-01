@@ -9,6 +9,10 @@
 
 class BChainCall : public IBCallable {
 private:
+
+    // Vector containing the variables and functions calls
+    // in their order of insertion.
+    // e.g. a.b().c.d() => [a,b(),c,d()]
     std::vector<std::shared_ptr<IBCallable>> m_callables;
 public:
 

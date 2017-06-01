@@ -7,8 +7,18 @@
 
 class BVariableCall : public IBCallable {
 private:
+
+    // The variable this variable call refers to.
+    // If this variable is not set, then the actual variable
+    // was not found
     std::shared_ptr<BVariable> m_variable;
+
+    // Expression assigned to this variable call
     std::shared_ptr<IBCallable> m_expression;
+
+    // Lexical token for the variable call.
+    // The value of this token and the actual variable
+    // should always match
     std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
 public:
 

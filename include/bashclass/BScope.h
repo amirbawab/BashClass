@@ -12,9 +12,17 @@ class BVariable;
 class BChainCall;
 class BScope : public std::enable_shared_from_this<BScope> {
 protected:
+
+    // Register the variables defined in this scope
     std::map<unsigned int,std::shared_ptr<BVariable>> m_variables;
+
+    // Register the scopes defines in this scope
     std::map<unsigned int,std::shared_ptr<BScope>> m_scopes;
+
+    // Register the chain calls defined in this scope
     std::map<unsigned int,std::shared_ptr<BChainCall>> m_chainCalls;
+
+    // Store the parent for this scope
     std::shared_ptr<BScope> m_parentScope;
 public:
     virtual ~BScope(){}

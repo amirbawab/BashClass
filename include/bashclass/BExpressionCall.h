@@ -7,8 +7,14 @@
 
 class BExpressionCall : public IBCallable {
 private:
+
+    // Left operand of the expression
     std::shared_ptr<IBCallable> m_leftOperand;
+
+    // Right operand of the expression
     std::shared_ptr<IBCallable> m_rightOperand;
+
+    // Operator of the expression
     std::shared_ptr<ecc::LexicalToken> m_operatorToken;
 
     // Boolean expression

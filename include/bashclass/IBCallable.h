@@ -5,6 +5,11 @@
 
 class IBCallable {
 public:
+
+    /**
+     * Get the type of the callable element
+     * @return type value as a string
+     */
     virtual std::string getTypeValueAsString()=0;
 };
 

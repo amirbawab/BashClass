@@ -6,6 +6,8 @@
 
 class BReturn {
 private:
+
+    // Expression assigned to this return statement
     std::shared_ptr<IBCallable> m_expression;
 public:
 

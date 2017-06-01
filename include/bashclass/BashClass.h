@@ -111,7 +111,7 @@ private:
     // Hold chains and expressions operands
     std::vector<std::shared_ptr<IBCallable>> m_expressionOperandStack;
 
-    // Hold operators
+    // Hold expression operators
     std::vector<std::shared_ptr<ecc::LexicalToken>> m_expressionOperatorStack;
 
     /**

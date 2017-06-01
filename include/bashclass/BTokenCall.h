@@ -7,6 +7,10 @@
 
 class BTokenCall : public IBCallable {
 private:
+
+    // Lexical token for the variable call.
+    // The value of this token and the actual function
+    // should always match
     std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
 public:
 

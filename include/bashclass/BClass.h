@@ -7,6 +7,8 @@
 
 class BClass : public BScope {
 private:
+
+    // Class name
     std::shared_ptr<ecc::LexicalToken> m_name;
 public:
     /**

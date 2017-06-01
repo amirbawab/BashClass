@@ -17,8 +17,9 @@ private:
     // Arguments passed to this function call
     std::vector<std::shared_ptr<IBCallable>> m_arguments;
 
-    // Lexical token for the function call, so the value of this token
-    // and the actual function should always match
+    // Lexical token for the function call.
+    // The value of this token and the actual function
+    // should always match
     std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
 public:
 

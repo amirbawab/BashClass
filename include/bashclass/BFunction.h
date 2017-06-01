@@ -9,10 +9,20 @@
 
 class BFunction : public BScope {
 private:
+
+    // Function name
     std::shared_ptr<ecc::LexicalToken> m_name;
+
+    // Function type
     std::shared_ptr<ecc::LexicalToken> m_type;
+
+    // Link to the actual function if exists.
+    // Check hasKnownType() function for more details
     std::shared_ptr<BScope> m_typeScope;
+
+    // Store the return statement for this function
     std::map<unsigned int,std::shared_ptr<BReturn>> m_returns;
+
 public:
 
     /**
@@ -62,7 +72,9 @@ public:
     std::stringstream getLabel();
 
     /**
-     * Check if the type of the function is known
+     * A type is known if:
+     * - The type is built-in (e.g. int, char, ...)
+     * - The typeScope links to the actual function
      */
     bool hasKnowType() const;
 
