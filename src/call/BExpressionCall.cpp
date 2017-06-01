@@ -122,6 +122,6 @@ std::string BExpressionCall::getTypeValueAsString() {
             return BType::UNDEFINED;
         }
 
-        throw std::runtime_error("Undefined operator in an expression with two operands. Please report this error.");
+        throw std::runtime_error("Undefined operator in an expression with one operand. Please report this error.");
     }
 }
