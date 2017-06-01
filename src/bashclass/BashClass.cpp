@@ -38,7 +38,7 @@ void BashClass::initHandlers() {
      **************************************/
     m_start = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
 
-        // Reset the reference key value at each phase
+        // Reset the reference key value
         m_referenceKey = 0;
 
         // Run checks
@@ -359,9 +359,7 @@ void BashClass::initHandlers() {
      **************************************/
 
     m_startReturn = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable) {
-        if(phase == BashClass::PHASE_EVAL) {
-            // FIXME ???
-        }
+        // Do nothing ...
     };
 
     m_returnExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
