@@ -89,7 +89,7 @@ void BashClass::initHandlers() {
             m_focusClass->setName(lexicalVector[index]);
 
             // Register class
-            m_scopeStack.back()->registerClass(lexicalVector[index], m_focusClass);
+            m_scopeStack.back()->registerClass(m_referenceKey, m_focusClass);
 
             // Push class scope
             m_scopeStack.push_back(m_focusClass);
@@ -99,7 +99,7 @@ void BashClass::initHandlers() {
         } else if(phase == BashClass::PHASE_EVAL) {
 
             // Push class scope
-            auto classScope = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
+            auto classScope = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);
             m_scopeStack.push_back(classScope);
         }
     };
@@ -132,7 +132,7 @@ void BashClass::initHandlers() {
             m_focusFunction->setName(lexicalVector[index]);
 
             // Register function
-            m_scopeStack.back()->registerFunction(lexicalVector[index], m_focusFunction);
+            m_scopeStack.back()->registerFunction(m_referenceKey, m_focusFunction);
 
             // Push function scope
             m_scopeStack.push_back(m_focusFunction);
@@ -142,7 +142,7 @@ void BashClass::initHandlers() {
         } else if(phase == BashClass::PHASE_EVAL) {
 
             // Push function scope
-            auto createdFunction = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
+            auto createdFunction = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);
             m_scopeStack.push_back(createdFunction);
         }
     };
@@ -180,7 +180,7 @@ void BashClass::initHandlers() {
             m_focusVariable->setName(lexicalVector[index]);
 
             // Register variable
-            m_scopeStack.back()->registerVariable(lexicalVector[index], m_focusVariable);
+            m_scopeStack.back()->registerVariable(m_referenceKey, m_focusVariable);
 
             // Clear focus
             m_focusVariable = nullptr;
@@ -214,7 +214,7 @@ void BashClass::initHandlers() {
             m_focusVariable->setName(lexicalVector[index]);
 
             // Register parameter
-            m_scopeStack.back()->registerVariable(lexicalVector[index], m_focusVariable);
+            m_scopeStack.back()->registerVariable(m_referenceKey, m_focusVariable);
 
             // Clear focus
             m_focusVariable = nullptr;
@@ -232,10 +232,10 @@ void BashClass::initHandlers() {
     m_startWhile = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto newWhile = std::make_shared<BWhile>();
-            m_scopeStack.back()->registerScope(lexicalVector[index], newWhile);
+            m_scopeStack.back()->registerScope(m_referenceKey, newWhile);
             m_scopeStack.push_back(newWhile);
         } else if(phase == BashClass::PHASE_EVAL) {
-            auto createdWhile = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
+            auto createdWhile = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);
             m_scopeStack.push_back(createdWhile);
         }
     };
@@ -261,10 +261,10 @@ void BashClass::initHandlers() {
     m_startIf = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto newIf = std::make_shared<BIf>();
-            m_scopeStack.back()->registerScope(lexicalVector[index], newIf);
+            m_scopeStack.back()->registerScope(m_referenceKey, newIf);
             m_scopeStack.push_back(newIf);
         } else if(phase == BashClass::PHASE_EVAL) {
-            auto createdIf = m_scopeStack.back()->getScopeByToken(lexicalVector[index]);
+            auto createdIf = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);
             m_scopeStack.push_back(createdIf);
         }
     };
@@ -343,14 +343,14 @@ void BashClass::initHandlers() {
             m_expressionOperandStack.pop_back();
 
             // Register variable chain call
-            m_scopeStack.back()->registerChainCall(lexicalVector[index], m_chainBuilderStack.back());
+            m_scopeStack.back()->registerChainCall(m_referenceKey, m_chainBuilderStack.back());
         }
     };
 
     m_functionExec = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             // Register function chain call
-            m_scopeStack.back()->registerChainCall(lexicalVector[index], m_chainBuilderStack.back());
+            m_scopeStack.back()->registerChainCall(m_referenceKey, m_chainBuilderStack.back());
         }
     };
 
@@ -360,7 +360,7 @@ void BashClass::initHandlers() {
 
     m_startReturn = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable) {
         if(phase == BashClass::PHASE_EVAL) {
-            m_focusReturnToken = lexicalVector[index];
+            // FIXME ???
         }
     };
 
@@ -375,13 +375,10 @@ void BashClass::initHandlers() {
             returnComp->setExpression(m_expressionOperandStack.back());
 
             // Register return statement
-            functionScope->registerReturn(m_focusReturnToken, returnComp);
+            functionScope->registerReturn(m_referenceKey, returnComp);
 
             // Remove consumed expression
             m_expressionOperandStack.pop_back();
-
-            // Clear focus
-            m_focusReturnToken = nullptr;
         }
     };
 

@@ -34,7 +34,7 @@ bool BFunction::requiresReturn() {
     return m_type->getName() != BType::TYPE_NAME_VOID;
 }
 
-void BFunction::registerReturn(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BReturn> ret) {
+void BFunction::registerReturn(unsigned int referenceKey, std::shared_ptr<BReturn> ret) {
 
     if(!ret->getExpression()) {
         throw BException("Cannot register a return statement without an expression");
@@ -59,12 +59,12 @@ void BFunction::registerReturn(std::shared_ptr<ecc::LexicalToken> token, std::sh
     }
 
     // Register return expression in this function
-    m_returns[token->getUID()] = ret;
+    m_returns[referenceKey] = ret;
 }
 
-std::shared_ptr<BReturn> BFunction::getReturnByToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
-    if(m_returns.find(lexicalToken->getUID()) != m_returns.end()) {
-        return m_returns[lexicalToken->getUID()];
+std::shared_ptr<BReturn> BFunction::getReturnByReferenceKey(unsigned int referenceKey) {
+    if(m_returns.find(referenceKey) != m_returns.end()) {
+        return m_returns[referenceKey];
     }
     throw BException("Requesting return statement with an unrecognized token key");
 }

@@ -54,18 +54,18 @@ std::vector<std::shared_ptr<BScope>> BScope::findAllFunctions(const char *name) 
     return functions;
 }
 
-std::shared_ptr<BScope> BScope::getScopeByToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
-    if(m_scopes.find(lexicalToken->getUID()) != m_scopes.end()) {
-        return m_scopes[lexicalToken->getUID()];
+std::shared_ptr<BScope> BScope::getScopeByReferenceKey(unsigned int referenceKey) {
+    if(m_scopes.find(referenceKey) != m_scopes.end()) {
+        return m_scopes[referenceKey];
     }
-    throw BException("Requesting scope with an unrecognized token key");
+    throw BException("Requesting scope with an unrecognized reference key");
 }
 
-std::shared_ptr<BVariable> BScope::getVariableByToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
-    if(m_variables.find(lexicalToken->getUID()) != m_variables.end()) {
-        return m_variables[lexicalToken->getUID()];
+std::shared_ptr<BVariable> BScope::getVariableByReferenceKey(unsigned int referenceKey) {
+    if(m_variables.find(referenceKey) != m_variables.end()) {
+        return m_variables[referenceKey];
     }
-    throw BException("Requesting variable with an unrecognized token key");
+    throw BException("Requesting variable with an unrecognized reference key");
 }
 
 std::vector<std::shared_ptr<BScope>> BScope::getAllScopes() {
@@ -138,7 +138,7 @@ std::stringstream BScope::getStructure() {
     return structure;
 }
 
-void BScope::registerClass(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> classScope) {
+void BScope::registerClass(unsigned int referenceKey, std::shared_ptr<BScope> classScope) {
 
     // Cast class
     auto classScopeCast = std::dynamic_pointer_cast<BClass>(classScope);
@@ -156,10 +156,10 @@ void BScope::registerClass(std::shared_ptr<ecc::LexicalToken> token, std::shared
     }
 
     // Register class in this scope
-    registerScope(token, classScope);
+    registerScope(referenceKey, classScope);
 }
 
-void BScope::registerFunction(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> functionScope) {
+void BScope::registerFunction(unsigned int referenceKey, std::shared_ptr<BScope> functionScope) {
 
     // Cast function
     auto functionScopeCast = std::dynamic_pointer_cast<BFunction>(functionScope);
@@ -178,15 +178,15 @@ void BScope::registerFunction(std::shared_ptr<ecc::LexicalToken> token, std::sha
     }
 
     // Register function in this scope
-    registerScope(token, functionScope);
+    registerScope(referenceKey, functionScope);
 }
 
-void BScope::registerScope(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> scope) {
-    m_scopes[token->getUID()] = scope;
+void BScope::registerScope(unsigned int referenceKey, std::shared_ptr<BScope> scope) {
+    m_scopes[referenceKey] = scope;
     scope->setParentScope(shared_from_this());
 }
 
-void BScope::registerVariable(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BVariable> variable) {
+void BScope::registerVariable(unsigned int referenceKey, std::shared_ptr<BVariable> variable) {
 
     // Variable name is required
     if(!variable->getName()) {
@@ -202,18 +202,17 @@ void BScope::registerVariable(std::shared_ptr<ecc::LexicalToken> token, std::sha
     }
 
     // Register variable in this scope
-    m_variables[token->getUID()] = variable;
+    m_variables[referenceKey] = variable;
     variable->setParentScope(shared_from_this());
 }
 
-void BScope::registerChainCall(std::shared_ptr<ecc::LexicalToken> token,
-                                  std::shared_ptr<BChainCall> chainCall) {
-    m_chainCalls[token->getUID()] = chainCall;
+void BScope::registerChainCall(unsigned int referenceKey, std::shared_ptr<BChainCall> chainCall) {
+    m_chainCalls[referenceKey] = chainCall;
 }
 
-std::shared_ptr<BChainCall> BScope::getChainCallByToken(std::shared_ptr<ecc::LexicalToken> token) {
-    if(m_chainCalls.find(token->getUID()) == m_chainCalls.end()) {
-        throw BException("Requesting chain call with an unrecognized token key");
+std::shared_ptr<BChainCall> BScope::getChainCallByReferenceKey(unsigned int referenceKey) {
+    if(m_chainCalls.find(referenceKey) == m_chainCalls.end()) {
+        throw BException("Requesting chain call with an unrecognized reference key");
     }
-    return m_chainCalls[token->getUID()];
+    return m_chainCalls[referenceKey];
 }

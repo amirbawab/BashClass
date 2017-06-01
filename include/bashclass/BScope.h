@@ -81,11 +81,11 @@ public:
     void setParentScope(std::shared_ptr<BScope> scope) { m_parentScope = scope;}
 
     /**
-     * Get scope by lexical token
-     * @param lexicalToken
+     * Get scope by reference key
+     * @param referenceKey
      * @return pointer to scope | nullptr
      */
-    std::shared_ptr<BScope> getScopeByToken(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+    std::shared_ptr<BScope> getScopeByReferenceKey(unsigned int referenceKey);
 
     /**
      * Get all scopes
@@ -94,11 +94,11 @@ public:
     std::vector<std::shared_ptr<BScope>> getAllScopes();
 
     /**
-     * Get variable by lexical token
-     * @param lexicalToken
+     * Get variable by reference key
+     * @param referenceKey
      * @return pointer to variable | nullptr
      */
-    std::shared_ptr<BVariable> getVariableByToken(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+    std::shared_ptr<BVariable> getVariableByReferenceKey(unsigned int referenceKey);
 
     /**
      * Get label for that scope
@@ -114,45 +114,45 @@ public:
 
     /**
      * Register class
-     * @param token
+     * @param referenceKey
      * @param classScope
      */
-    void registerClass(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> classScope);
+    void registerClass(unsigned int referenceKey, std::shared_ptr<BScope> classScope);
 
     /**
      * Register function
-     * @param token
+     * @param referenceKey
      * @param functionScope
      */
-    void registerFunction(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> functionScope);
+    void registerFunction(unsigned int referenceKey, std::shared_ptr<BScope> functionScope);
 
     /**
      * Register scope
-     * @param token
+     * @param referenceKey
      * @param scope
      */
-    void registerScope(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BScope> scope);
+    void registerScope(unsigned int referenceKey, std::shared_ptr<BScope> scope);
 
     /**
      * Register variable
-     * @param token
+     * @param referenceKey
      * @param variable
      */
-    void registerVariable(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BVariable> variable);
+    void registerVariable(unsigned int referenceKey, std::shared_ptr<BVariable> variable);
 
     /**
      * Register a chain call
-     * @param token
+     * @param referenceKey
      * @param chainCall
      */
-    void registerChainCall(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BChainCall> chainCall);
+    void registerChainCall(unsigned int referenceKey, std::shared_ptr<BChainCall> chainCall);
 
     /**
-     * Get chain call by token
-     * @param token
+     * Get chain call by reference key
+     * @param referenceKey
      * @return chainCall
      */
-    std::shared_ptr<BChainCall> getChainCallByToken(std::shared_ptr<ecc::LexicalToken> token);
+    std::shared_ptr<BChainCall> getChainCallByReferenceKey(unsigned int referenceKey);
 };
 
 #endif

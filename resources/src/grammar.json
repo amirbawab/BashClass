@@ -2,12 +2,12 @@
     "START": ["#start# START_BODY #end#"],
     "START_BODY": ["EPSILON","CLASS_DEC START_BODY","FUNCTION_DEC START_BODY","VARIABLE_DEC START_BODY","BASH_SUB START_BODY","BASH_INLINE START_BODY","BASH_BLOCK START_BODY"],
 
-    "CLASS_DEC": ["CLASS #startClass# CLASS_NAME #className# OPEN_CUR CLASS_BODY CLOSE_CUR #endClass#"],
+    "CLASS_DEC": ["#newKey# CLASS #startClass# CLASS_NAME #className# OPEN_CUR CLASS_BODY CLOSE_CUR #endClass#"],
     "CLASS" : ["'class'"],
     "CLASS_NAME" : ["'identifier'"],
     "CLASS_BODY" : ["EPSILON","VARIABLE_DEC CLASS_BODY","FUNCTION_DEC CLASS_BODY"],
     
-    "FUNCTION_DEC" : ["FUNCTION #startFunction# FUNCTION_TYPE #functionType# FUNCTION_NAME #functionName# OPEN_PAR FUNCTION_PARAM_DEC CLOSE_PAR OPEN_CUR FUNCTION_BODY CLOSE_CUR #endFunction#"],
+    "FUNCTION_DEC" : ["#newKey# FUNCTION #startFunction# FUNCTION_TYPE #functionType# FUNCTION_NAME #functionName# OPEN_PAR FUNCTION_PARAM_DEC CLOSE_PAR OPEN_CUR FUNCTION_BODY CLOSE_CUR #endFunction#"],
     "FUNCTION": ["'function'"],
     "FUNCTION_TYPE" : ["'identifier'","'int_type'","'boolean_type'","'char_type'","'string_type'","'void_type'","'any_type'"],
     "FUNCTION_NAME" : ["'identifier'"],
@@ -16,20 +16,20 @@
     "FUNCTION_PARAM_A" : ["VARIABLE #startParam# VARIABLE_TYPE #paramType# VARIABLE_NAME #paramName# #endParam# FUNCTION_PARAM_B"],
     "FUNCTION_PARAM_B" : ["EPSILON","COMMA FUNCTION_PARAM_A"],
 
-    "VAR_ASSIGN_OR_FUNC_CALL" : ["#startOuterCall# VAR_ASSIGN_OR_FUNC_CALL_A #endOuterCall#"],
+    "VAR_ASSIGN_OR_FUNC_CALL" : ["#newKey# #startOuterCall# VAR_ASSIGN_OR_FUNC_CALL_A #endOuterCall#"],
     "VAR_ASSIGN_OR_FUNC_CALL_A" : ["IDENTIFIER VAR_ASSIGN_OR_FUNC_CALL_B"],
     "VAR_ASSIGN_OR_FUNC_CALL_B" : ["#functionCall# IDENTIFIER_FUNCTION_CALL VAR_ASSIGN_OR_FUNC_CALL_C","#varCall# DOT VAR_ASSIGN_OR_FUNC_CALL_A","#varCall# ASSIGN EXPR_DEC SEMICOLON #varAssign#"],
     "VAR_ASSIGN_OR_FUNC_CALL_C" : ["SEMICOLON #functionExec#","DOT VAR_ASSIGN_OR_FUNC_CALL_A"],
     
-    "VARIABLE_DEC" : ["VARIABLE #startVar# VARIABLE_TYPE #varType# VARIABLE_NAME #varName# SEMICOLON #endVar#"],
+    "VARIABLE_DEC" : ["#newKey# VARIABLE #startVar# VARIABLE_TYPE #varType# VARIABLE_NAME #varName# SEMICOLON #endVar#"],
     "VARIABLE" : ["'var'"],
     "VARIABLE_TYPE" : ["'identifier'","'int_type'","'boolean_type'","'char_type'","'string_type'","'any_type'"],
     "VARIABLE_NAME" : ["'identifier'"],
 
-    "RETURN_DEC" : ["RETURN #startReturn# EXPR_DEC #returnExpr# SEMICOLON #endReturn#"],
+    "RETURN_DEC" : ["#newKey# RETURN #startReturn# EXPR_DEC #returnExpr# SEMICOLON #endReturn#"],
 
-    "STATEMENT" : ["IF #startIf# OPEN_PAR EXPR_DEC #ifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endIf#",
-                    "WHILE #startWhile# OPEN_PAR EXPR_DEC #whileCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endWhile#"],
+    "STATEMENT" : ["#newKey# IF #startIf# OPEN_PAR EXPR_DEC #ifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endIf#",
+                    "#newKey# WHILE #startWhile# OPEN_PAR EXPR_DEC #whileCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endWhile#"],
     "STATEMENT_BODY" : ["EPSILON","VARIABLE_DEC STATEMENT_BODY", "VAR_ASSIGN_OR_FUNC_CALL STATEMENT_BODY","STATEMENT STATEMENT_BODY","RETURN_DEC STATEMENT_BODY"],
 
     "BASH_SUB" : ["'bash_sub'"],

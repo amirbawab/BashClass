@@ -109,9 +109,6 @@ private:
     // Hold class currently being defined
     std::shared_ptr<BClass> m_focusClass;
 
-    // Hold return being defined
-    std::shared_ptr<ecc::LexicalToken> m_focusReturnToken;
-
     // Hold chains and expressions operands
     std::vector<std::shared_ptr<IBCallable>> m_expressionOperandStack;
 

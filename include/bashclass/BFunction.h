@@ -97,17 +97,17 @@ public:
 
     /**
      * Register return statement
-     * @param token
+     * @param referenceKey
      * @param ret
      */
-    void registerReturn(std::shared_ptr<ecc::LexicalToken> token, std::shared_ptr<BReturn> ret);
+    void registerReturn(unsigned int referenceKey, std::shared_ptr<BReturn> ret);
 
     /**
      * Get registered return expression
-     * @param lexicalToken
+     * @param referenceKey
      * @return return
      */
-    std::shared_ptr<BReturn> getReturnByToken(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+    std::shared_ptr<BReturn> getReturnByReferenceKey(unsigned int referenceKey);
 
     /**
      * A void function should not a return statement
