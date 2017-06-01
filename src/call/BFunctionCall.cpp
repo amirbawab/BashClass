@@ -11,38 +11,58 @@ std::string BFunctionCall::getTypeValueAsString() {
 
 void BFunctionCall::verifyArguments() {
 
-    if(!m_function) {
-        std::cerr << "Arguments for function call " << m_lexicalToken->getValue() << " cannot be verified" << std::endl;
-        return;
+    // Check if the number of arguments is less than the number of parameters
+    if(m_function && m_arguments.size() < m_function->findAllParameters().size()) {
+        std::cerr << "Function call " << m_lexicalToken->getValue()
+                  << " is missing arguments" << std::endl;
     }
 
-    // Get function parameters
-    auto parameters = m_function->findAllParameters();
+    // No need to check if for the number of arguments exceeding the number of parameters because
+    // this is already handled by the addArgument() function
+}
 
-    // Arguments number must match function parameters
-    if(parameters.size() != m_arguments.size()) {
-        std::cerr << "Function " << m_function->getName()->getValue()
-                  << " expects the number of arguments to be " << parameters.size() << " but given "
-                  << m_arguments.size() << " instead" << std::endl;
-    } else {
+void BFunctionCall::addArgument(std::shared_ptr<IBCallable> argument) {
 
-        // Arguments type must match function parameters
-        for(size_t i = 0; i < parameters.size(); i++) {
-            std::string argumentType = m_arguments[i]->getTypeValueAsString();
-            std::string parameterType = parameters[i]->getType()->getValue();
-            if(!parameters[i]->hasKnownType()) {
+    // Check the index of the parameter to be compared with
+    size_t paramIndex = m_arguments.size();
+
+    // Add argument
+    m_arguments.push_back(argument);
+
+    // To verify the argument added, the function must exist
+    if(m_function) {
+
+        // Get function parameters
+        auto parameters = m_function->findAllParameters();
+
+        // Arguments number must match function parameters
+        if(paramIndex >= parameters.size()) {
+            std::cerr << "Argument number " << paramIndex + 1 << " cannot be passed to the function "
+                      << m_function->getName()->getValue() << " because the function expects "
+                      << parameters.size() << " arguments" << std::endl;
+        } else {
+
+            std::string argumentType = argument->getTypeValueAsString();
+            std::string parameterType = parameters[paramIndex]->getType()->getValue();
+            if(!parameters[paramIndex]->hasKnownType()) {
                 std::cerr << "Cannot pass argument value to an undefined type for parameter "
-                          << parameters[i]->getName()->getValue() << " in function "
+                          << parameters[paramIndex]->getName()->getValue() << " in function "
                           << m_function->getName()->getValue() << std::endl;
             } else if(argumentType == BType::UNDEFINED) {
-                std::cerr << "Parameter " << parameters[i]->getName()->getValue()
+                std::cerr << "Parameter " << parameters[paramIndex]->getName()->getValue()
                           << " in function " << m_function->getName()->getValue()
                           << " is given an undefined argument" << std::endl;
             } else if(parameterType != BType::TYPE_VALUE_ANY && parameterType != argumentType) {
                 std::cerr << "Function " << m_function->getName()->getValue()
-                          << " expects argument " << i + 1 << " to be of type " << parameterType
+                          << " expects argument " << paramIndex + 1 << " to be of type " << parameterType
                           << " but given " << argumentType << std::endl;
             }
         }
+    } else {
+        std::cerr << "Arguments number " << m_arguments.size()+1
+                  << " for function call " << m_lexicalToken->getValue()
+                  << " cannot be verified because the function is undefined" << std::endl;
+
     }
 }
+

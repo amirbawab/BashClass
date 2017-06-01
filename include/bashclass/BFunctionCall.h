@@ -8,8 +8,17 @@
 
 class BFunctionCall : public IBCallable {
 private:
+
+    // The function this function call refers to.
+    // If this variable is not set, then the actual function
+    // was not found
     std::shared_ptr<BFunction> m_function;
+
+    // Arguments passed to this function call
     std::vector<std::shared_ptr<IBCallable>> m_arguments;
+
+    // Lexical token for the function call, so the value of this token
+    // and the actual function should always match
     std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
 public:
 
@@ -29,18 +38,13 @@ public:
      * Add argument
      * @param argument
      */
-    void addArgument(std::shared_ptr<IBCallable> argument) {m_arguments.push_back(argument);};
+    void addArgument(std::shared_ptr<IBCallable> argument);
 
     /**
      * Get function type
      * @return function type
      */
     std::string getTypeValueAsString();
-
-    /**
-     * Arguments must match function parameters
-     */
-    void verifyArguments();
 
     /**
      * Set lexical token
@@ -53,6 +57,11 @@ public:
      * @return lexical token
      */
     std::shared_ptr<ecc::LexicalToken> getLexicalToken() {return m_lexicalToken;}
+
+    /**
+     * Argument number should match the number of parameters
+     */
+    void verifyArguments();
 };
 
 #endif
