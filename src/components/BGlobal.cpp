@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stack>
 #include <set>
+#include <bashclass/BReport.h>
 
 std::stringstream BGlobal::getLabel() {
     return std::stringstream();
@@ -24,8 +25,10 @@ void BGlobal::linkTypes() {
                 // Find class scope of that type
                 auto cls = findAllClasses(variable->getType()->getValue().c_str());
                 if(cls.empty()) {
-                    std::cerr << "Undefined type " << variable->getType()->getValue() <<
-                              " for variable " << variable->getName()->getValue() << std::endl;
+                    BReport::getInstance().error()
+                            << "Undefined type " << variable->getType()->getValue() <<
+                            " for variable " << variable->getName()->getValue() << std::endl;
+                    BReport::getInstance().printError();
                 } else {
                     variable->setTypeScope(cls.front());
                 }
@@ -39,8 +42,10 @@ void BGlobal::linkTypes() {
                 // Find class scope of that type
                 auto cls = findAllClasses(castFunction->getType()->getValue().c_str());
                 if(cls.empty()) {
-                    std::cerr << "Undefined type " << castFunction->getType()->getValue() <<
-                              " for function " << castFunction->getName()->getValue() << std::endl;
+                    BReport::getInstance().error()
+                            << "Undefined type " << castFunction->getType()->getValue() <<
+                            " for function " << castFunction->getName()->getValue() << std::endl;
+                    BReport::getInstance().printError();
                 } else {
                     castFunction->setTypeScope(cls.front());
                 }
@@ -76,7 +81,9 @@ void BGlobal::detectCircularReference() {
                         scopeStack.push(variable->getTypeScope());
                     } else {
                         auto castClass = std::dynamic_pointer_cast<BClass>(cls);
-                        std::cerr << "Circular reference detected from class " << castClass->getName()->getValue() << std::endl;
+                        BReport::getInstance().error()
+                                << "Circular reference detected from class " << castClass->getName()->getValue() << std::endl;
+                        BReport::getInstance().printError();
                     }
                 }
             }

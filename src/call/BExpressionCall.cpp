@@ -2,6 +2,7 @@
 #include <bashclass/BTypes.h>
 #include <iostream>
 #include <bashclass/BException.h>
+#include <bashclass/BReport.h>
 
 const std::string BExpressionCall::BOOL_LOGICAL_OR = "logical_or";
 const std::string BExpressionCall::BOOL_LOGICAL_AND = "logical_and";
@@ -43,8 +44,10 @@ std::string BExpressionCall::getTypeValueAsString() {
                 return BType::TYPE_VALUE_BOOLEAN;
             }
 
-            std::cerr << "Boolean expression with " << m_operatorToken->getValue()
-                      << " operator requires both operand to be of the same type." << std::endl;
+            BReport::getInstance().error()
+                    << "Boolean expression with " << m_operatorToken->getValue()
+                    << " operator requires both operand to be of the same type." << std::endl;
+            BReport::getInstance().printError();
             return BType::UNDEFINED;
         }
 
@@ -54,8 +57,10 @@ std::string BExpressionCall::getTypeValueAsString() {
                 return BType::TYPE_VALUE_BOOLEAN;
             }
 
-            std::cerr << "Boolean expression with " << m_operatorToken->getValue()
-                      << " operator requires both operands to be of boolean type" << std::endl;
+            BReport::getInstance().error()
+                    << "Boolean expression with " << m_operatorToken->getValue()
+                    << " operator requires both operands to be of boolean type" << std::endl;
+            BReport::getInstance().printError();
             return BType::UNDEFINED;
         }
 
@@ -66,8 +71,10 @@ std::string BExpressionCall::getTypeValueAsString() {
                 return BType::TYPE_VALUE_BOOLEAN;
             }
 
-            std::cerr << "Boolean expression with " << m_operatorToken->getValue()
-                      << " operator requires both operands to be of integer type" << std::endl;
+            BReport::getInstance().error()
+                    << "Boolean expression with " << m_operatorToken->getValue()
+                    << " operator requires both operands to be of integer type" << std::endl;
+            BReport::getInstance().printError();
             return BType::UNDEFINED;
         }
 
@@ -81,8 +88,10 @@ std::string BExpressionCall::getTypeValueAsString() {
                 return BType::TYPE_VALUE_INT;
             }
 
-            std::cerr << "Integer expression with " << m_operatorToken->getValue()
-                      << " operator requires both operands to be of integer type" << std::endl;
+            BReport::getInstance().error()
+                    << "Integer expression with " << m_operatorToken->getValue()
+                    << " operator requires both operands to be of integer type" << std::endl;
+            BReport::getInstance().printError();
             return BType::UNDEFINED;
         }
 
@@ -98,8 +107,10 @@ std::string BExpressionCall::getTypeValueAsString() {
                 return BType::TYPE_VALUE_INT;
             }
 
-            std::cerr << "Operator " << m_operatorToken->getValue()
-                      << " requires both operands to be of integer or left operand to be a string" << std::endl;
+            BReport::getInstance().error()
+                    << "Operator " << m_operatorToken->getValue()
+                    << " requires both operands to be of integer or left operand to be a string" << std::endl;
+            BReport::getInstance().printError();
             return BType::UNDEFINED;
         }
 
@@ -118,8 +129,10 @@ std::string BExpressionCall::getTypeValueAsString() {
                 return BType::TYPE_VALUE_BOOLEAN;
             }
 
-            std::cerr << "Operator " << m_operatorToken->getValue()
-                      << " operand to be of boolean type" << std::endl;
+            BReport::getInstance().error()
+                    << "Operator " << m_operatorToken->getValue()
+                    << " operand to be of boolean type" << std::endl;
+            BReport::getInstance().printError();
             return BType::UNDEFINED;
         }
 

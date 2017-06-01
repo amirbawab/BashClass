@@ -4,6 +4,7 @@
 #include <bashclass/BClass.h>
 #include <iostream>
 #include <bashclass/BException.h>
+#include <bashclass/BReport.h>
 
 std::string BChainCall::getTypeValueAsString() {
     return last()->getTypeValueAsString();
@@ -38,26 +39,32 @@ void BChainCall::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc:
         if(variable) {
             // Check if the variable is a class member
             if(variable->isClassMember()) {
-                std::cerr << "Use the first parameter of the function to refer to the variable "
-                          << variable->getName()->getValue() << " at line " << token->getLine() << " and column "
-                          << token->getColumn() << std::endl;
+                BReport::getInstance().error()
+                        << "Use the first parameter of the function to refer to the variable "
+                        << variable->getName()->getValue() << " at line " << token->getLine() << " and column "
+                        << token->getColumn() << std::endl;
+                BReport::getInstance().printError();
             }
 
             // Set variable anyway since it's clear what the user wants
             variableCall->setVariable(variable);
         } else {
-            std::cerr << "Undefined variable " << token->getValue()
-                      << " at line " << token->getLine() << " and column "
-                      << token->getColumn() << std::endl;
+            BReport::getInstance().error()
+                    << "Undefined variable " << token->getValue()
+                    << " at line " << token->getLine() << " and column "
+                    << token->getColumn() << std::endl;
+            BReport::getInstance().printError();
         }
     } else {
         auto prevVariableCall = std::dynamic_pointer_cast<BVariableCall>(last());
         auto prevFunctionCall = std::dynamic_pointer_cast<BFunctionCall>(last());
         if((prevVariableCall && !prevVariableCall->getVariable())
            || (prevFunctionCall && !prevFunctionCall->getFunction())) {
-            std::cerr << "Cannot access variable member " << token->getValue()
-                      << " of undefined at line " << token->getLine() << " and column "
-                      << token->getColumn() << std::endl;
+            BReport::getInstance().error()
+                    << "Cannot access variable member " << token->getValue()
+                    << " of undefined at line " << token->getLine() << " and column "
+                    << token->getColumn() << std::endl;
+            BReport::getInstance().printError();
         } else {
             std::shared_ptr<BScope> typeScope = getPrevItemTypeScope(prevVariableCall, prevFunctionCall);
             if(typeScope) {
@@ -66,16 +73,21 @@ void BChainCall::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc:
                     variableCall->setVariable(variables.front());
                 } else {
                     auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
-                    std::cerr << "Class " << castClass->getName()->getValue() << " does not have a variable member "
-                              << token->getValue() << " at line "
-                              << token->getLine() << " and column "
-                              << token->getColumn() << std::endl;
+                    BReport::getInstance().error()
+                            << "Class " << castClass->getName()->getValue()
+                            << " does not have a variable member "
+                            << token->getValue() << " at line "
+                            << token->getLine() << " and column "
+                            << token->getColumn() << std::endl;
+                    BReport::getInstance().printError();
                 }
             } else {
-                std::cerr << "Variable member " << token->getValue()
-                          << " at line " << token->getLine()
-                          << " and column " << token->getColumn()
-                          << " does not exist. Previous element type does not have any known members." << std::endl;
+                BReport::getInstance().error()
+                        << "Variable member " << token->getValue()
+                        << " at line " << token->getLine()
+                        << " and column " << token->getColumn()
+                        << " does not exist. Previous element type does not have any known members." << std::endl;
+                BReport::getInstance().printError();
             }
         }
     }
@@ -96,19 +108,22 @@ void BChainCall::addFunction(std::shared_ptr<BScope> globalScope, std::shared_pt
         if(!functions.empty()) {
             functionCall->setFunction(std::dynamic_pointer_cast<BFunction>(functions.front()));
         } else {
-            std::cerr << "Undefined function " << token->getValue()
-                      << " at line " << token->getLine() << " and column "
-                      << token->getColumn() << std::endl;
-
+            BReport::getInstance().error()
+                    << "Undefined function " << token->getValue()
+                    << " at line " << token->getLine() << " and column "
+                    << token->getColumn() << std::endl;
+            BReport::getInstance().printError();
         }
     } else {
         auto prevVariableCall = std::dynamic_pointer_cast<BVariableCall>(last());
         auto prevFunctionCall = std::dynamic_pointer_cast<BFunctionCall>(last());
         if((prevVariableCall && !prevVariableCall->getVariable())
            || (prevFunctionCall && !prevFunctionCall->getFunction())) {
-            std::cerr << "Cannot access function member " << token->getValue()
-                      << " of undefined at line " << token->getLine() << " and column "
-                      << token->getColumn() << std::endl;
+            BReport::getInstance().error()
+                    << "Cannot access function member " << token->getValue()
+                    << " of undefined at line " << token->getLine() << " and column "
+                    << token->getColumn() << std::endl;
+            BReport::getInstance().printError();
         } else {
             std::shared_ptr<BScope> typeScope = getPrevItemTypeScope(prevVariableCall, prevFunctionCall);
             if(typeScope) {
@@ -118,16 +133,20 @@ void BChainCall::addFunction(std::shared_ptr<BScope> globalScope, std::shared_pt
                     functionCall->setFunction(function);
                 } else {
                     auto castClass = std::dynamic_pointer_cast<BClass>(typeScope);
-                    std::cerr << "Class " << castClass->getName()->getValue() << " does not have a function member "
-                              << token->getValue() << " at line "
-                              << token->getLine() << " and column "
-                              << token->getColumn() << std::endl;
+                    BReport::getInstance().error()
+                            << "Class " << castClass->getName()->getValue() << " does not have a function member "
+                            << token->getValue() << " at line "
+                            << token->getLine() << " and column "
+                            << token->getColumn() << std::endl;
+                    BReport::getInstance().printError();
                 }
             } else {
-                std::cerr << "Function member " << token->getValue()
-                          << " at line " << token->getLine()
-                          << " and column " << token->getColumn()
-                          << " does not exist. Previous element type does not have any known members." << std::endl;
+                BReport::getInstance().error()
+                        << "Function member " << token->getValue()
+                        << " at line " << token->getLine()
+                        << " and column " << token->getColumn()
+                        << " does not exist. Previous element type does not have any known members." << std::endl;
+                BReport::getInstance().printError();
             }
         }
     }

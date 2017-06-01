@@ -8,6 +8,7 @@
 #include <iostream>
 #include <sstream>
 #include <bashclass/BException.h>
+#include <bashclass/BReport.h>
 
 std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(const char* name) {
     std::vector<std::shared_ptr<BVariable>> variables;
@@ -151,8 +152,10 @@ void BScope::registerClass(unsigned int referenceKey, std::shared_ptr<BScope> cl
     // Check if class was added previously
     auto getClass = findAllClasses(classScopeCast->getName()->getValue().c_str());
     if(!getClass.empty()) {
-        std::cerr << "Class " << classScopeCast->getName()->getValue() << " at line "
-                  << classScopeCast->getName()->getLine() << " was defined previously" << std::endl;
+        BReport::getInstance().error()
+                << "Class " << classScopeCast->getName()->getValue() << " at line "
+                << classScopeCast->getName()->getLine() << " was defined previously" << std::endl;
+        BReport::getInstance().printError();
     }
 
     // Register class in this scope
@@ -172,9 +175,11 @@ void BScope::registerFunction(unsigned int referenceKey, std::shared_ptr<BScope>
     // Check if function was added previously
     auto getFunc = findAllFunctions(functionScopeCast->getName()->getValue().c_str());
     if(!getFunc.empty()) {
-        std::cerr << "Function " << functionScopeCast->getName()->getValue() << " at line "
-                  << functionScopeCast->getName()->getLine()
-                  <<" was defined previously in the same scope" << std::endl;
+        BReport::getInstance().error()
+                << "Function " << functionScopeCast->getName()->getValue() << " at line "
+                << functionScopeCast->getName()->getLine()
+                <<" was defined previously in the same scope" << std::endl;
+        BReport::getInstance().printError();
     }
 
     // Register function in this scope
@@ -196,9 +201,11 @@ void BScope::registerVariable(unsigned int referenceKey, std::shared_ptr<BVariab
     // Check if variable was added previously
     auto getVar = findAllVariables(variable->getName()->getValue().c_str());
     if(!getVar.empty()) {
-        std::cerr << (variable->isParam() ? "Parameter " : "Variable ")
-                  << variable->getName()->getValue() << " at line " << variable->getName()->getLine()
-                  << " was defined previously in the same scope" << std::endl;
+        BReport::getInstance().error()
+                << (variable->isParam() ? "Parameter " : "Variable ")
+                << variable->getName()->getValue() << " at line " << variable->getName()->getLine()
+                << " was defined previously in the same scope" << std::endl;
+        BReport::getInstance().printError();
     }
 
     // Register variable in this scope

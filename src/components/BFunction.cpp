@@ -3,6 +3,7 @@
 #include <bashclass/BTypes.h>
 #include <iostream>
 #include <bashclass/BException.h>
+#include <bashclass/BReport.h>
 
 std::stringstream BFunction::getLabel() {
     std::stringstream stream = m_parentScope->getLabel();
@@ -23,9 +24,11 @@ void BFunction::verifyParameters() {
         auto params = findAllParameters();
         if(params.empty() || params.front()->getTypeScope() != m_parentScope) {
             auto castClass = std::dynamic_pointer_cast<BClass>(m_parentScope);
-            std::cerr << "Function " << getName()->getValue() << " in class "
-                      << castClass->getName()->getValue() <<" must have the first argument of type "
-                      << castClass->getName()->getValue() << std::endl;
+            BReport::getInstance().error()
+                    << "Function " << getName()->getValue() << " in class "
+                    << castClass->getName()->getValue() <<" must have the first argument of type "
+                    << castClass->getName()->getValue() << std::endl;
+            BReport::getInstance().printError();
         }
     }
 }
@@ -45,17 +48,25 @@ void BFunction::registerReturn(unsigned int referenceKey, std::shared_ptr<BRetur
         std::string functionType = m_type->getValue();
         std::string expressionType = ret->getExpression()->getTypeValueAsString();
         if(!hasKnowType()) {
-            std::cerr << "Cannot return expression in function " << m_name->getValue() << " of undefined type"
-                      << std::endl;
+            BReport::getInstance().error()
+                    << "Cannot return expression in function " << m_name->getValue() << " of undefined type"
+                    << std::endl;
+            BReport::getInstance().printError();
         } else if(expressionType == BType::UNDEFINED) {
-            std::cerr << "Function " << m_name->getValue() << " has return statement but of undefined type" << std::endl;
+            BReport::getInstance().error()
+                    << "Function " << m_name->getValue() << " has return statement but of undefined type" << std::endl;
+            BReport::getInstance().printError();
         } else if(functionType != BType::TYPE_VALUE_ANY && functionType != expressionType) {
-            std::cerr << "Function " << m_name->getValue() << " is of type " << functionType
-                      << " but return expression is of type " << expressionType << std::endl;
+            BReport::getInstance().error()
+                    << "Function " << m_name->getValue() << " is of type " << functionType
+                    << " but return expression is of type " << expressionType << std::endl;
+            BReport::getInstance().printError();
         }
     } else {
-        std::cerr << "Function " << m_name->getValue()
-                  << " does not expect to return an expression" << std::endl;
+        BReport::getInstance().error()
+                << "Function " << m_name->getValue()
+                << " does not expect to return an expression" << std::endl;
+        BReport::getInstance().printError();
     }
 
     // Register return expression in this function
@@ -75,7 +86,9 @@ bool BFunction::hasReturn() {
 
 void BFunction::verifyReturns() {
     if(requiresReturn() && !hasReturn()) {
-        std::cerr << "Function " << m_name->getValue() << " is missing a return statement" << std::endl;
+        BReport::getInstance().error()
+                << "Function " << m_name->getValue() << " is missing a return statement" << std::endl;
+        BReport::getInstance().printError();
     }
     // No need to check for !requiresReturn() && hasReturn() because is handled by the register function
 }

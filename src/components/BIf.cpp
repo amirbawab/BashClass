@@ -1,6 +1,7 @@
 #include <bashclass/BIf.h>
 #include <bashclass/BTypes.h>
 #include <iostream>
+#include <bashclass/BReport.h>
 
 std::stringstream BIf::getLabel() {
     std::stringstream stream = m_parentScope->getLabel();
@@ -16,8 +17,12 @@ void BIf::setExpression(std::shared_ptr<IBCallable> expression) {
     // Verify the type of the expression is boolean
     std::string expressionType = expression->getTypeValueAsString();
     if(expressionType == BType::UNDEFINED) {
-        std::cerr << "If statement condition cannot be of undefined type" << std::endl;
+        BReport::getInstance().error()
+                << "If statement condition cannot be of undefined type" << std::endl;
+        BReport::getInstance().printError();
     } else if(expressionType != BType::TYPE_VALUE_BOOLEAN) {
-        std::cerr << "An if condition must evaluate to a boolean instead of " << expressionType << std::endl;
+        BReport::getInstance().error()
+                << "An if condition must evaluate to a boolean instead of " << expressionType << std::endl;
+        BReport::getInstance().printError();
     }
 }
