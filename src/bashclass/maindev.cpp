@@ -1,6 +1,7 @@
 #include <easycc/EasyCCDev.h>
 #include <iostream>
 #include <bashclass/BashClass.h>
+#include <bashclass/BReport.h>
 
 int main(int argc, char *argv[]) {
 
@@ -77,6 +78,11 @@ int main(int argc, char *argv[]) {
     // Start compiling
     std::vector<int> phases = {BashClass::PHASE_CREATE, BashClass::PHASE_EVAL, BashClass::PHASE_GENERATE};
     for(int phase : phases) {
+
+        // Generate code only if no semantic errors were reported
+        if(phase == BashClass::PHASE_GENERATE && BReport::getInstance().hasError()) {
+            return BashClass::ERR_CODE_SEMANTIC;
+        }
 
         // Set the phase number
         easyCC.setParsingPhase(phase);

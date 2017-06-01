@@ -17,9 +17,18 @@ typedef std::function<void(int, LexicalTokens&, int, bool)> SemanticActionHandle
 
 class BashClass {
 public:
+
+    // Different phases
     static const int PHASE_CREATE = 1;
     static const int PHASE_EVAL = 2;
     static const int PHASE_GENERATE = 3;
+
+    // Error code
+    static const int ERR_CODE_SEMANTIC = 4;
+
+    /**
+     * Initialize members
+     */
     BashClass();
 
     // Print the structure of the code

@@ -21,6 +21,11 @@ public:
     void operator=(BReport const&) = delete;
 
     /**
+     * Flush buffer
+     */
+    ~BReport();
+
+    /**
      * Get singleton instance
      * @return singleton instance
      */
@@ -39,6 +44,12 @@ public:
      * @return
      */
     std::stringstream& error() {return m_errorStream;}
+
+    /**
+     * Check if an error was reported
+     * @return true if an error was reported
+     */
+    bool hasError() {return m_hasError;}
 };
 
 #endif
