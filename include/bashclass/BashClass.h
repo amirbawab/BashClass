@@ -28,6 +28,7 @@ public:
     // Semantic action handlers
     SemanticActionHandler m_start;
     SemanticActionHandler m_end;
+    SemanticActionHandler m_newKey;
 
     SemanticActionHandler m_startClass;
     SemanticActionHandler m_className;
@@ -87,6 +88,9 @@ private:
 
     // Global scope
     std::shared_ptr<BGlobal> m_global;
+
+    // Key updated by a semantic action handler
+    unsigned int m_referenceKey;
 
     // Hold nesting scopes
     std::vector<std::shared_ptr<BScope>> m_scopeStack;

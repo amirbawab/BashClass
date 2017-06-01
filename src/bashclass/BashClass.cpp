@@ -37,30 +37,24 @@ void BashClass::initHandlers() {
      *          PROGRAM
      **************************************/
     m_start = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE) {
 
-            // Push global scope
-            m_scopeStack.push_back(m_global);
-        } else if(phase == BashClass::PHASE_EVAL) {
+        // Reset the reference key value at each phase
+        m_referenceKey = 0;
 
-            // Run checks
-            onPhaseStartCheck();
+        // Run checks
+        onPhaseStartCheck();
 
-            // Push global scope
-            m_scopeStack.push_back(m_global);
+        // Push global scope
+        m_scopeStack.push_back(m_global);
+
+        // Connect elements after building the structure
+        if(phase == BashClass::PHASE_EVAL) {
 
             // Link types of functions and variables
             m_global->linkTypes();
 
             // Detect circular references
             m_global->detectCircularReference();
-        } else if(phase == BashClass::PHASE_GENERATE) {
-
-            // Run checks
-            onPhaseStartCheck();
-
-            // Push global scope
-            m_scopeStack.push_back(m_global);
         }
     };
 
@@ -68,6 +62,15 @@ void BashClass::initHandlers() {
 
         // Pop the global scope in all phases
         m_scopeStack.pop_back();
+    };
+
+    /**************************************
+     *          REFERENCE KEY
+     **************************************/
+    m_newKey = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+
+        // Update reference key
+        ++m_referenceKey;
     };
 
     /**************************************
