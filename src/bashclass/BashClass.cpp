@@ -1,6 +1,4 @@
 #include <bashclass/BashClass.h>
-#include <bashclass/BTypes.h>
-#include <bashclass/BClass.h>
 #include <bashclass/BIf.h>
 #include <bashclass/BWhile.h>
 #include <iostream>
@@ -392,9 +390,7 @@ void BashClass::initHandlers() {
      **************************************/
 
     m_startArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            // TODO
-        }
+        // Do nothing ...
     };
 
     m_setArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
@@ -427,9 +423,7 @@ void BashClass::initHandlers() {
      **************************************/
 
     m_startExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            // TODO
-        }
+        // Do nothing ...
     };
 
     m_createExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
@@ -461,8 +455,6 @@ void BashClass::initHandlers() {
     };
 
     m_endExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            // TODO
-        }
+        // Do nothing ...
     };
 }
