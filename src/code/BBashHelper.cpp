@@ -47,3 +47,16 @@ void BBashHelper::createLocalVar(std::shared_ptr<BVariable> variable) {
     ss << "local " << variable->getLabel().str() << "=" << std::endl;
     BGenerateCode::get().write(ss);
 }
+
+void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
+    std::stringstream ss;
+    ss << "function " << function->getLabel().str() << "(";
+    ss << ") {" << std::endl;
+    BGenerateCode::get().write(ss);
+}
+
+void BBashHelper::closeFunction(std::shared_ptr<BFunction> function) {
+    std::stringstream ss;
+    ss << "}" << std::endl;
+    BGenerateCode::get().write(ss);
+}

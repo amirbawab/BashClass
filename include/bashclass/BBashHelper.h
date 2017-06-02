@@ -4,6 +4,7 @@
 #include <memory>
 #include <bashclass/BClass.h>
 #include <bashclass/BVariable.h>
+#include <bashclass/BFunction.h>
 
 class BBashHelper {
 public:
@@ -13,6 +14,8 @@ public:
     static void uniqueCounter(std::shared_ptr<BClass> classScope);
     static void createGlobalVar(std::shared_ptr<BVariable> variable);
     static void createLocalVar(std::shared_ptr<BVariable> variable);
+    static void createFunction(std::shared_ptr<BFunction> function);
+    static void closeFunction(std::shared_ptr<BFunction> function);
     static void bash(std::shared_ptr<ecc::LexicalToken> lexicalToken);
 };
 

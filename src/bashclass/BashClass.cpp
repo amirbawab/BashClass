@@ -143,6 +143,10 @@ void BashClass::initHandlers() {
     m_startFunction = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusFunction = std::make_shared<BFunction>();
+        } else if(phase == BashClass::PHASE_GENERATE) {
+            auto functionScope = std::dynamic_pointer_cast<BFunction>(
+                    m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey));
+            BBashHelper::createFunction(functionScope);
         }
     };
 
@@ -183,6 +187,8 @@ void BashClass::initHandlers() {
             functionScope->verifyReturns();
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_GENERATE) {
+            auto functionScope = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
+            BBashHelper::closeFunction(functionScope);
             m_scopeStack.pop_back();
         }
     };
