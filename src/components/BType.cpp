@@ -7,6 +7,8 @@ const std::string BType::TYPE_NAME_STRING = "string_type";
 const std::string BType::TYPE_NAME_ANY = "any_type";
 const std::string BType::TYPE_NAME_VOID = "void_type";
 const std::string BType::TYPE_NAME_BASH_SUB = "bash_sub";
+const std::string BType::TYPE_NAME_BASH_INLINE = "bash_inline";
+const std::string BType::TYPE_NAME_BASH_BLOCK = "bash_block";
 
 const std::string BType::TYPE_VALUE_INT = "int";
 const std::string BType::TYPE_VALUE_CHAR = "char";

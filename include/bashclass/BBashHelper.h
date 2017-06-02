@@ -13,6 +13,7 @@ public:
     static void uniqueCounter(std::shared_ptr<BClass> classScope);
     static void createGlobalVar(std::shared_ptr<BVariable> variable);
     static void createLocalVar(std::shared_ptr<BVariable> variable);
+    static void bash(std::shared_ptr<ecc::LexicalToken> lexicalToken);
 };
 
 #endif

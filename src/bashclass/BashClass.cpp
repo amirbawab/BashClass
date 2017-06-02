@@ -92,6 +92,15 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
+     *              BASH CODE
+     **************************************/
+    m_bashCode = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_GENERATE) {
+            BBashHelper::bash(lexicalVector[index]);
+        }
+    };
+
+    /**************************************
      *          CLASS DECLARATION
      **************************************/
     m_startClass = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
