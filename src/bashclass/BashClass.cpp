@@ -412,6 +412,11 @@ void BashClass::initHandlers() {
             // Get current function scope
             auto functionScope = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
 
+            // Find function if current scope is not a function
+            if(!functionScope) {
+                functionScope = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back()->findParentFunction());
+            }
+
             // Create and configure return statement
             auto returnComp = std::make_shared<BReturn>();
             returnComp->setExpression(m_expressionOperandStack.back());

@@ -153,6 +153,12 @@ public:
      * @return chainCall
      */
     std::shared_ptr<BChainCall> getChainCallByReferenceKey(unsigned int referenceKey);
+
+    /**
+     * Find parent function of this scope
+     * @return pointer to the function or nullptr
+     */
+    std::shared_ptr<BScope> findParentFunction();
 };
 
 #endif

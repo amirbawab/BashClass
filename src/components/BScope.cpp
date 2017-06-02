@@ -223,3 +223,14 @@ std::shared_ptr<BChainCall> BScope::getChainCallByReferenceKey(unsigned int refe
     }
     return m_chainCalls[referenceKey];
 }
+
+std::shared_ptr<BScope> BScope::findParentFunction() {
+    auto parentScope = m_parentScope;
+    while(parentScope) {
+        if(std::dynamic_pointer_cast<BFunction>(parentScope)) {
+            return parentScope;
+        }
+        parentScope = parentScope->getParentScope();
+    }
+    return nullptr;
+}
