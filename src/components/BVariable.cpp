@@ -8,7 +8,7 @@ BVariable::BVariable() {
 
 std::stringstream BVariable::getLabel() {
     std::stringstream stream = m_parentScope->getLabel();
-    stream << "_v_" << m_name->getValue();
+    stream << (m_isParam ? "_p_" : "_v_") << m_name->getValue();
     return stream;
 }
 

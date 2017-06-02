@@ -60,6 +60,11 @@ void BBashHelper::bash(std::shared_ptr<ecc::LexicalToken> token) {
 void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
     std::stringstream ss;
     ss << "function " << function->getLabel().str() << "() {" << std::endl;
+    int paramPos = 1;
+    for(auto param : function->findAllParameters()) {
+        _indent(param->getParentScope(), ss);
+        ss << "local " << param->getLabel().str() << "=\"$" << paramPos++ << "\"" << std::endl;
+    }
     BGenerateCode::get().write(ss);
 }
 
