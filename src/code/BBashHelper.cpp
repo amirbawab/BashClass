@@ -2,10 +2,14 @@
 #include <bashclass/BGenerateCode.h>
 #include <bashclass/BTypes.h>
 #include <bashclass/BException.h>
+#include <bashclass/BGlobal.h>
 
-void _indent(std::shared_ptr<BScope> scope, std::stringstream& ss) {
-    auto parent = scope->getParentScope();
-    while(parent && !std::dynamic_pointer_cast<BClass>(scope)) {
+void _indent(std::shared_ptr<BScope> parent, std::stringstream& ss) {
+    if(!parent) {
+        throw BException("Parent scope should not be empty");
+    }
+
+    while(!std::dynamic_pointer_cast<BGlobal>(parent) && !std::dynamic_pointer_cast<BClass>(parent)) {
         ss << "\t";
         parent = parent->getParentScope();
     }
