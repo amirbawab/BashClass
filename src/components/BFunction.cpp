@@ -19,20 +19,6 @@ bool BFunction::hasKnowType() const {
     return BType::isBuiltInType(m_type->getName()) || m_typeScope;
 }
 
-void BFunction::verifyParameters() {
-    if(isClassMember()) {
-        auto params = findAllParameters();
-        if(params.empty() || params.front()->getTypeScope() != m_parentScope) {
-            auto castClass = std::dynamic_pointer_cast<BClass>(m_parentScope);
-            BReport::getInstance().error()
-                    << "Function " << getName()->getValue() << " in class "
-                    << castClass->getName()->getValue() <<" must have the first argument of type "
-                    << castClass->getName()->getValue() << std::endl;
-            BReport::getInstance().printError();
-        }
-    }
-}
-
 bool BFunction::requiresReturn() {
     return m_type->getName() != BType::TYPE_NAME_VOID;
 }

@@ -5,6 +5,7 @@
 #include <bashclass/BException.h>
 #include <bashclass/BGenerateCode.h>
 #include <bashclass/BBashHelper.h>
+#include <bashclass/BThisCall.h>
 
 BashClass::BashClass() {
     m_global = BGlobal::getInstance();
@@ -183,7 +184,6 @@ void BashClass::initHandlers() {
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_EVAL) {
             auto functionScope = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
-            functionScope->verifyParameters();
             functionScope->verifyReturns();
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_GENERATE) {
@@ -373,6 +373,14 @@ void BashClass::initHandlers() {
             auto token = std::make_shared<BTokenCall>();
             token->setLexicalToken(lexicalVector[index]);
             m_chainBuilderStack.back()->addToken(token);
+        }
+    };
+
+    m_thisCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            auto thisCall = std::make_shared<BThisCall>();
+            thisCall->setLexicalToken(lexicalVector[index]);
+            m_chainBuilderStack.back()->addThis(m_scopeStack.back(), thisCall);
         }
     };
 

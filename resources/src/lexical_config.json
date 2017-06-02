@@ -31,6 +31,7 @@
             "boolean" : "boolean_type",
             "true" : "truefalse",
             "false" : "truefalse",
+            "this" : "this_ref",
             "undefined": "undefined"
         }
     }

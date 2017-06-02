@@ -79,11 +79,6 @@ public:
     bool hasKnowType() const;
 
     /**
-     * A function member of a class must have the class as the type of the first argument
-     */
-    void verifyParameters();
-
-    /**
      * Check if function requires a return expression
      * @return true if function requires a return expression
      */

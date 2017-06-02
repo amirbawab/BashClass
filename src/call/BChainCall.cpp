@@ -17,11 +17,14 @@ std::string BChainCall::getTypeValueAsString() {
  * @return pointer to the type scope
  */
 std::shared_ptr<BScope> getPrevItemTypeScope(std::shared_ptr<BVariableCall> prevVariableCall,
-                                             std::shared_ptr<BFunctionCall> prevFunctionCall) {
+                                             std::shared_ptr<BFunctionCall> prevFunctionCall,
+                                             std::shared_ptr<BThisCall> prevThisCall) {
     if(prevVariableCall) {
         return prevVariableCall->getVariable()->getTypeScope();
     } else if(prevFunctionCall) {
         return prevFunctionCall->getFunction()->getTypeScope();
+    } else if(prevThisCall) {
+        return prevThisCall->getReference();
     } else {
         throw BException("Undefined call on an unknown instance");
     }
@@ -37,16 +40,6 @@ void BChainCall::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc:
     if(m_callables.empty()) {
         auto variable = scope->findClosestVariable(token->getValue());
         if(variable) {
-            // Check if the variable is a class member
-            if(variable->isClassMember()) {
-                BReport::getInstance().error()
-                        << "Use the first parameter of the function to refer to the variable "
-                        << variable->getName()->getValue() << " at line " << token->getLine() << " and column "
-                        << token->getColumn() << std::endl;
-                BReport::getInstance().printError();
-            }
-
-            // Set variable anyway since it's clear what the user wants
             variableCall->setVariable(variable);
         } else {
             BReport::getInstance().error()
@@ -56,17 +49,27 @@ void BChainCall::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc:
             BReport::getInstance().printError();
         }
     } else {
+
+        // Cast previous element
         auto prevVariableCall = std::dynamic_pointer_cast<BVariableCall>(last());
         auto prevFunctionCall = std::dynamic_pointer_cast<BFunctionCall>(last());
+        auto prevThisCall = std::dynamic_pointer_cast<BThisCall>(last());
+
+        // Check if previous element is recognized
         if((prevVariableCall && !prevVariableCall->getVariable())
-           || (prevFunctionCall && !prevFunctionCall->getFunction())) {
+           || (prevFunctionCall && !prevFunctionCall->getFunction())
+           || (prevThisCall && !prevThisCall->getReference())) {
             BReport::getInstance().error()
                     << "Cannot access variable member " << token->getValue()
                     << " of undefined at line " << token->getLine() << " and column "
                     << token->getColumn() << std::endl;
             BReport::getInstance().printError();
         } else {
-            std::shared_ptr<BScope> typeScope = getPrevItemTypeScope(prevVariableCall, prevFunctionCall);
+
+            // Get the type of the previous element
+            std::shared_ptr<BScope> typeScope = getPrevItemTypeScope(prevVariableCall, prevFunctionCall, prevThisCall);
+
+            // Check if the type is defined
             if(typeScope) {
                 auto variables = typeScope->findAllVariables(token->getValue().c_str());
                 if(!variables.empty()) {
@@ -115,17 +118,27 @@ void BChainCall::addFunction(std::shared_ptr<BScope> globalScope, std::shared_pt
             BReport::getInstance().printError();
         }
     } else {
+
+        // Cast previous element
         auto prevVariableCall = std::dynamic_pointer_cast<BVariableCall>(last());
         auto prevFunctionCall = std::dynamic_pointer_cast<BFunctionCall>(last());
+        auto prevThisCall = std::dynamic_pointer_cast<BThisCall>(last());
+
+        // Check if the previous element is recognized
         if((prevVariableCall && !prevVariableCall->getVariable())
-           || (prevFunctionCall && !prevFunctionCall->getFunction())) {
+           || (prevFunctionCall && !prevFunctionCall->getFunction())
+           || (prevThisCall && !prevThisCall->getReference())) {
             BReport::getInstance().error()
                     << "Cannot access function member " << token->getValue()
                     << " of undefined at line " << token->getLine() << " and column "
                     << token->getColumn() << std::endl;
             BReport::getInstance().printError();
         } else {
-            std::shared_ptr<BScope> typeScope = getPrevItemTypeScope(prevVariableCall, prevFunctionCall);
+
+            // Get the type of the previous element
+            std::shared_ptr<BScope> typeScope = getPrevItemTypeScope(prevVariableCall, prevFunctionCall, prevThisCall);
+
+            // Check if the type is defined
             if(typeScope) {
                 auto functions = typeScope->findAllFunctions(token->getValue().c_str());
                 if(!functions.empty()) {
@@ -157,6 +170,33 @@ void BChainCall::addFunction(std::shared_ptr<BScope> globalScope, std::shared_pt
 
 void BChainCall::addToken(std::shared_ptr<BTokenCall> token) {
     m_callables.push_back(token);
+}
+
+void BChainCall::addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisCall> thisReference) {
+
+    // Callable chain must be empty
+    if(!m_callables.empty()) {
+        throw BException("A 'this' reference must always be at the beginning of the chain");
+    }
+
+    // Find the parent class of the this reference
+    auto parentScope = scope;
+    while(parentScope && !std::dynamic_pointer_cast<BClass>(parentScope)) {
+        parentScope = parentScope->getParentScope();
+    }
+
+    // Check if a parent class was found
+    if(parentScope) {
+        thisReference->setReference(std::dynamic_pointer_cast<BClass>(parentScope));
+    } else {
+        BReport::getInstance().error()
+                << "Undefined reference for 'this' at line " << thisReference->getLexicalToken()->getLine()
+                << " and column " << thisReference->getLexicalToken()->getColumn() << std::endl;
+        BReport::getInstance().printError();
+    }
+
+    // Add this reference to the chain anyway
+    m_callables.push_back(thisReference);
 }
 
 std::shared_ptr<IBCallable> BChainCall::operator[](int index) {

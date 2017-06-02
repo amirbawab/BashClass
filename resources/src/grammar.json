@@ -18,10 +18,13 @@
 
     "BASH_DEC" : ["BASH_SUB #bashCode#", "BASH_INLINE #bashCode#", "BASH_BLOCK #bashCode#"],
 
-    "VAR_ASSIGN_OR_FUNC_CALL" : ["#newKey# #startOuterCall# VAR_ASSIGN_OR_FUNC_CALL_A #endOuterCall#"],
+    "VAR_ASSIGN_OR_FUNC_CALL" : ["#newKey# #startOuterCall# THIS_OPT VAR_ASSIGN_OR_FUNC_CALL_A #endOuterCall#"],
     "VAR_ASSIGN_OR_FUNC_CALL_A" : ["IDENTIFIER VAR_ASSIGN_OR_FUNC_CALL_B"],
     "VAR_ASSIGN_OR_FUNC_CALL_B" : ["#functionCall# IDENTIFIER_FUNCTION_CALL VAR_ASSIGN_OR_FUNC_CALL_C","#varCall# DOT VAR_ASSIGN_OR_FUNC_CALL_A","#varCall# ASSIGN EXPR_DEC SEMICOLON #varAssign#"],
     "VAR_ASSIGN_OR_FUNC_CALL_C" : ["SEMICOLON #functionExec#","DOT VAR_ASSIGN_OR_FUNC_CALL_A"],
+
+    "THIS_OPT" : ["THIS #thisCall# DOT","EPSILON"],
+    "THIS" : ["'this_ref'"],
     
     "VARIABLE_DEC" : ["#newKey# VARIABLE #startVar# VARIABLE_TYPE #varType# VARIABLE_NAME #varName# SEMICOLON #endVar#"],
     "VARIABLE" : ["'var'"],
@@ -90,7 +93,7 @@
         "ARITH_VAR_OR_FUNC_CALL"
         ],
 
-    "ARITH_VAR_OR_FUNC_CALL" : ["#startInnerCall# ARITH_VAR_OR_FUNC_CALL_A #endInnerCall#"],
+    "ARITH_VAR_OR_FUNC_CALL" : ["#startInnerCall# THIS_OPT ARITH_VAR_OR_FUNC_CALL_A #endInnerCall#"],
     "ARITH_VAR_OR_FUNC_CALL_A" : ["IDENTIFIER ARITH_VAR_OR_FUNC_CALL_B"],
     "ARITH_VAR_OR_FUNC_CALL_B" : ["#varCall# EPSILON","#functionCall# IDENTIFIER_FUNCTION_CALL ARITH_VAR_OR_FUNC_CALL_C","#varCall# DOT ARITH_VAR_OR_FUNC_CALL_A"],
     "ARITH_VAR_OR_FUNC_CALL_C" : ["EPSILON","DOT ARITH_VAR_OR_FUNC_CALL_A"],

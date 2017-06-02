@@ -57,6 +57,7 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#varCall#", bashClass.m_varCall);
     easyCC.registerSemanticAction("#functionCall#", bashClass.m_functionCall);
     easyCC.registerSemanticAction("#tokenCall#", bashClass.m_tokenCall);
+    easyCC.registerSemanticAction("#thisCall#", bashClass.m_thisCall);
 
     easyCC.registerSemanticAction("#bashCode#", bashClass.m_bashCode);
 

@@ -5,6 +5,7 @@
 #include <bashclass/BGlobal.h>
 #include <bashclass/BVariableCall.h>
 #include <bashclass/BFunctionCall.h>
+#include <iostream>
 
 void _indent(std::shared_ptr<BScope> parent, std::stringstream& ss) {
     if(!parent) {
@@ -22,8 +23,12 @@ std::string _chainCallToCode(std::shared_ptr<BChainCall> chainCallPtr) {
     std::string chainStr;
     std::shared_ptr<BScope> prevTypeScope;
     for (size_t i = 0; i < chainCall.size(); i++) {
+
+        // Cast element
         auto variableCallCast = std::dynamic_pointer_cast<BVariableCall>(chainCall[i]);
         auto functionCallCast = std::dynamic_pointer_cast<BFunctionCall>(chainCall[i]);
+        auto thisCallCast = std::dynamic_pointer_cast<BThisCall>(chainCall[i]);
+
         if (variableCallCast) {
             if (i == 0) {
                 chainStr = variableCallCast->getVariable()->getLabel().str();
@@ -38,6 +43,11 @@ std::string _chainCallToCode(std::shared_ptr<BChainCall> chainCallPtr) {
             } else {
                 chainStr = functionCallCast->getFunction()->getLabel().str() + "[" + chainStr + "]";
             }
+        } else if(thisCallCast) {
+            chainStr = "_this_";
+            prevTypeScope = thisCallCast->getReference();
+        } else {
+            throw BException("Cannot generate code for an unrecognized element call");
         }
     }
     return chainStr;

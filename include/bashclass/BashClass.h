@@ -71,6 +71,7 @@ public:
     SemanticActionHandler m_varCall;
     SemanticActionHandler m_functionCall;
     SemanticActionHandler m_tokenCall;
+    SemanticActionHandler m_thisCall;
 
     SemanticActionHandler m_bashCode;
 

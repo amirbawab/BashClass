@@ -6,6 +6,7 @@
 #include <bashclass/IBCallable.h>
 #include <bashclass/BScope.h>
 #include <bashclass/BTokenCall.h>
+#include <bashclass/BThisCall.h>
 
 class BChainCall : public IBCallable {
 private:
@@ -78,6 +79,13 @@ public:
      * @param token
      */
     void addToken(std::shared_ptr<BTokenCall> token);
+
+    /**
+     * Add this reference to the chain
+     * @param scope
+     * @param thisReference
+     */
+    void addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisCall> thisReference);
 
     /**
      * Set parent scope
