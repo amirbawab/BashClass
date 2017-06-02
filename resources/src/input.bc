@@ -63,18 +63,18 @@ class Team {
     var Person p1;
     var Person p2;
 
-    function Person getP1(var Team this) {
+    function Person getP1() {
         return this.p1;
     }
 
-    function Person getP2(var Team this) {
+    function Person getP2() {
         return this.p2;
     }
 
     /**
      * Print details about the team
      */
-    function void printDetails(var Team this) {
+    function void printDetails() {
         print(stringf2("Team {} has {} members", this.name, 2));
         print(stringf2("First is: {}. Second is: {}",this.p1.name, this.p2.name));
     }
@@ -110,11 +110,11 @@ function int main(var string name) {
         var Team team;
         team.name = "Bash team";
         team.p1.name = "One";
-        team.getP1(team).id = 1;
+        team.getP1().id = 1;
         team.p2.name = "Two";
-        team.getP2(team).id = 2;
+        team.getP2().id = 2;
         
-        team.printDetails(team);
+        team.printDetails();
 
         i=i+1;
     }
