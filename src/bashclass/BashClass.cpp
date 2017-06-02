@@ -123,7 +123,7 @@ void BashClass::initHandlers() {
 
             // Clear focus
             m_focusClass = nullptr;
-        } else if(phase == BashClass::PHASE_EVAL) {
+        } else if(phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
 
             // Push class scope
             auto classScope = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);
@@ -132,7 +132,7 @@ void BashClass::initHandlers() {
     };
 
     m_endClass = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
+        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
             m_scopeStack.pop_back();
         }
     };
@@ -166,7 +166,7 @@ void BashClass::initHandlers() {
 
             // Clear focus
             m_focusFunction = nullptr;
-        } else if(phase == BashClass::PHASE_EVAL) {
+        } else if(phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
 
             // Push function scope
             auto createdFunction = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);
@@ -182,6 +182,8 @@ void BashClass::initHandlers() {
             functionScope->verifyParameters();
             functionScope->verifyReturns();
             m_scopeStack.pop_back();
+        } else if(phase == BashClass::PHASE_GENERATE) {
+            m_scopeStack.pop_back();
         }
     };
 
@@ -191,6 +193,15 @@ void BashClass::initHandlers() {
     m_startVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusVariable = std::make_shared<BVariable>();
+        } else if(phase == BashClass::PHASE_GENERATE) {
+
+            // Generate code for the current variable
+            auto variable = m_scopeStack.back()->getVariableByReferenceKey(m_referenceKey);
+            if(m_scopeStack.back() == m_global) {
+                BBashHelper::createGlobalVar(variable);
+            } else {
+                BBashHelper::createLocalVar(variable);
+            }
         }
     };
 
@@ -261,7 +272,7 @@ void BashClass::initHandlers() {
             auto newWhile = std::make_shared<BWhile>();
             m_scopeStack.back()->registerScope(m_referenceKey, newWhile);
             m_scopeStack.push_back(newWhile);
-        } else if(phase == BashClass::PHASE_EVAL) {
+        } else if(phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
             auto createdWhile = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);
             m_scopeStack.push_back(createdWhile);
         }
@@ -276,7 +287,7 @@ void BashClass::initHandlers() {
     };
 
     m_endWhile = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
+        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
             m_scopeStack.pop_back();
         }
     };
@@ -290,7 +301,7 @@ void BashClass::initHandlers() {
             auto newIf = std::make_shared<BIf>();
             m_scopeStack.back()->registerScope(m_referenceKey, newIf);
             m_scopeStack.push_back(newIf);
-        } else if(phase == BashClass::PHASE_EVAL) {
+        } else if(phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
             auto createdIf = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);
             m_scopeStack.push_back(createdIf);
         }
@@ -305,7 +316,7 @@ void BashClass::initHandlers() {
     };
 
     m_endIf = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
+        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
             m_scopeStack.pop_back();
         }
     };
