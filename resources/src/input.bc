@@ -90,10 +90,10 @@ class Person {
 function int main(var string name) {
 
     // If name was not specified
-    //if(name == "") {
-    //    print("Pleas enter a name as an argument when running this script");
-    //    return FAILURE_CODE;
-    //}
+    if(name == "") {
+        print("Pleas enter a name as an argument when running this script");
+        return FAILURE_CODE;
+    }
 
     // Initialize global variables
     init();
