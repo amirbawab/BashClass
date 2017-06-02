@@ -40,11 +40,6 @@ public:
      * Link types of all variables and functions
      */
     void linkTypes();
-
-    /**
-     * Write classes headers in bash
-     */
-    void bashifyClassesHeaders();
 };
 
 #endif

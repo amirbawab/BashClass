@@ -4,6 +4,7 @@
 #include <iostream>
 #include <bashclass/BException.h>
 #include <bashclass/BGenerateCode.h>
+#include <bashclass/BBashHelper.h>
 
 BashClass::BashClass() {
     m_global = BGlobal::getInstance();
@@ -59,10 +60,13 @@ void BashClass::initHandlers() {
         } else if(phase == BashClass::PHASE_GENERATE) {
 
             // Generate code required before any input
-            BGenerateCode::get().writePreCode();
+            BBashHelper::header();
 
-            // Generate classes
-            m_global->bashifyClassesHeaders();
+            // Generate classes headers
+            for(auto cls : m_global->findAllClasses()) {
+                auto classCast = std::dynamic_pointer_cast<BClass>(cls);
+                BBashHelper::declareClass(classCast);
+            }
         }
     };
 
@@ -74,7 +78,7 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_GENERATE) {
 
             // Generate code required after the input
-            BGenerateCode::get().writePostCode();
+            BBashHelper::footer();
         }
     };
 

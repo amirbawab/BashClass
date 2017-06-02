@@ -27,11 +27,6 @@ public:
      * Get class label
      */
     std::stringstream getLabel();
-
-    /**
-     * Write class header in bash
-     */
-    void bashifyHeader();
 };
 
 #endif
