@@ -3,6 +3,8 @@
 #include <bashclass/BTypes.h>
 #include <bashclass/BException.h>
 #include <bashclass/BGlobal.h>
+#include <bashclass/BVariableCall.h>
+#include <bashclass/BFunctionCall.h>
 
 void _indent(std::shared_ptr<BScope> parent, std::stringstream& ss) {
     if(!parent) {
@@ -13,6 +15,32 @@ void _indent(std::shared_ptr<BScope> parent, std::stringstream& ss) {
         ss << "\t";
         parent = parent->getParentScope();
     }
+}
+
+std::string _chainCallToCode(std::shared_ptr<BChainCall> chainCallPtr) {
+    BChainCall &chainCall = *chainCallPtr;
+    std::string chainStr;
+    std::shared_ptr<BScope> prevTypeScope;
+    for (size_t i = 0; i < chainCall.size(); i++) {
+        auto variableCallCast = std::dynamic_pointer_cast<BVariableCall>(chainCall[i]);
+        auto functionCallCast = std::dynamic_pointer_cast<BFunctionCall>(chainCall[i]);
+        if (variableCallCast) {
+            if (i == 0) {
+                chainStr = variableCallCast->getVariable()->getLabel().str();
+            } else {
+                chainStr = prevTypeScope->getLabel().str() +
+                           "[${" + chainStr + "},\"" + variableCallCast->getVariable()->getLabel().str() + "\"]";
+            }
+            prevTypeScope = variableCallCast->getVariable()->getTypeScope();
+        } else if (functionCallCast) {
+            if (i == 0) {
+                chainStr = functionCallCast->getFunction()->getLabel().str();
+            } else {
+                chainStr = functionCallCast->getFunction()->getLabel().str() + "[" + chainStr + "]";
+            }
+        }
+    }
+    return chainStr;
 }
 
 void BBashHelper::header() {
@@ -82,6 +110,8 @@ void BBashHelper::closeFunction(std::shared_ptr<BFunction> function) {
 void BBashHelper::assignVariable(std::shared_ptr<BChainCall> chainCall) {
     std::stringstream ss;
     _indent(chainCall->getParentScope(), ss);
-    ss << "=" << std::endl;
+
+    // Convert chain to code
+    ss << _chainCallToCode(chainCall) << "=" << std::endl;
     BGenerateCode::get().write(ss);
 }

@@ -23,9 +23,16 @@ public:
      * Get chain size
      * @return size
      */
-    int size() {
+    size_t size() {
         return m_callables.size();
     }
+
+    /**
+     * Get callable element at the provided index
+     * @param index
+     * @return callable item
+     */
+    std::shared_ptr<IBCallable> operator[](int index);
 
     /**
      * Check if chain is empty

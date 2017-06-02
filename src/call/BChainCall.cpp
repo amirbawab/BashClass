@@ -158,3 +158,10 @@ void BChainCall::addFunction(std::shared_ptr<BScope> globalScope, std::shared_pt
 void BChainCall::addToken(std::shared_ptr<BTokenCall> token) {
     m_callables.push_back(token);
 }
+
+std::shared_ptr<IBCallable> BChainCall::operator[](int index) {
+    if(index < 0 || index >= m_callables.size()) {
+        throw BException("Accessing an index out of bound in a chain call");
+    }
+    return m_callables[index];
+}
