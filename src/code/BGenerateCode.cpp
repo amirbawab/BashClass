@@ -13,6 +13,6 @@ void BGenerateCode::writePostCode() {
     std::cout << "# -----------------------------------------------------------------" << std::endl;
 }
 
-void BGenerateCode::write(std::stringstream code) {
-    std::cout << code.str() << std::endl;
+void BGenerateCode::write(std::stringstream &code) {
+    std::cout << code.str();
 }

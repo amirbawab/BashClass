@@ -91,3 +91,13 @@ void BGlobal::detectCircularReference() {
 
     }
 }
+
+void BGlobal::bashifyClassesHeaders() {
+
+    // Generate header for each class
+    auto classes = findAllClasses();
+    for(auto cls : classes) {
+        auto classCast = std::dynamic_pointer_cast<BClass>(cls);
+        classCast->bashifyHeader();
+    }
+}

@@ -60,6 +60,9 @@ void BashClass::initHandlers() {
 
             // Generate code required before any input
             BGenerateCode::get().writePreCode();
+
+            // Generate classes
+            m_global->bashifyClassesHeaders();
         }
     };
 

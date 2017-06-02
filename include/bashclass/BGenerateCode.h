@@ -37,7 +37,7 @@ public:
      * Write code
      * @param code
      */
-    void write(std::stringstream code);
+    void write(std::stringstream &code);
 };
 
 #endif
