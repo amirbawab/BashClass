@@ -14,6 +14,9 @@ private:
     // in their order of insertion.
     // e.g. a.b().c.d() => [a,b(),c,d()]
     std::vector<std::shared_ptr<IBCallable>> m_callables;
+
+    // Parent scope of this chain call
+    std::shared_ptr<BScope> m_parentScope;
 public:
 
     /**
@@ -68,6 +71,18 @@ public:
      * @param token
      */
     void addToken(std::shared_ptr<BTokenCall> token);
+
+    /**
+     * Set parent scope
+     * @param parentScope
+     */
+    void setParentScope(std::shared_ptr<BScope> parentScope) {m_parentScope = parentScope;}
+
+    /**
+     * Get parent scope
+     * @return parent scope
+     */
+    std::shared_ptr<BScope> getParentScope() {return m_parentScope;}
 };
 
 #endif

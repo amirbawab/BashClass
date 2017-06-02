@@ -388,6 +388,10 @@ void BashClass::initHandlers() {
 
             // Register variable chain call
             m_scopeStack.back()->registerChainCall(m_referenceKey, m_chainBuilderStack.back());
+        } else if(phase == BashClass::PHASE_GENERATE) {
+
+            // Generate assign statement
+            BBashHelper::assignVariable(m_scopeStack.back()->getChainCallByReferenceKey(m_referenceKey));
         }
     };
 

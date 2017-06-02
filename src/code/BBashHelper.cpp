@@ -74,3 +74,10 @@ void BBashHelper::closeFunction(std::shared_ptr<BFunction> function) {
     ss << "}" << std::endl << std::endl;
     BGenerateCode::get().write(ss);
 }
+
+void BBashHelper::assignVariable(std::shared_ptr<BChainCall> chainCall) {
+    std::stringstream ss;
+    _indent(chainCall->getParentScope(), ss);
+    ss << "=" << std::endl;
+    BGenerateCode::get().write(ss);
+}

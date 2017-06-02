@@ -215,6 +215,7 @@ void BScope::registerVariable(unsigned int referenceKey, std::shared_ptr<BVariab
 
 void BScope::registerChainCall(unsigned int referenceKey, std::shared_ptr<BChainCall> chainCall) {
     m_chainCalls[referenceKey] = chainCall;
+    chainCall->setParentScope(shared_from_this());
 }
 
 std::shared_ptr<BChainCall> BScope::getChainCallByReferenceKey(unsigned int referenceKey) {
