@@ -4,6 +4,7 @@
 #include <iostream>
 #include <bashclass/BException.h>
 #include <bashclass/BReport.h>
+#include <stack>
 
 std::stringstream BFunction::getLabel() {
     std::stringstream stream = m_parentScope->getLabel();
@@ -24,5 +25,5 @@ bool BFunction::requiresReturn() {
 }
 
 void BFunction::verifyReturns() {
-    // TODO Run DFS and check if all scopes cover the return statement
+    // TODO
 }

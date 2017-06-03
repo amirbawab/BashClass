@@ -80,11 +80,35 @@ std::vector<std::shared_ptr<BScope>> BScope::getAllScopes() {
 
 std::shared_ptr<BVariable> BScope::findClosestVariable(std::string name) {
     auto currentScope = shared_from_this();
-    while(currentScope != nullptr) {
+    while(currentScope) {
         auto variables = currentScope->findAllVariables(name.c_str());
         if(!variables.empty()) {
             // If multiple variable definition were found (semantic error), also select the front
             return variables.front();
+        }
+        currentScope = currentScope->getParentScope();
+    }
+    return nullptr;
+}
+
+std::shared_ptr<BFunction> BScope::findClosestFunction() {
+    auto currentScope = shared_from_this();
+    while(currentScope) {
+        auto functionCast = std::dynamic_pointer_cast<BFunction>(currentScope);
+        if(functionCast) {
+            return functionCast;
+        }
+        currentScope = currentScope->getParentScope();
+    }
+    return nullptr;
+}
+
+std::shared_ptr<BClass> BScope::findClosestClass() {
+    auto currentScope = shared_from_this();
+    while(currentScope) {
+        auto classCast = std::dynamic_pointer_cast<BClass>(currentScope);
+        if(classCast) {
+            return classCast;
         }
         currentScope = currentScope->getParentScope();
     }
@@ -214,16 +238,9 @@ void BScope::registerVariable(unsigned int referenceKey, std::shared_ptr<BVariab
     variable->setParentScope(shared_from_this());
 }
 
-void BScope::registerReturn(unsigned int referenceKey, std::shared_ptr<BReturn> ret) {
-    m_returns[referenceKey] = ret;
+void BScope::setReturn(std::shared_ptr<BReturn> ret) {
     ret->setParentScope(shared_from_this());
-}
-
-std::shared_ptr<BReturn> BScope::getReturnByReferenceKey(unsigned int referenceKey) {
-    if(m_returns.find(referenceKey) != m_returns.end()) {
-        return m_returns[referenceKey];
-    }
-    throw BException("Requesting return statement with an unrecognized token key");
+    m_return = ret;
 }
 
 void BScope::registerChainCall(unsigned int referenceKey, std::shared_ptr<BChainCall> chainCall) {

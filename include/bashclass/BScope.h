@@ -11,6 +11,8 @@
 class BVariable;
 class BChainCall;
 class BReturn;
+class BFunction;
+class BClass;
 class BScope : public std::enable_shared_from_this<BScope> {
 protected:
 
@@ -24,7 +26,7 @@ protected:
     std::map<unsigned int,std::shared_ptr<BChainCall>> m_chainCalls;
 
     // Register the return statements defined in this scope
-    std::map<unsigned int,std::shared_ptr<BReturn>> m_returns;
+    std::shared_ptr<BReturn> m_return;
 
     // Store the parent for this scope
     std::shared_ptr<BScope> m_parentScope;
@@ -117,6 +119,18 @@ public:
     std::shared_ptr<BVariable> findClosestVariable(std::string name);
 
     /**
+     * Find closest ancestor function
+     * @return closest function pointer | nullptr if not found
+     */
+    std::shared_ptr<BFunction> findClosestFunction();
+
+    /**
+     * Find closest ancestor class
+     * @return closest class pointer | nullptr if not found
+     */
+    std::shared_ptr<BClass> findClosestClass();
+
+    /**
      * Register class
      * @param referenceKey
      * @param classScope
@@ -152,25 +166,23 @@ public:
     void registerChainCall(unsigned int referenceKey, std::shared_ptr<BChainCall> chainCall);
 
     /**
-     * Register return statement
-     * @param referenceKey
-     * @param ret
-     */
-    void registerReturn(unsigned int referenceKey, std::shared_ptr<BReturn> ret);
-
-    /**
-     * Get registered return expression
-     * @param referenceKey
-     * @return return
-     */
-    std::shared_ptr<BReturn> getReturnByReferenceKey(unsigned int referenceKey);
-
-    /**
      * Get chain call by reference key
      * @param referenceKey
      * @return chainCall
      */
     std::shared_ptr<BChainCall> getChainCallByReferenceKey(unsigned int referenceKey);
+
+    /**
+     * Set return statement
+     * @param ret
+     */
+    void setReturn(std::shared_ptr<BReturn> ret);
+
+    /**
+     * Get return statement
+     * @return return statement
+     */
+    std::shared_ptr<BReturn> getReturn() {return m_return;}
 };
 
 #endif

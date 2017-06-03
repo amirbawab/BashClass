@@ -427,7 +427,7 @@ void BashClass::initHandlers() {
             returnComp->setExpression(m_expressionOperandStack.back());
 
             // Register return statement
-            m_scopeStack.back()->registerReturn(m_referenceKey, returnComp);
+            m_scopeStack.back()->setReturn(returnComp);
 
             // Remove consumed expression
             m_expressionOperandStack.pop_back();

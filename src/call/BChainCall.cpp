@@ -180,14 +180,11 @@ void BChainCall::addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisCal
     }
 
     // Find the parent class of the this reference
-    auto parentScope = scope;
-    while(parentScope && !std::dynamic_pointer_cast<BClass>(parentScope)) {
-        parentScope = parentScope->getParentScope();
-    }
+    auto classScope = scope->findClosestClass();
 
     // Check if a parent class was found
-    if(parentScope) {
-        thisReference->setReference(std::dynamic_pointer_cast<BClass>(parentScope));
+    if(classScope) {
+        thisReference->setReference(std::dynamic_pointer_cast<BClass>(classScope));
     } else {
         BReport::getInstance().error()
                 << "Undefined reference for 'this' at line " << thisReference->getLexicalToken()->getLine()
