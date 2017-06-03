@@ -5,7 +5,6 @@
 #include <memory>
 #include <bashclass/BScope.h>
 #include <bashclass/IBCallable.h>
-#include <bashclass/BReturn.h>
 
 class BFunction : public BScope {
 private:
@@ -19,9 +18,6 @@ private:
     // Link to the actual function if exists.
     // Check hasKnownType() function for more details
     std::shared_ptr<BScope> m_typeScope;
-
-    // Store the return statement for this function
-    std::map<unsigned int,std::shared_ptr<BReturn>> m_returns;
 
 public:
 
@@ -83,26 +79,6 @@ public:
      * @return true if function requires a return expression
      */
     bool requiresReturn();
-
-    /**
-     * Check if the function has a return statement
-     * @return true if the function has a return statement
-     */
-    bool hasReturn();
-
-    /**
-     * Register return statement
-     * @param referenceKey
-     * @param ret
-     */
-    void registerReturn(unsigned int referenceKey, std::shared_ptr<BReturn> ret);
-
-    /**
-     * Get registered return expression
-     * @param referenceKey
-     * @return return
-     */
-    std::shared_ptr<BReturn> getReturnByReferenceKey(unsigned int referenceKey);
 
     /**
      * A void function should not a return statement

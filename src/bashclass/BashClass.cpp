@@ -6,6 +6,7 @@
 #include <bashclass/BGenerateCode.h>
 #include <bashclass/BBashHelper.h>
 #include <bashclass/BThisCall.h>
+#include <bashclass/BReturn.h>
 
 BashClass::BashClass() {
     m_global = BGlobal::getInstance();
@@ -421,20 +422,12 @@ void BashClass::initHandlers() {
     m_returnExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
-            // Get current function scope
-            auto functionScope = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
-
-            // Find function if current scope is not a function
-            if(!functionScope) {
-                functionScope = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back()->findParentFunction());
-            }
-
             // Create and configure return statement
             auto returnComp = std::make_shared<BReturn>();
             returnComp->setExpression(m_expressionOperandStack.back());
 
             // Register return statement
-            functionScope->registerReturn(m_referenceKey, returnComp);
+            m_scopeStack.back()->registerReturn(m_referenceKey, returnComp);
 
             // Remove consumed expression
             m_expressionOperandStack.pop_back();

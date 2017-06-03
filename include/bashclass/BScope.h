@@ -10,6 +10,7 @@
 
 class BVariable;
 class BChainCall;
+class BReturn;
 class BScope : public std::enable_shared_from_this<BScope> {
 protected:
 
@@ -21,6 +22,9 @@ protected:
 
     // Register the chain calls defined in this scope
     std::map<unsigned int,std::shared_ptr<BChainCall>> m_chainCalls;
+
+    // Register the return statements defined in this scope
+    std::map<unsigned int,std::shared_ptr<BReturn>> m_returns;
 
     // Store the parent for this scope
     std::shared_ptr<BScope> m_parentScope;
@@ -148,17 +152,25 @@ public:
     void registerChainCall(unsigned int referenceKey, std::shared_ptr<BChainCall> chainCall);
 
     /**
+     * Register return statement
+     * @param referenceKey
+     * @param ret
+     */
+    void registerReturn(unsigned int referenceKey, std::shared_ptr<BReturn> ret);
+
+    /**
+     * Get registered return expression
+     * @param referenceKey
+     * @return return
+     */
+    std::shared_ptr<BReturn> getReturnByReferenceKey(unsigned int referenceKey);
+
+    /**
      * Get chain call by reference key
      * @param referenceKey
      * @return chainCall
      */
     std::shared_ptr<BChainCall> getChainCallByReferenceKey(unsigned int referenceKey);
-
-    /**
-     * Find parent function of this scope
-     * @return pointer to the function or nullptr
-     */
-    std::shared_ptr<BScope> findParentFunction();
 };
 
 #endif

@@ -9,6 +9,7 @@
 #include <sstream>
 #include <bashclass/BException.h>
 #include <bashclass/BReport.h>
+#include <bashclass/BReturn.h>
 
 std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(const char* name) {
     std::vector<std::shared_ptr<BVariable>> variables;
@@ -213,6 +214,18 @@ void BScope::registerVariable(unsigned int referenceKey, std::shared_ptr<BVariab
     variable->setParentScope(shared_from_this());
 }
 
+void BScope::registerReturn(unsigned int referenceKey, std::shared_ptr<BReturn> ret) {
+    m_returns[referenceKey] = ret;
+    ret->setParentScope(shared_from_this());
+}
+
+std::shared_ptr<BReturn> BScope::getReturnByReferenceKey(unsigned int referenceKey) {
+    if(m_returns.find(referenceKey) != m_returns.end()) {
+        return m_returns[referenceKey];
+    }
+    throw BException("Requesting return statement with an unrecognized token key");
+}
+
 void BScope::registerChainCall(unsigned int referenceKey, std::shared_ptr<BChainCall> chainCall) {
     m_chainCalls[referenceKey] = chainCall;
     chainCall->setParentScope(shared_from_this());
@@ -223,15 +236,4 @@ std::shared_ptr<BChainCall> BScope::getChainCallByReferenceKey(unsigned int refe
         throw BException("Requesting chain call with an unrecognized reference key");
     }
     return m_chainCalls[referenceKey];
-}
-
-std::shared_ptr<BScope> BScope::findParentFunction() {
-    auto parentScope = m_parentScope;
-    while(parentScope) {
-        if(std::dynamic_pointer_cast<BFunction>(parentScope)) {
-            return parentScope;
-        }
-        parentScope = parentScope->getParentScope();
-    }
-    return nullptr;
 }
