@@ -271,3 +271,13 @@ std::shared_ptr<BChainCall> BScope::getChainCallByReferenceKey(unsigned int refe
     }
     return m_chainCalls[referenceKey];
 }
+
+bool BScope::hasReturn() {
+
+    // Check if a return statement has been set in this scope
+    if(m_return) {
+        return true;
+    }
+
+    // TODO Check children if/elseif/else scopes if all of them have a return statement
+}

@@ -183,6 +183,12 @@ public:
      * @return return statement
      */
     std::shared_ptr<BReturn> getReturn() {return m_return;}
+
+    /**
+     * Check if scope has a return statement
+     * @return true if it has a return statement
+     */
+    bool hasReturn();
 };
 
 #endif
