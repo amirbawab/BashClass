@@ -32,25 +32,36 @@ std::vector<std::shared_ptr<BVariable>> BScope::findAllParameters(const char *na
     return parameters;
 }
 
-std::vector<std::shared_ptr<BScope>> BScope::findAllClasses(const char* name) {
-    std::vector<std::shared_ptr<BScope>> classes;
+std::vector<std::shared_ptr<BClass>> BScope::findAllClasses(const char* name) {
+    std::vector<std::shared_ptr<BClass>> classes;
     for(auto scope : m_scopes) {
         std::shared_ptr<BClass> classScope = std::dynamic_pointer_cast<BClass>(scope.second);
-        if(classScope && (!name ||
-                (classScope->getName() && classScope->getName()->getValue() == name))) {
-            classes.push_back(classScope);
+        if(classScope) {
+
+            if(!classScope->getName()) {
+                throw BException("Finding classes requires a class name to be defined");
+            }
+
+            if(!name || (classScope->getName()->getValue() == name)) {
+                classes.push_back(classScope);
+            }
         }
     }
     return classes;
 }
 
-std::vector<std::shared_ptr<BScope>> BScope::findAllFunctions(const char *name) {
-    std::vector<std::shared_ptr<BScope>> functions;
+std::vector<std::shared_ptr<BFunction>> BScope::findAllFunctions(const char *name) {
+    std::vector<std::shared_ptr<BFunction>> functions;
     for(auto scope : m_scopes) {
         std::shared_ptr<BFunction> functionScope = std::dynamic_pointer_cast<BFunction>(scope.second);
-        if(functionScope && (!name ||
-                (functionScope->getName() && functionScope->getName()->getValue() == name))) {
-            functions.push_back(functionScope);
+        if(functionScope) {
+            if(!functionScope->getName()) {
+                throw BException("Finding functions requires a function name to be defined");
+            }
+
+            if (!name || (functionScope->getName()->getValue() == name)) {
+                functions.push_back(functionScope);
+            }
         }
     }
     return functions;
@@ -164,22 +175,19 @@ std::stringstream BScope::getStructure() {
     return structure;
 }
 
-void BScope::registerClass(unsigned int referenceKey, std::shared_ptr<BScope> classScope) {
-
-    // Cast class
-    auto classScopeCast = std::dynamic_pointer_cast<BClass>(classScope);
+void BScope::registerClass(unsigned int referenceKey, std::shared_ptr<BClass> classScope) {
 
     // Class name is required
-    if(!classScopeCast->getName()) {
+    if(!classScope->getName()) {
         throw BException("Cannot register a class without specifying its name first");
     }
 
     // Check if class was added previously
-    auto getClass = findAllClasses(classScopeCast->getName()->getValue().c_str());
+    auto getClass = findAllClasses(classScope->getName()->getValue().c_str());
     if(!getClass.empty()) {
         BReport::getInstance().error()
-                << "Class " << classScopeCast->getName()->getValue() << " at line "
-                << classScopeCast->getName()->getLine() << " was defined previously" << std::endl;
+                << "Class " << classScope->getName()->getValue() << " at line "
+                << classScope->getName()->getLine() << " was defined previously" << std::endl;
         BReport::getInstance().printError();
     }
 
@@ -187,22 +195,19 @@ void BScope::registerClass(unsigned int referenceKey, std::shared_ptr<BScope> cl
     registerScope(referenceKey, classScope);
 }
 
-void BScope::registerFunction(unsigned int referenceKey, std::shared_ptr<BScope> functionScope) {
-
-    // Cast function
-    auto functionScopeCast = std::dynamic_pointer_cast<BFunction>(functionScope);
+void BScope::registerFunction(unsigned int referenceKey, std::shared_ptr<BFunction> functionScope) {
 
     // Function name is required
-    if(!functionScopeCast->getName()) {
+    if(!functionScope->getName()) {
         throw BException("Cannot register a function without specifying its name first");
     }
 
     // Check if function was added previously
-    auto getFunc = findAllFunctions(functionScopeCast->getName()->getValue().c_str());
+    auto getFunc = findAllFunctions(functionScope->getName()->getValue().c_str());
     if(!getFunc.empty()) {
         BReport::getInstance().error()
-                << "Function " << functionScopeCast->getName()->getValue() << " at line "
-                << functionScopeCast->getName()->getLine()
+                << "Function " << functionScope->getName()->getValue() << " at line "
+                << functionScope->getName()->getLine()
                 <<" was defined previously in the same scope" << std::endl;
         BReport::getInstance().printError();
     }

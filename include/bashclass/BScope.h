@@ -9,10 +9,10 @@
 #include <easycc/LexicalToken.h>
 
 class BVariable;
-class BChainCall;
-class BReturn;
 class BFunction;
 class BClass;
+class BChainCall;
+class BReturn;
 class BScope : public std::enable_shared_from_this<BScope> {
 protected:
 
@@ -63,7 +63,7 @@ public:
      * in their order of insertion, otherwise return the classes
      * that matches the passed name
      */
-    std::vector<std::shared_ptr<BScope>> findAllClasses(const char* name = nullptr);
+    std::vector<std::shared_ptr<BClass>> findAllClasses(const char* name = nullptr);
 
     /**
      * Find all functions
@@ -72,7 +72,7 @@ public:
      * in their order of insertion, otherwise return the functions
      * that matches the passed name
      */
-    std::vector<std::shared_ptr<BScope>> findAllFunctions(const char* name = nullptr);
+    std::vector<std::shared_ptr<BFunction>> findAllFunctions(const char* name = nullptr);
 
     /**
      * Get parent scope
@@ -135,14 +135,14 @@ public:
      * @param referenceKey
      * @param classScope
      */
-    void registerClass(unsigned int referenceKey, std::shared_ptr<BScope> classScope);
+    void registerClass(unsigned int referenceKey, std::shared_ptr<BClass> classScope);
 
     /**
      * Register function
      * @param referenceKey
      * @param functionScope
      */
-    void registerFunction(unsigned int referenceKey, std::shared_ptr<BScope> functionScope);
+    void registerFunction(unsigned int referenceKey, std::shared_ptr<BFunction> functionScope);
 
     /**
      * Register scope
