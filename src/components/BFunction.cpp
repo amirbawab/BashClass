@@ -25,5 +25,16 @@ bool BFunction::requiresReturn() {
 }
 
 void BFunction::verifyReturns() {
-    // TODO
+    if(requiresReturn()) {
+
+        // TODO When else statement is added, this function must handle the case of if/else for the return
+        if(!m_return) {
+            BReport::getInstance().error()
+                    << "Missing return statement in function " << m_name->getValue() << std::endl;
+            BReport::getInstance().printError();
+        }
+    }
+
+    // No need to check for the case of return not required
+    // since it is already handled when it is set into a scope
 }

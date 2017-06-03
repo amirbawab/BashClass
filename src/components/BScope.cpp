@@ -239,8 +239,25 @@ void BScope::registerVariable(unsigned int referenceKey, std::shared_ptr<BVariab
 }
 
 void BScope::setReturn(std::shared_ptr<BReturn> ret) {
-    ret->setParentScope(shared_from_this());
-    m_return = ret;
+
+    // If several return statement are found in the same scope,
+    // then only the first one is registered
+    if(m_return) {
+        BReport::getInstance().error()
+                << "Multiple return statements are set within the same scope in function "
+                << m_return->getFunction()->getName()->getValue() << std::endl;
+        BReport::getInstance().printError();
+    } else {
+        // Find function to which this return belongs to
+        ret->setFunction(findClosestFunction());
+
+        // Verify return statement
+        ret->verifyReturn();
+
+        // Set return statement in this scope
+        ret->setParentScope(shared_from_this());
+        m_return = ret;
+    }
 }
 
 void BScope::registerChainCall(unsigned int referenceKey, std::shared_ptr<BChainCall> chainCall) {
