@@ -37,17 +37,16 @@ void BGlobal::linkTypes() {
 
         // Link all functions in that scope
         for(auto function : top->findAllFunctions()) {
-            auto castFunction = std::dynamic_pointer_cast<BFunction>(function);
-            if(!BType::isBuiltInType(castFunction->getType()->getName())) {
+            if(!BType::isBuiltInType(function->getType()->getName())) {
                 // Find class scope of that type
-                auto cls = findAllClasses(castFunction->getType()->getValue().c_str());
+                auto cls = findAllClasses(function->getType()->getValue().c_str());
                 if(cls.empty()) {
                     BReport::getInstance().error()
-                            << "Undefined type " << castFunction->getType()->getValue() <<
-                            " for function " << castFunction->getName()->getValue() << std::endl;
+                            << "Undefined type " << function->getType()->getValue() <<
+                            " for function " << function->getName()->getValue() << std::endl;
                     BReport::getInstance().printError();
                 } else {
-                    castFunction->setTypeScope(cls.front());
+                    function->setTypeScope(cls.front());
                 }
             }
         }
@@ -80,14 +79,12 @@ void BGlobal::detectCircularReference() {
                     if(visited.find(variable->getTypeScope()) == visited.end()) {
                         scopeStack.push(variable->getTypeScope());
                     } else {
-                        auto castClass = std::dynamic_pointer_cast<BClass>(cls);
                         BReport::getInstance().error()
-                                << "Circular reference detected from class " << castClass->getName()->getValue() << std::endl;
+                                << "Circular reference detected from class " << cls->getName()->getValue() << std::endl;
                         BReport::getInstance().printError();
                     }
                 }
             }
         }
-
     }
 }

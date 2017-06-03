@@ -66,8 +66,7 @@ void BashClass::initHandlers() {
 
             // Generate classes headers
             for(auto cls : m_global->findAllClasses()) {
-                auto classCast = std::dynamic_pointer_cast<BClass>(cls);
-                BBashHelper::declareClass(classCast);
+                BBashHelper::declareClass(cls);
             }
         }
     };
