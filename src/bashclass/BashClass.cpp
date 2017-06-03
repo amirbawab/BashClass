@@ -145,7 +145,7 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_CREATE) {
             m_focusFunction = std::make_shared<BFunction>();
         } else if(phase == BashClass::PHASE_GENERATE) {
-            auto functionScope = std::dynamic_pointer_cast<BFunction>(
+            auto functionScope = std::static_pointer_cast<BFunction>(
                     m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey));
             BBashHelper::createFunction(functionScope);
         }
@@ -183,11 +183,11 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_CREATE) {
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_EVAL) {
-            auto functionScope = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
+            auto functionScope = std::static_pointer_cast<BFunction>(m_scopeStack.back());
             functionScope->verifyReturns();
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_GENERATE) {
-            auto functionScope = std::dynamic_pointer_cast<BFunction>(m_scopeStack.back());
+            auto functionScope = std::static_pointer_cast<BFunction>(m_scopeStack.back());
             BBashHelper::closeFunction(functionScope);
             m_scopeStack.pop_back();
         }
@@ -286,7 +286,7 @@ void BashClass::initHandlers() {
 
     m_whileCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            auto whileScope = std::dynamic_pointer_cast<BWhile>(m_scopeStack.back());
+            auto whileScope = std::static_pointer_cast<BWhile>(m_scopeStack.back());
             whileScope->setExpression(m_expressionOperandStack.back());
             m_expressionOperandStack.pop_back();
         }
@@ -315,7 +315,7 @@ void BashClass::initHandlers() {
 
     m_ifCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            auto ifScope = std::dynamic_pointer_cast<BIf>(m_scopeStack.back());
+            auto ifScope = std::static_pointer_cast<BIf>(m_scopeStack.back());
             ifScope->setExpression(m_expressionOperandStack.back());
             m_expressionOperandStack.pop_back();
         }
@@ -388,7 +388,7 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_EVAL) {
 
             // Configure variable call
-            auto variableCall = std::dynamic_pointer_cast<BVariableCall>(m_chainBuilderStack.back()->last());
+            auto variableCall = std::static_pointer_cast<BVariableCall>(m_chainBuilderStack.back()->last());
             variableCall->setExpression(m_expressionOperandStack.back());
 
             // Pop consumed expression
@@ -449,7 +449,7 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_EVAL) {
 
             // Get function that is currently being built
-            auto functionCall = std::dynamic_pointer_cast<BFunctionCall>(m_chainBuilderStack.back()->last());
+            auto functionCall = std::static_pointer_cast<BFunctionCall>(m_chainBuilderStack.back()->last());
 
             // Add the argument to it
             functionCall->addArgument(m_expressionOperandStack.back());
@@ -463,7 +463,7 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_EVAL) {
 
             // Get function call
-            auto functionCall = std::dynamic_pointer_cast<BFunctionCall>(m_chainBuilderStack.back()->last());
+            auto functionCall = std::static_pointer_cast<BFunctionCall>(m_chainBuilderStack.back()->last());
 
             // Verify provided arguments
             functionCall->verifyArguments();
