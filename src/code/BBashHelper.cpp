@@ -70,6 +70,7 @@ std::string _chainCallToCode(std::shared_ptr<BChainCall> chainCall) {
                     ss << variableCallCast->getVariable()->getLabel().str();
                 }
             } else {
+                // TODO Add exception if previous call was not found in the map
                 ss << prevTypeScope->getLabel().str() << "[" << returnMap[(*chainCall)[i-1]] << "," << variableCallCast->getVariable()->getLabel().str() << "]";
             }
 
@@ -82,6 +83,41 @@ std::string _chainCallToCode(std::shared_ptr<BChainCall> chainCall) {
             prevTypeScope = variableCallCast->getVariable()->getTypeScope();
 
         } else if (functionCallCast) {
+
+            // Check if function call is the first call in the chain
+            if(i == 0) {
+                ss << functionCallCast->getFunction()->getLabel().str();
+
+                // TODO Put all arguments
+                ss << " args...";
+
+                if(functionCallCast->getFunction()->isClassMember()) {
+                    ss << " " << FUNCTION_THIS;
+                }
+
+                if(functionCallCast->getFunction()->requiresReturn()) {
+                    std::string newKey = _generateResultKey(uniqueId++);
+                    returnMap[functionCallCast] = newKey;
+                    ss << " " << newKey;
+                }
+            } else {
+                ss << functionCallCast->getFunction()->getLabel().str();
+
+                // TODO Put all arguments
+                ss << " args...";
+
+                ss << " " << returnMap[(*chainCall)[i-1]];
+
+                if(functionCallCast->getFunction()->requiresReturn()) {
+                    std::string newKey = _generateResultKey(uniqueId++);
+                    returnMap[functionCallCast] = newKey;
+                    ss << " " << newKey;
+                }
+            }
+
+            ss << std::endl;
+
+            // Update the tyoe of the previous scope
             prevTypeScope = functionCallCast->getFunction()->getTypeScope();
         } else if(thisCallCast) {
             prevTypeScope = thisCallCast->getReference();
