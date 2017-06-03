@@ -10,6 +10,7 @@
 // Constants
 std::string FUNCTION_THIS = "_this_";
 std::string FUNCTION_RETURN = "_return_";
+std::string RESULT = "_result_";
 
 void _indent(std::shared_ptr<BScope> parent, std::stringstream& ss) {
     if(!parent) {
@@ -22,39 +23,73 @@ void _indent(std::shared_ptr<BScope> parent, std::stringstream& ss) {
     }
 }
 
-std::string _chainCallToCode(std::shared_ptr<BChainCall> chainCallPtr) {
-    BChainCall &chainCall = *chainCallPtr;
-    std::string chainStr;
+std::string _generateResultKey(unsigned int number) {
+    return RESULT + std::to_string(number);
+}
+
+std::string _chainCallToCode(std::shared_ptr<BChainCall> chainCall) {
+
+    // Hold the code for the chain call
+    std::stringstream ss;
+
+    // Keep track of the previous element type
     std::shared_ptr<BScope> prevTypeScope;
-    for (size_t i = 0; i < chainCall.size(); i++) {
+
+    // Have a unique key for each result of an element call
+    std::map<std::shared_ptr<IBCallable>, std::string> returnMap;
+
+    // Assign a unique key for each result
+    static unsigned int uniqueId = 0;
+
+    // Start processing the calls
+    for (size_t i = 0; i < chainCall->size(); i++) {
 
         // Cast element
-        auto variableCallCast = std::dynamic_pointer_cast<BVariableCall>(chainCall[i]);
-        auto functionCallCast = std::dynamic_pointer_cast<BFunctionCall>(chainCall[i]);
-        auto thisCallCast = std::dynamic_pointer_cast<BThisCall>(chainCall[i]);
+        auto variableCallCast = std::dynamic_pointer_cast<BVariableCall>((*chainCall)[i]);
+        auto functionCallCast = std::dynamic_pointer_cast<BFunctionCall>((*chainCall)[i]);
+        auto thisCallCast = std::dynamic_pointer_cast<BThisCall>((*chainCall)[i]);
+
+        // Generate indentation
+        _indent(chainCall->getParentScope(), ss);
 
         if (variableCallCast) {
-            if (i == 0) {
-                chainStr = variableCallCast->getVariable()->getLabel().str();
+
+            // Generate new key for this variable
+            std::string newKey = _generateResultKey(uniqueId++);
+            ss << newKey << "=";
+
+            // Check if element is the first one in the chain
+            if(i == 0) {
+
+                // Class members have different value than other variables for the first assign statement
+                if(variableCallCast->getVariable()->isClassMember()) {
+                    // Get class parent of this variable
+                    auto classCast = std::static_pointer_cast<BClass>(variableCallCast->getVariable()->getParentScope());
+                    ss << classCast->getLabel().str() << "[" << FUNCTION_THIS << "," << variableCallCast->getVariable()->getLabel().str() << "]";
+                } else {
+                    ss << variableCallCast->getVariable()->getLabel().str();
+                }
             } else {
-                chainStr = prevTypeScope->getLabel().str() +
-                           "[${" + chainStr + "},\"" + variableCallCast->getVariable()->getLabel().str() + "\"]";
+                ss << prevTypeScope->getLabel().str() << "[" << returnMap[(*chainCall)[i-1]] << "," << variableCallCast->getVariable()->getLabel().str() << "]";
             }
+
+            ss << std::endl;
+
+            // Store the new key in the map
+            returnMap[variableCallCast] = newKey;
+
+            // Update the type of the previous scope
             prevTypeScope = variableCallCast->getVariable()->getTypeScope();
+
         } else if (functionCallCast) {
-            if (i == 0) {
-                chainStr = functionCallCast->getFunction()->getLabel().str();
-            } else {
-                chainStr = functionCallCast->getFunction()->getLabel().str() + "[" + chainStr + "]";
-            }
+            prevTypeScope = functionCallCast->getFunction()->getTypeScope();
         } else if(thisCallCast) {
-            chainStr = FUNCTION_THIS;
             prevTypeScope = thisCallCast->getReference();
         } else {
             throw BException("Cannot generate code for an unrecognized element call");
         }
     }
-    return chainStr;
+    return ss.str();
 }
 
 void BBashHelper::header() {
@@ -138,7 +173,6 @@ void BBashHelper::closeFunction(std::shared_ptr<BFunction> function) {
 
 void BBashHelper::assignVariable(std::shared_ptr<BChainCall> chainCall) {
     std::stringstream ss;
-    _indent(chainCall->getParentScope(), ss);
 
     // Convert chain to code
     ss << _chainCallToCode(chainCall) << "=" << std::endl;
