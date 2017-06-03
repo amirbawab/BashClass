@@ -114,11 +114,17 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
         ss << "local " << param->getLabel().str() << "=\"$" << paramPos++ << "\"" << std::endl;
     }
 
-    // Generate additional parameters
-    _indent(function, ss);
-    ss << "local " << FUNCTION_THIS << "=$" << paramPos++ << std::endl;
-    _indent(function, ss);
-    ss << "declare -n " << FUNCTION_RETURN << "=$" << paramPos++ << std::endl;
+    // Generate 'this' if function is a class member
+    if(function->isClassMember()) {
+        _indent(function, ss);
+        ss << "local " << FUNCTION_THIS << "=$" << paramPos++ << std::endl;
+    }
+
+    // Generate return reference if function requires a return statement
+    if(function->requiresReturn()) {
+        _indent(function, ss);
+        ss << "declare -n " << FUNCTION_RETURN << "=$" << paramPos++ << std::endl;
+    }
 
     BGenerateCode::get().write(ss);
 }
