@@ -117,9 +117,19 @@ std::string _chainCallToCode(std::shared_ptr<BChainCall> chainCall) {
 
             ss << std::endl;
 
-            // Update the tyoe of the previous scope
+            // Update the type of the previous scope
             prevTypeScope = functionCallCast->getFunction()->getTypeScope();
         } else if(thisCallCast) {
+
+            if(i > 0) {
+                throw BException("A 'this' reference is supported only when it appears first at the chain");
+            }
+
+            std::string newKey = _generateResultKey(uniqueId++);
+            returnMap[thisCallCast] = newKey;
+            ss  << newKey << "=" << FUNCTION_THIS << std::endl;
+
+            // Update the type of the previous scope
             prevTypeScope = thisCallCast->getReference();
         } else {
             throw BException("Cannot generate code for an unrecognized element call");
