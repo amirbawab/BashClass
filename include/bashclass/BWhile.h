@@ -2,6 +2,7 @@
 #define BASHCLASS_BWHILE_H
 
 #include <bashclass/BScope.h>
+#include <bashclass/IBCallable.h>
 
 class BWhile : public BScope {
 private:

@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <memory>
-#include <bashclass/BScope.h>
 #include <bashclass/IBCallable.h>
+#include <bashclass/BClass.h>
 
 class BFunction : public BScope {
 private:
@@ -17,7 +17,7 @@ private:
 
     // Link to the actual function if exists.
     // Check hasKnownType() function for more details
-    std::shared_ptr<BScope> m_typeScope;
+    std::shared_ptr<BClass> m_typeScope;
 
 public:
 
@@ -49,13 +49,13 @@ public:
      * Get variable type scope
      * @return type
      */
-    std::shared_ptr<BScope> getTypeScope() const {return m_typeScope;}
+    std::shared_ptr<BClass> getTypeScope() const {return m_typeScope;}
 
     /**
      * Set variable type scope
      * @param type
      */
-    void setTypeScope(std::shared_ptr<BScope> scope) {m_typeScope = scope;}
+    void setTypeScope(std::shared_ptr<BClass> scope) {m_typeScope = scope;}
 
     /**
      * Check if this function is a class member

@@ -5,10 +5,9 @@
 #include <sstream>
 #include <memory>
 #include <easycc/LexicalToken.h>
-#include <bashclass/BScope.h>
 #include <bashclass/IBCallable.h>
+#include <bashclass/BClass.h>
 
-class BScope;
 class BVariable {
 private:
 
@@ -20,7 +19,7 @@ private:
 
     // Link to the type of this variable.
     // Check hasKnownType() function for more details
-    std::shared_ptr<BScope> m_typeScope;
+    std::shared_ptr<BClass> m_typeScope;
 
     // Parent scope of this variable
     std::shared_ptr<BScope> m_parentScope;
@@ -63,13 +62,13 @@ public:
      * Get variable type scope
      * @return type
      */
-    std::shared_ptr<BScope> getTypeScope() const {return m_typeScope;}
+    std::shared_ptr<BClass> getTypeScope() const {return m_typeScope;}
 
     /**
      * Set variable type scope
      * @param type
      */
-    void setTypeScope(std::shared_ptr<BScope> scope) {m_typeScope = scope;}
+    void setTypeScope(std::shared_ptr<BClass> scope) {m_typeScope = scope;}
 
     /**
      * Get parent scope

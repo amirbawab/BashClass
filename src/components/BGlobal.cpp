@@ -5,6 +5,7 @@
 #include <stack>
 #include <set>
 #include <bashclass/BReport.h>
+#include <bashclass/BVariable.h>
 
 std::stringstream BGlobal::getLabel() {
     return std::stringstream();

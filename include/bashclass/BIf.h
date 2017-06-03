@@ -2,6 +2,7 @@
 #define BASHCLASS_BIF_H
 
 #include <bashclass/BScope.h>
+#include <bashclass/IBCallable.h>
 
 class BIf : public BScope {
 private:

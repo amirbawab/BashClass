@@ -5,7 +5,6 @@
 #include <vector>
 #include <memory>
 #include <sstream>
-#include <bashclass/BVariable.h>
 #include <easycc/LexicalToken.h>
 
 class BVariable;

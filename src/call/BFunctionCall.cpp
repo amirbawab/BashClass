@@ -2,6 +2,7 @@
 #include <bashclass/BTypes.h>
 #include <iostream>
 #include <bashclass/BReport.h>
+#include <bashclass/BVariable.h>
 
 std::string BFunctionCall::getTypeValueAsString() {
     if(!m_function || !m_function->hasKnowType()) {
