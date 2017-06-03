@@ -136,40 +136,14 @@ std::stringstream BScope::getStructure() {
         std::shared_ptr<BScope> top = structureStack.top();
         structureStack.pop();
 
-        // Cast the top pointer
-        auto castGlobal = std::dynamic_pointer_cast<BGlobal>(top);
-        auto castClass = std::dynamic_pointer_cast<BClass>(top);
-        auto castFunction = std::dynamic_pointer_cast<BFunction>(top);
-        auto castWhile = std::dynamic_pointer_cast<BWhile>(top);
-        auto castIf = std::dynamic_pointer_cast<BIf>(top);
-
-        // Get corresponding information
-        if(castClass) {
-            structure << "class: " << castClass->getName()->getValue() << ". Label: "
-            << castClass->getLabel().str() << std::endl;
-        } else if(castFunction) {
-            structure << "function: " << castFunction->getName()->getValue()
-            << " : " << castFunction->getType()->getValue() << ". Label: " << castFunction->getLabel().str()
-            << std::endl;
-        } else if(castGlobal) {
-            structure << "global" << std::endl;
-        } else if(castWhile) {
-            structure << "while. Label: " << castWhile->getLabel().str() << std::endl;
-        } else if(castIf) {
-            structure << "if. Label: " << castIf->getLabel().str() << std::endl;
-        }
-
-        // Get all variables
+        structure << "Scope: " << top->getLabel().str() << std::endl;
         for(auto variable : top->findAllVariables()) {
-            structure << "variable" << (variable->isParam() ? "[P]" : "") << ": " << variable->getName()->getValue()
-            << " : " << variable->getType()->getValue() << ". Label: " << variable->getLabel().str() << std::endl;
+            structure << "Variable: " << variable->getLabel().str() << std::endl;
         }
 
-        if(castGlobal || castClass || castFunction || castWhile || castIf) {
-            // Push all the children scopes
-            for(auto scope : top->m_scopes) {
-                structureStack.push(scope.second);
-            }
+        // Push all children scopes
+        for(auto scope : top->m_scopes) {
+            structureStack.push(scope.second);
         }
     }
     return structure;
