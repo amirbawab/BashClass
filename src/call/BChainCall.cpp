@@ -10,26 +10,6 @@ std::string BChainCall::getTypeValueAsString() {
     return last()->getTypeValueAsString();
 }
 
-/**
- * Get the type of the previous item in the chain
- * @param prevVariableCall
- * @param prevFunctionCall
- * @return pointer to the type scope
- */
-std::shared_ptr<BClass> getPrevItemTypeScope(std::shared_ptr<BVariableCall> prevVariableCall,
-                                             std::shared_ptr<BFunctionCall> prevFunctionCall,
-                                             std::shared_ptr<BThisCall> prevThisCall) {
-    if(prevVariableCall) {
-        return prevVariableCall->getVariable()->getTypeScope();
-    } else if(prevFunctionCall) {
-        return prevFunctionCall->getFunction()->getTypeScope();
-    } else if(prevThisCall) {
-        return prevThisCall->getReference();
-    } else {
-        throw BException("Undefined call on an unknown instance");
-    }
-}
-
 void BChainCall::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
 
     // Prepare variable call
@@ -51,14 +31,10 @@ void BChainCall::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc:
     } else {
 
         // Cast previous element
-        auto prevVariableCall = std::dynamic_pointer_cast<BVariableCall>(last());
-        auto prevFunctionCall = std::dynamic_pointer_cast<BFunctionCall>(last());
-        auto prevThisCall = std::dynamic_pointer_cast<BThisCall>(last());
+        auto lastElement = last();
 
         // Check if previous element is recognized
-        if((prevVariableCall && !prevVariableCall->getVariable())
-           || (prevFunctionCall && !prevFunctionCall->getFunction())
-           || (prevThisCall && !prevThisCall->getReference())) {
+        if(!lastElement->isKnown()) {
             BReport::getInstance().error()
                     << "Cannot access variable member " << token->getValue()
                     << " of undefined at line " << token->getLine() << " and column "
@@ -67,7 +43,7 @@ void BChainCall::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc:
         } else {
 
             // Get the type of the previous element
-            auto typeScope = getPrevItemTypeScope(prevVariableCall, prevFunctionCall, prevThisCall);
+            auto typeScope = lastElement->getTypeScope();
 
             // Check if the type is defined
             if(typeScope) {
@@ -119,14 +95,10 @@ void BChainCall::addFunction(std::shared_ptr<BScope> globalScope, std::shared_pt
     } else {
 
         // Cast previous element
-        auto prevVariableCall = std::dynamic_pointer_cast<BVariableCall>(last());
-        auto prevFunctionCall = std::dynamic_pointer_cast<BFunctionCall>(last());
-        auto prevThisCall = std::dynamic_pointer_cast<BThisCall>(last());
+        auto lastElement = last();
 
         // Check if the previous element is recognized
-        if((prevVariableCall && !prevVariableCall->getVariable())
-           || (prevFunctionCall && !prevFunctionCall->getFunction())
-           || (prevThisCall && !prevThisCall->getReference())) {
+        if(!lastElement->isKnown()) {
             BReport::getInstance().error()
                     << "Cannot access function member " << token->getValue()
                     << " of undefined at line " << token->getLine() << " and column "
@@ -135,7 +107,7 @@ void BChainCall::addFunction(std::shared_ptr<BScope> globalScope, std::shared_pt
         } else {
 
             // Get the type of the previous element
-            auto typeScope = getPrevItemTypeScope(prevVariableCall, prevFunctionCall, prevThisCall);
+            auto typeScope = lastElement->getTypeScope();
 
             // Check if the type is defined
             if(typeScope) {
