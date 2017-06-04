@@ -198,20 +198,19 @@ void BScope::setReturn(std::shared_ptr<BReturn> ret) {
     // If several return statement are found in the same scope,
     // then only the first one is registered
     if(m_return) {
+        auto function = findClosestFunction();
         BReport::getInstance().error()
                 << "Multiple return statements are set within the same scope in function "
-                << m_return->getFunction()->getName()->getValue() << std::endl;
+                << function << std::endl;
         BReport::getInstance().printError();
     } else {
-        // Find function to which this return belongs to
-        ret->setFunction(findClosestFunction());
-
-        // Verify return statement
-        ret->verifyReturn();
 
         // Set return statement in this scope
         ret->setParentScope(shared_from_this());
         m_return = ret;
+
+        // Verify return statement
+        ret->verifyReturn();
     }
 }
 

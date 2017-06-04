@@ -13,12 +13,6 @@ private:
 
     // Set the parent scope of this return statement
     std::shared_ptr<BScope> m_parentScope;
-
-    // Set the function to which this return statement belongs to.
-    // If the return statement is not in a scope inside the function (e.g. if, while, et...),
-    // then the m_function and m_parentScope will be both pointing to the function holding
-    // this return statement
-    std::shared_ptr<BFunction> m_function;
 public:
 
     /**
@@ -49,18 +43,6 @@ public:
      * @return parent scope
      */
     std::shared_ptr<BScope> getParentScope() {return m_parentScope;}
-
-    /**
-     * Set the function to which the return statement belongs
-     * @param function
-     */
-    void setFunction(std::shared_ptr<BFunction> function) {m_function = function;}
-
-    /**
-     * Get the function to which the return statement belongs
-     * @return
-     */
-    std::shared_ptr<BFunction> getFunction() {return m_function;}
 };
 
 #endif
