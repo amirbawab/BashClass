@@ -6,3 +6,7 @@ std::stringstream BClass::getLabel() {
     stream << "_c_" << m_name->getValue();
     return stream;
 }
+
+std::shared_ptr<BClass> BClass::findClosestClass() {
+    return std::static_pointer_cast<BClass>(shared_from_this());
+}

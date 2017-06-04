@@ -34,3 +34,7 @@ void BFunction::verifyReturns() {
     // No need to check for the case of return not required
     // since it is already handled when it is set into a scope
 }
+
+std::shared_ptr<BFunction> BFunction::findClosestFunction() {
+    return std::static_pointer_cast<BFunction>(shared_from_this());
+}

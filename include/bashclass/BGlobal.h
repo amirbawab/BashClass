@@ -40,6 +40,18 @@ public:
      * Link types of all variables and functions
      */
     void linkTypes();
+
+    /**
+     * There is no ancestor function scope for a global scope
+     * @return nullptr
+     */
+    std::shared_ptr<BFunction> findClosestFunction() {return nullptr;}
+
+    /**
+     * Ther eis no ancestor class scope for a global scope
+     * @return nullptr
+     */
+    std::shared_ptr<BClass> findClosestClass() {return nullptr;}
 };
 
 #endif

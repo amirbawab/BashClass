@@ -27,6 +27,18 @@ public:
      * Get class label
      */
     std::stringstream getLabel();
+
+    /**
+     * There is no ancestor function for a class scope
+     * @return nullptr
+     */
+    std::shared_ptr<BFunction> findClosestFunction() {return nullptr;}
+
+    /**
+     * The closest class to this scope is this scope itself
+     * @return this scope
+     */
+    std::shared_ptr<BClass> findClosestClass();
 };
 
 #endif

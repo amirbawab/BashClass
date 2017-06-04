@@ -84,6 +84,18 @@ public:
      * A void function should not a return statement
      */
     void verifyReturns();
+
+    /**
+     * The closest function to this scope is the scope itself
+     * @return this scope
+     */
+    std::shared_ptr<BFunction> findClosestFunction();
+
+    /**
+     * Find closest class by asking the parent scope
+     * @return class scope or nullptr if not found
+     */
+    std::shared_ptr<BClass> findClosestClass() { return m_parentScope->findClosestClass(); }
 };
 
 #endif

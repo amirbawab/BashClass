@@ -102,30 +102,6 @@ std::shared_ptr<BVariable> BScope::findClosestVariable(std::string name) {
     return nullptr;
 }
 
-std::shared_ptr<BFunction> BScope::findClosestFunction() {
-    auto currentScope = shared_from_this();
-    while(currentScope) {
-        auto functionCast = std::dynamic_pointer_cast<BFunction>(currentScope);
-        if(functionCast) {
-            return functionCast;
-        }
-        currentScope = currentScope->getParentScope();
-    }
-    return nullptr;
-}
-
-std::shared_ptr<BClass> BScope::findClosestClass() {
-    auto currentScope = shared_from_this();
-    while(currentScope) {
-        auto classCast = std::dynamic_pointer_cast<BClass>(currentScope);
-        if(classCast) {
-            return classCast;
-        }
-        currentScope = currentScope->getParentScope();
-    }
-    return nullptr;
-}
-
 std::stringstream BScope::getStructure() {
     std::stringstream structure;
     std::stack<std::shared_ptr<BScope>> structureStack;

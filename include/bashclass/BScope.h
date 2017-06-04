@@ -118,16 +118,16 @@ public:
     std::shared_ptr<BVariable> findClosestVariable(std::string name);
 
     /**
-     * Find closest ancestor function
+     * Find closest function: ancestor or itself
      * @return closest function pointer | nullptr if not found
      */
-    std::shared_ptr<BFunction> findClosestFunction();
+    virtual std::shared_ptr<BFunction> findClosestFunction()=0;
 
     /**
-     * Find closest ancestor class
+     * Find closest class: ancestor or itself
      * @return closest class pointer | nullptr if not found
      */
-    std::shared_ptr<BClass> findClosestClass();
+    virtual std::shared_ptr<BClass> findClosestClass()=0;
 
     /**
      * Register class
