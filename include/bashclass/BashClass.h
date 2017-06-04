@@ -98,9 +98,6 @@ public:
 
 private:
 
-    // Global scope
-    std::shared_ptr<BGlobal> m_global;
-
     // Key updated by a semantic action handler
     unsigned int m_referenceKey;
 

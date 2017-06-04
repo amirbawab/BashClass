@@ -9,12 +9,11 @@
 #include <bashclass/BReturn.h>
 
 BashClass::BashClass() {
-    m_global = BGlobal::getInstance();
     initHandlers();
 }
 
 void BashClass::printStructure() {
-    std::cout << m_global->getStructure().str() << std::endl;
+    std::cout << BGlobal::getInstance()->getStructure().str() << std::endl;
 }
 
 void BashClass::onPhaseStartCheck() {
@@ -49,23 +48,23 @@ void BashClass::initHandlers() {
         onPhaseStartCheck();
 
         // Push global scope
-        m_scopeStack.push_back(m_global);
+        m_scopeStack.push_back(BGlobal::getInstance());
 
         // Connect elements after building the structure
         if(phase == BashClass::PHASE_EVAL) {
 
             // Link types of functions and variables
-            m_global->linkTypes();
+            BGlobal::getInstance()->linkTypes();
 
             // Detect circular references
-            m_global->detectCircularReference();
+            BGlobal::getInstance()->detectCircularReference();
         } else if(phase == BashClass::PHASE_GENERATE) {
 
             // Generate code required before any input
             BBashHelper::header();
 
             // Generate classes headers
-            for(auto cls : m_global->findAllClasses()) {
+            for(auto cls : BGlobal::getInstance()->findAllClasses()) {
                 BBashHelper::declareClass(cls);
             }
         }
@@ -203,7 +202,7 @@ void BashClass::initHandlers() {
 
             // Generate code for the current variable
             auto variable = m_scopeStack.back()->getVariableByReferenceKey(m_referenceKey);
-            if(m_scopeStack.back() == m_global || variable->isClassMember()) {
+            if(m_scopeStack.back() == BGlobal::getInstance() || variable->isClassMember()) {
                 BBashHelper::createGlobalVar(variable);
             } else {
                 BBashHelper::createLocalVar(variable);
@@ -364,7 +363,7 @@ void BashClass::initHandlers() {
 
     m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_chainBuilderStack.back()->addFunction(m_global, lexicalVector[index]);
+            m_chainBuilderStack.back()->addFunction(BGlobal::getInstance(), lexicalVector[index]);
         }
     };
 
