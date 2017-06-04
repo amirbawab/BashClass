@@ -1,5 +1,6 @@
 #include <bashclass/BTokenCall.h>
 #include <bashclass/BTypes.h>
+#include <bashclass/BException.h>
 
 std::string BTokenCall::getTypeValueAsString() {
     if(m_lexicalToken->getName() == BType::DATA_TYPE_NAME_INT) {
@@ -12,5 +13,5 @@ std::string BTokenCall::getTypeValueAsString() {
     } else if(m_lexicalToken->getName() == BType::DATA_TYPE_NAME_BOOLEAN) {
         return BType::TYPE_VALUE_BOOLEAN;
     }
-    return BType::UNDEFINED;
+    throw BException("Token type value cannot be undefined");
 }

@@ -65,7 +65,7 @@ std::string _chainCallToCode(std::shared_ptr<BChainCall> chainCall) {
                 // Class members have different value than other variables for the first assign statement
                 if(variableCallCast->getVariable()->isClassMember()) {
                     // Get class parent of this variable
-                    auto classCast = std::static_pointer_cast<BClass>(variableCallCast->getVariable()->getParentScope());
+                    auto classCast = variableCallCast->getVariable()->getParentScope()->findClosestClass();
                     ss << classCast->getLabel().str() << "[" << FUNCTION_THIS << "," << variableCallCast->getVariable()->getLabel().str() << "]";
                 } else {
                     ss << variableCallCast->getVariable()->getLabel().str();
