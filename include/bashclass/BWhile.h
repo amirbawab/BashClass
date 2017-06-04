@@ -31,13 +31,13 @@ public:
      * Find closest function by asking the parent scope
      * @return function scope or nullptr if not found
      */
-    std::shared_ptr<BFunction> findClosestFunction() {return m_parentScope->findClosestFunction(); }
+    std::shared_ptr<BFunction> findClosestFunction();
 
     /**
      * Find closest class by asking the parent scope
      * @return class scope or nullptr if not found
      */
-    std::shared_ptr<BClass> findClosestClass() { return m_parentScope->findClosestClass(); }
+    std::shared_ptr<BClass> findClosestClass();
 };
 
 #endif

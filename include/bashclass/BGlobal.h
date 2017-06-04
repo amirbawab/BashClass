@@ -48,7 +48,7 @@ public:
     std::shared_ptr<BFunction> findClosestFunction() {return nullptr;}
 
     /**
-     * Ther eis no ancestor class scope for a global scope
+     * There is no ancestor class scope for a global scope
      * @return nullptr
      */
     std::shared_ptr<BClass> findClosestClass() {return nullptr;}

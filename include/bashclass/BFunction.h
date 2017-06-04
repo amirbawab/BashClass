@@ -95,7 +95,7 @@ public:
      * Find closest class by asking the parent scope
      * @return class scope or nullptr if not found
      */
-    std::shared_ptr<BClass> findClosestClass() { return m_parentScope->findClosestClass(); }
+    std::shared_ptr<BClass> findClosestClass();
 };
 
 #endif

@@ -38,3 +38,10 @@ void BFunction::verifyReturns() {
 std::shared_ptr<BFunction> BFunction::findClosestFunction() {
     return std::static_pointer_cast<BFunction>(shared_from_this());
 }
+
+std::shared_ptr<BClass> BFunction::findClosestClass() {
+    if(!m_parentScope) {
+        throw BException("Cannot find closest class for a function with an undefined parent scope");
+    }
+    return m_parentScope->findClosestClass();
+}
