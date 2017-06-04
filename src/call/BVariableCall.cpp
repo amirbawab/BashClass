@@ -11,7 +11,7 @@ std::string BVariableCall::getTypeValueAsString() {
     return m_variable->getType()->getValue();
 }
 
-void BVariableCall::setExpression(std::shared_ptr<IBCallable> expression) {
+void BVariableCall::setExpression(std::shared_ptr<IBCompositeCallable> expression) {
 
     // Set expression
     m_expression = expression;

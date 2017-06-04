@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <bashclass/IBCompositeCallable.h>
+#include <bashclass/IBSimpleCallable.h>
 #include <bashclass/BScope.h>
 #include <bashclass/BTokenCall.h>
 #include <bashclass/BThisCall.h>
@@ -14,7 +15,7 @@ private:
     // Vector containing the variables and functions calls
     // in their order of insertion.
     // e.g. a.b().c.d() => [a,b(),c,d()]
-    std::vector<std::shared_ptr<IBCallable>> m_callables;
+    std::vector<std::shared_ptr<IBSimpleCallable>> m_callables;
 
     // Parent scope of this chain call
     std::shared_ptr<BScope> m_parentScope;
@@ -33,7 +34,7 @@ public:
      * @param index
      * @return callable item
      */
-    std::shared_ptr<IBCallable> operator[](int index);
+    std::shared_ptr<IBSimpleCallable> operator[](int index);
 
     /**
      * Check if chain is empty
@@ -47,7 +48,7 @@ public:
      * Get the last element or nullptr
      * @return last or nullptr
      */
-    std::shared_ptr<IBCallable> last() {
+    std::shared_ptr<IBSimpleCallable> last() {
         if(m_callables.empty()) {
             throw std::runtime_error("Accessing last element of an empty chain");
         }

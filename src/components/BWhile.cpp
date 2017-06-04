@@ -9,7 +9,7 @@ std::stringstream BWhile::getLabel() {
     return stream;
 }
 
-void BWhile::setExpression(std::shared_ptr<IBCallable> expression) {
+void BWhile::setExpression(std::shared_ptr<IBCompositeCallable> expression) {
 
     // Store the condition/expression
     m_expression = expression;

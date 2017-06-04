@@ -37,7 +37,7 @@ std::string _chainCallToCode(std::shared_ptr<BChainCall> chainCall) {
     std::shared_ptr<BScope> prevTypeScope;
 
     // Have a unique key for each result of an element call
-    std::map<std::shared_ptr<IBCallable>, std::string> returnMap;
+    std::map<std::shared_ptr<IBSimpleCallable>, std::string> returnMap;
 
     // Assign a unique key for each result
     static unsigned int uniqueId = 0;

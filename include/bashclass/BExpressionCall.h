@@ -9,10 +9,10 @@ class BExpressionCall : public IBCompositeCallable {
 private:
 
     // Left operand of the expression
-    std::shared_ptr<IBCallable> m_leftOperand;
+    std::shared_ptr<IBCompositeCallable> m_leftOperand;
 
     // Right operand of the expression
-    std::shared_ptr<IBCallable> m_rightOperand;
+    std::shared_ptr<IBCompositeCallable> m_rightOperand;
 
     // Operator of the expression
     std::shared_ptr<ecc::LexicalToken> m_operatorToken;
@@ -47,25 +47,25 @@ public:
      * Set left operator
      * @param leftOperand
      */
-    void setLeftOperand(std::shared_ptr<IBCallable> leftOperand) { m_leftOperand = leftOperand;}
+    void setLeftOperand(std::shared_ptr<IBCompositeCallable> leftOperand) { m_leftOperand = leftOperand;}
 
     /**
      * Get left operator
      * @return  leftOperator
      */
-    std::shared_ptr<IBCallable> getLeftOperand() const {return m_leftOperand;}
+    std::shared_ptr<IBCompositeCallable> getLeftOperand() const {return m_leftOperand;}
 
     /**
      * Set right operand
      * @param rightOperand
      */
-    void setRightOperand(std::shared_ptr<IBCallable> rightOperand) {m_rightOperand = rightOperand;}
+    void setRightOperand(std::shared_ptr<IBCompositeCallable> rightOperand) {m_rightOperand = rightOperand;}
 
     /**
      * Get right operand
      * @return rightOpeartor
      */
-    std::shared_ptr<IBCallable> getRightOperand() const {return m_rightOperand;}
+    std::shared_ptr<IBCompositeCallable> getRightOperand() const {return m_rightOperand;}
 
     /**
      * Set operator

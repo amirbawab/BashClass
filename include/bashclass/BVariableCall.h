@@ -2,10 +2,11 @@
 #define BASHCLASS_BVARIABLECALL_H
 
 #include <bashclass/BVariable.h>
-#include <bashclass/IBCallable.h>
+#include <bashclass/IBSimpleCallable.h>
+#include <bashclass/IBCompositeCallable.h>
 #include <memory>
 
-class BVariableCall : public IBCallable {
+class BVariableCall : public IBSimpleCallable {
 private:
 
     // The variable this variable call refers to.
@@ -14,7 +15,7 @@ private:
     std::shared_ptr<BVariable> m_variable;
 
     // Expression assigned to this variable call
-    std::shared_ptr<IBCallable> m_expression;
+    std::shared_ptr<IBCompositeCallable> m_expression;
 
     // Lexical token for the variable call.
     // The value of this token and the actual variable
@@ -38,13 +39,13 @@ public:
      * Get expression
      * @return expression
      */
-    std::shared_ptr<IBCallable> getExpression() {return m_expression;}
+    std::shared_ptr<IBCompositeCallable> getExpression() {return m_expression;}
 
     /**
      * Set expression
      * @param expression
      */
-    void setExpression(std::shared_ptr<IBCallable> expression);
+    void setExpression(std::shared_ptr<IBCompositeCallable> expression);
 
     /**
      * Get type of the variable

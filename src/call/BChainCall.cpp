@@ -193,7 +193,7 @@ void BChainCall::addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisCal
     m_callables.push_back(thisReference);
 }
 
-std::shared_ptr<IBCallable> BChainCall::operator[](int index) {
+std::shared_ptr<IBSimpleCallable> BChainCall::operator[](int index) {
     if(index < 0 || index >= m_callables.size()) {
         throw BException("Accessing an index out of bound in a chain call");
     }

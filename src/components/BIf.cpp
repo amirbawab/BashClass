@@ -9,7 +9,7 @@ std::stringstream BIf::getLabel() {
     return stream;
 }
 
-void BIf::setExpression(std::shared_ptr<IBCallable> expression) {
+void BIf::setExpression(std::shared_ptr<IBCompositeCallable> expression) {
 
     // Store the condition/expression
     m_expression = expression;
