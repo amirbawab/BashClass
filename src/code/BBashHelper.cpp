@@ -17,7 +17,8 @@ void _indent(std::shared_ptr<BScope> parent, std::stringstream& ss) {
         throw BException("Parent scope should not be empty");
     }
 
-    while(!std::dynamic_pointer_cast<BGlobal>(parent) && !std::dynamic_pointer_cast<BClass>(parent)) {
+    auto closestClass = parent->findClosestClass();
+    while (parent != BGlobal::getInstance() && parent != closestClass) {
         ss << "\t";
         parent = parent->getParentScope();
     }

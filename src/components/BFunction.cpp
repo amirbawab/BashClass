@@ -13,7 +13,7 @@ std::stringstream BFunction::getLabel() {
 }
 
 bool BFunction::isClassMember() {
-    return m_parentScope && std::dynamic_pointer_cast<BClass>(m_parentScope);
+    return m_parentScope->findClosestClass() != nullptr;
 }
 
 bool BFunction::hasKnowType() const {
