@@ -11,6 +11,10 @@ void BReturn::verifyReturn() {
         throw BException("Cannot verify a return statement without an expression");
     }
 
+    if(!m_parentScope) {
+        throw BException("Cannot verify a return statement without a parent scope");
+    }
+
     // Get ancestor function
     auto function = m_parentScope->findClosestFunction();
     if(!function) {

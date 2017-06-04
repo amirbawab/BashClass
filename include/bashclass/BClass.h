@@ -29,10 +29,10 @@ public:
     std::stringstream getLabel();
 
     /**
-     * There is no ancestor function for a class scope
-     * @return nullptr
+     * Find closest function by asking the parent scope
+     * @return function scope or nullptr if not found
      */
-    std::shared_ptr<BFunction> findClosestFunction() {return nullptr;}
+    std::shared_ptr<BFunction> findClosestFunction() { return m_parentScope->findClosestFunction(); }
 
     /**
      * The closest class to this scope is this scope itself

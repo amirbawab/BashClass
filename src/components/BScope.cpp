@@ -234,4 +234,5 @@ bool BScope::hasReturn() {
     }
 
     // TODO Check children if/elseif/else scopes if all of them have a return statement
+    return false;
 }
