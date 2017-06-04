@@ -15,3 +15,11 @@ std::string BTokenCall::getTypeValueAsString() {
     }
     throw BException("Token type value cannot be undefined");
 }
+
+bool BTokenCall::isKnown() {
+    return true;
+}
+
+std::shared_ptr<BClass> BTokenCall::getTypeScope() {
+    throw BException("Cannot get type scope of a token call");
+}

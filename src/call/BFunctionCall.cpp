@@ -3,6 +3,7 @@
 #include <iostream>
 #include <bashclass/BReport.h>
 #include <bashclass/BVariable.h>
+#include <bashclass/BException.h>
 
 std::string BFunctionCall::getTypeValueAsString() {
     if(!m_function || !m_function->hasKnowType()) {
@@ -79,3 +80,13 @@ void BFunctionCall::addArgument(std::shared_ptr<IBCallable> argument) {
     }
 }
 
+bool BFunctionCall::isKnown() {
+    return m_function != nullptr;
+}
+
+std::shared_ptr<BClass> BFunctionCall::getTypeScope() {
+    if(!m_function) {
+        throw BException("Cannot get type scope of a function call with an unknown reference");
+    }
+    return m_function->getTypeScope();
+}

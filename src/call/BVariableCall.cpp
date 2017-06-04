@@ -2,6 +2,7 @@
 #include <bashclass/BTypes.h>
 #include <iostream>
 #include <bashclass/BReport.h>
+#include <bashclass/BException.h>
 
 std::string BVariableCall::getTypeValueAsString() {
     if(!m_variable || !m_variable->hasKnownType()) {
@@ -42,4 +43,15 @@ void BVariableCall::setExpression(std::shared_ptr<IBCallable> expression) {
                 << m_lexicalToken->getValue() << std::endl;
         BReport::getInstance().printError();
     }
+}
+
+bool BVariableCall::isKnown() {
+    return m_variable != nullptr;
+}
+
+std::shared_ptr<BClass> BVariableCall::getTypeScope() {
+    if(!m_variable) {
+        throw BException("Cannot get type scope of a function call with an unknown reference");
+    }
+    return m_variable->getTypeScope();
 }

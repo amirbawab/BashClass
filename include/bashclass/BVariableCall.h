@@ -63,6 +63,18 @@ public:
      * @return lexical token
      */
     std::shared_ptr<ecc::LexicalToken> getLexicalToken() {return m_lexicalToken;}
+
+    /**
+     * Check if the actual variable exists
+     * @return true if the actual variable exists
+     */
+    bool isKnown();
+
+    /**
+     * Get type of the actual variable
+     * @return type of the actual variable
+     */
+    std::shared_ptr<BClass> getTypeScope();
 };
 
 

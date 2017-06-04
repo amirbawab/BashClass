@@ -1,11 +1,11 @@
 #ifndef BASHCLASS_BEXPRESSIONCALL_H
 #define BASHCLASS_BEXPRESSIONCALL_H
 
-#include <bashclass/IBCallable.h>
+#include <bashclass/IBCompositeCallable.h>
 #include <easycc/LexicalToken.h>
 #include <memory>
 
-class BExpressionCall : public IBCallable {
+class BExpressionCall : public IBCompositeCallable {
 private:
 
     // Left operand of the expression

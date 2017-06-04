@@ -2,11 +2,11 @@
 #define BASHCLASS_BFUNCTIONCALL_H
 
 #include <bashclass/BFunction.h>
-#include <bashclass/IBCallable.h>
+#include <bashclass/IBSimpleCallable.h>
 #include <memory>
 #include <vector>
 
-class BFunctionCall : public IBCallable {
+class BFunctionCall : public IBSimpleCallable {
 private:
 
     // The function this function call refers to.
@@ -63,6 +63,18 @@ public:
      * Argument number should match the number of parameters
      */
     void verifyArguments();
+
+    /**
+     * Check if the actual function exists
+     * @return true if the actual function exists
+     */
+    bool isKnown();
+
+    /**
+     * Get type of the actual function
+     * @return type of the actual function
+     */
+    std::shared_ptr<BClass> getTypeScope();
 };
 
 #endif

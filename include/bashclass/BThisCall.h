@@ -1,12 +1,12 @@
 #ifndef BASHCLASS_BTHISCALL_H
 #define BASHCLASS_BTHISCALL_H
 
-#include <bashclass/IBCallable.h>
+#include <bashclass/IBSimpleCallable.h>
 #include <bashclass/BClass.h>
 #include <easycc/LexicalToken.h>
 #include <memory>
 
-class BThisCall : public IBCallable {
+class BThisCall : public IBSimpleCallable {
 private:
 
     // The class that this reference points to
@@ -45,6 +45,18 @@ public:
      * @param reference
      */
     void setReference(std::shared_ptr<BClass> reference) {m_reference = reference;}
+
+    /**
+     * Check if the this reference is known
+     * @return true if known
+     */
+    bool isKnown();
+
+    /**
+     * Get type scope
+     * @return type scope
+     */
+    std::shared_ptr<BClass> getTypeScope();
 };
 
 #endif

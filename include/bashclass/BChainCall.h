@@ -3,12 +3,12 @@
 
 #include <memory>
 #include <vector>
-#include <bashclass/IBCallable.h>
+#include <bashclass/IBCompositeCallable.h>
 #include <bashclass/BScope.h>
 #include <bashclass/BTokenCall.h>
 #include <bashclass/BThisCall.h>
 
-class BChainCall : public IBCallable {
+class BChainCall : public IBCompositeCallable {
 private:
 
     // Vector containing the variables and functions calls
