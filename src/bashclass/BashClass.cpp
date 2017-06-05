@@ -456,7 +456,7 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_EVAL) {
 
             // Get function that is currently being built
-            auto functionCall = std::static_pointer_cast<BFunctionCall>(m_chainBuilderStack.back()->last());
+            auto functionCall = std::static_pointer_cast<BFunctionChainCall>(m_chainBuilderStack.back()->last());
 
             // Add the argument to it
             functionCall->addArgument(m_expressionOperandStack.back());
@@ -470,7 +470,7 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_EVAL) {
 
             // Get function call
-            auto functionCall = std::static_pointer_cast<BFunctionCall>(m_chainBuilderStack.back()->last());
+            auto functionCall = std::static_pointer_cast<BFunctionChainCall>(m_chainBuilderStack.back()->last());
 
             // Verify provided arguments
             functionCall->verifyArguments();

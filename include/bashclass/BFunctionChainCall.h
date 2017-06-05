@@ -1,5 +1,5 @@
-#ifndef BASHCLASS_BFUNCTIONCALL_H
-#define BASHCLASS_BFUNCTIONCALL_H
+#ifndef BASHCLASS_BFUNCTIONCHAINCALL_H
+#define BASHCLASS_BFUNCTIONCHAINCALL_H
 
 #include <bashclass/BFunction.h>
 #include <bashclass/IBSimpleCallable.h>
@@ -7,7 +7,7 @@
 #include <memory>
 #include <vector>
 
-class BFunctionCall : public IBSimpleCallable {
+class BFunctionChainCall : public IBSimpleCallable {
 private:
 
     // The function this function call refers to.

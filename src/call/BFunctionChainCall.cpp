@@ -1,18 +1,18 @@
-#include <bashclass/BFunctionCall.h>
+#include <bashclass/BFunctionChainCall.h>
 #include <bashclass/BTypes.h>
 #include <iostream>
 #include <bashclass/BReport.h>
 #include <bashclass/BVariable.h>
 #include <bashclass/BException.h>
 
-std::string BFunctionCall::getTypeValueAsString() {
+std::string BFunctionChainCall::getTypeValueAsString() {
     if(!m_function || !m_function->hasKnowType()) {
         return BType::UNDEFINED;
     }
     return m_function->getType()->getValue();
 }
 
-void BFunctionCall::verifyArguments() {
+void BFunctionChainCall::verifyArguments() {
 
     // Check if the number of arguments is less than the number of parameters
     if(m_function && m_arguments.size() < m_function->findAllParameters().size()) {
@@ -26,7 +26,7 @@ void BFunctionCall::verifyArguments() {
     // this is already handled by the addArgument() function
 }
 
-void BFunctionCall::addArgument(std::shared_ptr<IBCompositeCallable> argument) {
+void BFunctionChainCall::addArgument(std::shared_ptr<IBCompositeCallable> argument) {
 
     // Check the index of the parameter to be compared with
     size_t paramIndex = m_arguments.size();
@@ -80,11 +80,11 @@ void BFunctionCall::addArgument(std::shared_ptr<IBCompositeCallable> argument) {
     }
 }
 
-bool BFunctionCall::isKnown() {
+bool BFunctionChainCall::isKnown() {
     return m_function != nullptr;
 }
 
-std::shared_ptr<BClass> BFunctionCall::getTypeScope() {
+std::shared_ptr<BClass> BFunctionChainCall::getTypeScope() {
     if(!m_function) {
         throw BException("Cannot get type scope of a function call with an unknown reference");
     }

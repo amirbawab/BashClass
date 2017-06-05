@@ -4,7 +4,7 @@
 #include <bashclass/BException.h>
 #include <bashclass/BGlobal.h>
 #include <bashclass/BVariableChainCall.h>
-#include <bashclass/BFunctionCall.h>
+#include <bashclass/BFunctionChainCall.h>
 #include <iostream>
 #include <bashclass/BExpressionCall.h>
 
@@ -99,7 +99,7 @@ void _chainCallToCode(std::shared_ptr<BChainCall> chainCall, std::stringstream &
 
         // Cast element
         auto variableCallCast = std::dynamic_pointer_cast<BVariableChainCall>((*chainCall)[i]);
-        auto functionCallCast = std::dynamic_pointer_cast<BFunctionCall>((*chainCall)[i]);
+        auto functionCallCast = std::dynamic_pointer_cast<BFunctionChainCall>((*chainCall)[i]);
         auto thisCallCast = std::dynamic_pointer_cast<BThisChainCall>((*chainCall)[i]);
         auto tokenCallCast = std::dynamic_pointer_cast<BTokenCall>((*chainCall)[i]);
 

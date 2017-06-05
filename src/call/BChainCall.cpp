@@ -1,6 +1,6 @@
 #include <bashclass/BChainCall.h>
 #include <bashclass/BVariableChainCall.h>
-#include <bashclass/BFunctionCall.h>
+#include <bashclass/BFunctionChainCall.h>
 #include <bashclass/BClass.h>
 #include <iostream>
 #include <bashclass/BException.h>
@@ -78,7 +78,7 @@ void BChainCall::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc:
 void BChainCall::addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
 
     // Prepare function call
-    auto functionCall = std::make_shared<BFunctionCall>();
+    auto functionCall = std::make_shared<BFunctionChainCall>();
     functionCall->setLexicalToken(token);
 
     // Check if the function is the first callable item to be added
