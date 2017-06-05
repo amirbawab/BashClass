@@ -100,7 +100,7 @@ void _chainCallToCode(std::shared_ptr<BChainCall> chainCall, std::stringstream &
         // Cast element
         auto variableCallCast = std::dynamic_pointer_cast<BVariableCall>((*chainCall)[i]);
         auto functionCallCast = std::dynamic_pointer_cast<BFunctionCall>((*chainCall)[i]);
-        auto thisCallCast = std::dynamic_pointer_cast<BThisCall>((*chainCall)[i]);
+        auto thisCallCast = std::dynamic_pointer_cast<BThisChainCall>((*chainCall)[i]);
         auto tokenCallCast = std::dynamic_pointer_cast<BTokenCall>((*chainCall)[i]);
 
         // Generate indentation

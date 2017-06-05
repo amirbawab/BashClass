@@ -156,7 +156,7 @@ void BChainCall::addToken(std::shared_ptr<BTokenCall> token) {
     m_callables.push_back(token);
 }
 
-void BChainCall::addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisCall> thisReference) {
+void BChainCall::addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisChainCall> thisReference) {
 
     // Callable chain must be empty
     if(!m_callables.empty()) {

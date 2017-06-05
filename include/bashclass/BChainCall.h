@@ -7,7 +7,7 @@
 #include <bashclass/IBSimpleCallable.h>
 #include <bashclass/BScope.h>
 #include <bashclass/BTokenCall.h>
-#include <bashclass/BThisCall.h>
+#include <bashclass/BThisChainCall.h>
 
 class BChainCall : public IBCompositeCallable {
 private:
@@ -86,7 +86,7 @@ public:
      * @param scope
      * @param thisReference
      */
-    void addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisCall> thisReference);
+    void addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisChainCall> thisReference);
 
     /**
      * Set parent scope

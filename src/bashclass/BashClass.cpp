@@ -5,7 +5,7 @@
 #include <bashclass/BException.h>
 #include <bashclass/BGenerateCode.h>
 #include <bashclass/BBashHelper.h>
-#include <bashclass/BThisCall.h>
+#include <bashclass/BThisChainCall.h>
 #include <bashclass/BReturn.h>
 
 BashClass::BashClass() {
@@ -381,7 +381,7 @@ void BashClass::initHandlers() {
 
     m_thisCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            auto thisCall = std::make_shared<BThisCall>();
+            auto thisCall = std::make_shared<BThisChainCall>();
             thisCall->setLexicalToken(lexicalVector[index]);
             m_chainBuilderStack.back()->addThis(m_scopeStack.back(), thisCall);
         }
