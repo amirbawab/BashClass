@@ -1,7 +1,7 @@
-#ifndef BASHCLASS_BCHAINABLE_H
-#define BASHCLASS_BCHAINABLE_H
+#ifndef BASHCLASS_IBCHAINABLE_H
+#define BASHCLASS_IBCHAINABLE_H
 
-class BChainable {
+class IBChainable {
 
     /**
      * Get the type of the chainable element
