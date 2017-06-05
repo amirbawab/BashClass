@@ -202,11 +202,13 @@ void BashClass::initHandlers() {
 
             // Generate code for the current variable
             auto variable = m_scopeStack.back()->getVariableByReferenceKey(m_referenceKey);
-            if(m_scopeStack.back() == BGlobal::getInstance() || variable->isClassMember()) {
+            if(m_scopeStack.back() == BGlobal::getInstance()) {
                 BBashHelper::createGlobalVar(variable);
-            } else {
+            } else if(!variable->isClassMember()) {
                 BBashHelper::createLocalVar(variable);
             }
+
+            // Don't generate code for class members
         }
     };
 

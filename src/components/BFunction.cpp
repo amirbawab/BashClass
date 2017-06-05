@@ -13,6 +13,9 @@ std::stringstream BFunction::getLabel() {
 }
 
 bool BFunction::isClassMember() {
+    if(!m_parentScope) {
+        throw BException("Cannot check if a function is a class member if it does not have a parent scope");
+    }
     return m_parentScope->findClosestClass() != nullptr;
 }
 

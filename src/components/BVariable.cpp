@@ -1,6 +1,7 @@
 #include <bashclass/BVariable.h>
 #include <bashclass/BTypes.h>
 #include <bashclass/BClass.h>
+#include <bashclass/BException.h>
 
 BVariable::BVariable() {
     m_isParam = false;
@@ -13,6 +14,9 @@ std::stringstream BVariable::getLabel() {
 }
 
 bool BVariable::isClassMember() {
+    if(!m_parentScope) {
+        throw BException("Cannot check if a variable is a class member if it does not have a parent scope");
+    }
     return m_parentScope->findClosestClass() != nullptr;
 }
 
