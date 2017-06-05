@@ -208,6 +208,7 @@ void BBashHelper::createGlobalVar(std::shared_ptr<BVariable> variable, std::stri
 void BBashHelper::createLocalVar(std::shared_ptr<BVariable> variable, std::string defaultValue) {
     std::stringstream ss;
     ss << std::endl;
+    _indent(variable->getParentScope(),ss);
     ss << "# Create local variable" << std::endl;
 
     _indent(variable->getParentScope(), ss);
