@@ -213,12 +213,12 @@ void BScope::setReturn(std::shared_ptr<BReturn> ret) {
     }
 }
 
-void BScope::registerChainCall(unsigned int referenceKey, std::shared_ptr<BChainCall> chainCall) {
+void BScope::registerChainCall(unsigned int referenceKey, std::shared_ptr<BChain> chainCall) {
     m_chainCalls[referenceKey] = chainCall;
     chainCall->setParentScope(shared_from_this());
 }
 
-std::shared_ptr<BChainCall> BScope::getChainCallByReferenceKey(unsigned int referenceKey) {
+std::shared_ptr<BChain> BScope::getChainCallByReferenceKey(unsigned int referenceKey) {
     if(m_chainCalls.find(referenceKey) == m_chainCalls.end()) {
         throw BException("Requesting chain call with an unrecognized reference key");
     }

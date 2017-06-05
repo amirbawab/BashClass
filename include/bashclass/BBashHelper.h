@@ -5,7 +5,7 @@
 #include <bashclass/BClass.h>
 #include <bashclass/BVariable.h>
 #include <bashclass/BFunction.h>
-#include <bashclass/BChainCall.h>
+#include <bashclass/BChain.h>
 
 class BBashHelper {
 public:
@@ -68,13 +68,13 @@ public:
      * Generate a variable assign
      * @param chainCall
      */
-    static void assignVariable(std::shared_ptr<BChainCall> chainCall);
+    static void assignVariable(std::shared_ptr<BChain> chainCall);
 
     /**
      * Generate call for a function execution
      * @param chainCall
      */
-    static void functionExec(std::shared_ptr<BChainCall> chainCall);
+    static void functionExec(std::shared_ptr<BChain> chainCall);
 };
 
 #endif

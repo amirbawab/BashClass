@@ -1,4 +1,4 @@
-#include <bashclass/BChainCall.h>
+#include <bashclass/BChain.h>
 #include <bashclass/BVariableChainCall.h>
 #include <bashclass/BFunctionChainCall.h>
 #include <bashclass/BClass.h>
@@ -7,11 +7,11 @@
 #include <bashclass/BReport.h>
 #include <bashclass/BGlobal.h>
 
-std::string BChainCall::getTypeValueAsString() {
+std::string BChain::getTypeValueAsString() {
     return last()->getTypeValueAsString();
 }
 
-void BChainCall::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
+void BChain::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
 
     // Prepare variable call
     std::shared_ptr<BVariableChainCall> variableCall = std::make_shared<BVariableChainCall>();
@@ -75,7 +75,7 @@ void BChainCall::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc:
     m_callables.push_back(variableCall);
 }
 
-void BChainCall::addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
+void BChain::addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
 
     // Prepare function call
     auto functionCall = std::make_shared<BFunctionChainCall>();
@@ -152,11 +152,11 @@ void BChainCall::addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc:
     m_callables.push_back(functionCall);
 }
 
-void BChainCall::addToken(std::shared_ptr<BTokenCall> token) {
+void BChain::addToken(std::shared_ptr<BTokenCall> token) {
     m_callables.push_back(token);
 }
 
-void BChainCall::addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisChainCall> thisReference) {
+void BChain::addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisChainCall> thisReference) {
 
     // Callable chain must be empty
     if(!m_callables.empty()) {
@@ -180,7 +180,7 @@ void BChainCall::addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisCha
     m_callables.push_back(thisReference);
 }
 
-std::shared_ptr<IBSimpleCallable> BChainCall::operator[](int index) {
+std::shared_ptr<IBSimpleCallable> BChain::operator[](int index) {
     if(index < 0 || index >= m_callables.size()) {
         throw BException("Accessing an index out of bound in a chain call");
     }

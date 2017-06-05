@@ -5,7 +5,7 @@
 #include <stack>
 #include <memory>
 #include <bashclass/BGlobal.h>
-#include <bashclass/BChainCall.h>
+#include <bashclass/BChain.h>
 #include <bashclass/BVariableChainCall.h>
 #include <bashclass/BFunctionChainCall.h>
 #include <bashclass/BTokenCall.h>
@@ -107,7 +107,7 @@ private:
     // Hold calls in order to build chains
     // e.g. a.b(c.d(e.f())) => [a, b], [b, c], [e, f]
     // e.g. a.b = 123;      => [a, b], [123]
-    std::vector<std::shared_ptr<BChainCall>> m_chainBuilderStack;
+    std::vector<std::shared_ptr<BChain>> m_chainBuilderStack;
 
     // Hold variable currently being defined
     std::shared_ptr<BVariable> m_focusVariable;

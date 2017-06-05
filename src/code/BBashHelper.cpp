@@ -86,7 +86,7 @@ void _varCall_nonMember(std::shared_ptr<BVariableChainCall> variableCall, std::s
  * @param chainCall
  * @return multi-line code representing a chain call
  */
-void _chainCallToCode(std::shared_ptr<BChainCall> chainCall, std::stringstream &ss) {
+void _chainCallToCode(std::shared_ptr<BChain> chainCall, std::stringstream &ss) {
 
     // Have a unique key for each result of an element call
     std::map<std::shared_ptr<IBSimpleCallable>, std::string> returnMap;
@@ -178,9 +178,9 @@ void _chainCallToCode(std::shared_ptr<BChainCall> chainCall, std::stringstream &
 
 void _expressionToCode(std::shared_ptr<BExpressionCall> expression, std::stringstream &ss) {
     auto leftOperandExpression = std::dynamic_pointer_cast<BExpressionCall>(expression->getLeftOperand());
-    auto leftOperandChain = std::dynamic_pointer_cast<BChainCall>(expression->getLeftOperand());
+    auto leftOperandChain = std::dynamic_pointer_cast<BChain>(expression->getLeftOperand());
     auto rightOperandExpression = std::dynamic_pointer_cast<BExpressionCall>(expression->getRightOperand());
-    auto rightOperandChain = std::dynamic_pointer_cast<BChainCall>(expression->getRightOperand());
+    auto rightOperandChain = std::dynamic_pointer_cast<BChain>(expression->getRightOperand());
 
     if(leftOperandExpression) {
         _expressionToCode(leftOperandExpression, ss);
@@ -293,13 +293,13 @@ void BBashHelper::closeFunction(std::shared_ptr<BFunction> function) {
     BGenerateCode::get().write(ss);
 }
 
-void BBashHelper::assignVariable(std::shared_ptr<BChainCall> chainCall) {
+void BBashHelper::assignVariable(std::shared_ptr<BChain> chainCall) {
     std::stringstream ss;
 
     // TOD Add expression
     auto variableCall = std::static_pointer_cast<BVariableChainCall>(chainCall->last());
     auto expressionComposite = std::dynamic_pointer_cast<BExpressionCall>(variableCall->getExpression());
-    auto chainComposite = std::dynamic_pointer_cast<BChainCall>(variableCall->getExpression());
+    auto chainComposite = std::dynamic_pointer_cast<BChain>(variableCall->getExpression());
 
     // Start converting the expression
     ss << std::endl;
@@ -324,7 +324,7 @@ void BBashHelper::assignVariable(std::shared_ptr<BChainCall> chainCall) {
     BGenerateCode::get().write(ss);
 }
 
-void BBashHelper::functionExec(std::shared_ptr<BChainCall> chainCall) {
+void BBashHelper::functionExec(std::shared_ptr<BChain> chainCall) {
     std::stringstream ss;
 
     // Convert chain to code

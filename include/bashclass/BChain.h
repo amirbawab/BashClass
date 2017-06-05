@@ -1,5 +1,5 @@
-#ifndef BASHCLASS_BCHAINCALL_H
-#define BASHCLASS_BCHAINCALL_H
+#ifndef BASHCLASS_BCHAIN_H
+#define BASHCLASS_BCHAIN_H
 
 #include <memory>
 #include <vector>
@@ -9,7 +9,7 @@
 #include <bashclass/BTokenCall.h>
 #include <bashclass/BThisChainCall.h>
 
-class BChainCall : public IBCompositeCallable {
+class BChain : public IBCompositeCallable {
 private:
 
     // Vector containing the variables and functions calls

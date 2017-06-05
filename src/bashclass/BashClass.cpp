@@ -334,7 +334,7 @@ void BashClass::initHandlers() {
 
     m_startOuterCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_chainBuilderStack.push_back(std::make_shared<BChainCall>());
+            m_chainBuilderStack.push_back(std::make_shared<BChain>());
         }
     };
 
@@ -346,7 +346,7 @@ void BashClass::initHandlers() {
 
     m_startInnerCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            auto innerChainCall = std::make_shared<BChainCall>();
+            auto innerChainCall = std::make_shared<BChain>();
             innerChainCall->setParentScope(m_scopeStack.back());
             m_chainBuilderStack.push_back(innerChainCall);
         }
