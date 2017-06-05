@@ -1,17 +1,17 @@
-#include <bashclass/BVariableCall.h>
+#include <bashclass/BVariableChainCall.h>
 #include <bashclass/BTypes.h>
 #include <iostream>
 #include <bashclass/BReport.h>
 #include <bashclass/BException.h>
 
-std::string BVariableCall::getTypeValueAsString() {
+std::string BVariableChainCall::getTypeValueAsString() {
     if(!m_variable || !m_variable->hasKnownType()) {
         return BType::UNDEFINED;
     }
     return m_variable->getType()->getValue();
 }
 
-void BVariableCall::setExpression(std::shared_ptr<IBCompositeCallable> expression) {
+void BVariableChainCall::setExpression(std::shared_ptr<IBCompositeCallable> expression) {
 
     // Set expression
     m_expression = expression;
@@ -45,11 +45,11 @@ void BVariableCall::setExpression(std::shared_ptr<IBCompositeCallable> expressio
     }
 }
 
-bool BVariableCall::isKnown() {
+bool BVariableChainCall::isKnown() {
     return m_variable != nullptr;
 }
 
-std::shared_ptr<BClass> BVariableCall::getTypeScope() {
+std::shared_ptr<BClass> BVariableChainCall::getTypeScope() {
     if(!m_variable) {
         throw BException("Cannot get type scope of a function call with an unknown reference");
     }

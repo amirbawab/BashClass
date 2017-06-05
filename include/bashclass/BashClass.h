@@ -6,7 +6,7 @@
 #include <memory>
 #include <bashclass/BGlobal.h>
 #include <bashclass/BChainCall.h>
-#include <bashclass/BVariableCall.h>
+#include <bashclass/BVariableChainCall.h>
 #include <bashclass/BFunctionCall.h>
 #include <bashclass/BTokenCall.h>
 #include <bashclass/BExpressionCall.h>

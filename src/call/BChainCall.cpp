@@ -1,5 +1,5 @@
 #include <bashclass/BChainCall.h>
-#include <bashclass/BVariableCall.h>
+#include <bashclass/BVariableChainCall.h>
 #include <bashclass/BFunctionCall.h>
 #include <bashclass/BClass.h>
 #include <iostream>
@@ -14,7 +14,7 @@ std::string BChainCall::getTypeValueAsString() {
 void BChainCall::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
 
     // Prepare variable call
-    std::shared_ptr<BVariableCall> variableCall = std::make_shared<BVariableCall>();
+    std::shared_ptr<BVariableChainCall> variableCall = std::make_shared<BVariableChainCall>();
     variableCall->setLexicalToken(token);
 
     // Check if the variable is the first callable item to be added

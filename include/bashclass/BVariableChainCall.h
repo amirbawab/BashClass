@@ -1,12 +1,12 @@
-#ifndef BASHCLASS_BVARIABLECALL_H
-#define BASHCLASS_BVARIABLECALL_H
+#ifndef BASHCLASS_BVARIABLECHAINCALL_H
+#define BASHCLASS_BVARIABLECHAINCALL_H
 
 #include <bashclass/BVariable.h>
 #include <bashclass/IBSimpleCallable.h>
 #include <bashclass/IBCompositeCallable.h>
 #include <memory>
 
-class BVariableCall : public IBSimpleCallable {
+class BVariableChainCall : public IBSimpleCallable {
 private:
 
     // The variable this variable call refers to.

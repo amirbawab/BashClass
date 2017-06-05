@@ -391,7 +391,7 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_EVAL) {
 
             // Configure variable call
-            auto variableCall = std::static_pointer_cast<BVariableCall>(m_chainBuilderStack.back()->last());
+            auto variableCall = std::static_pointer_cast<BVariableChainCall>(m_chainBuilderStack.back()->last());
             variableCall->setExpression(m_expressionOperandStack.back());
 
             // Pop consumed expression
