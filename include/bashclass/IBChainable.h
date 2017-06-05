@@ -2,6 +2,7 @@
 #define BASHCLASS_IBCHAINABLE_H
 
 class IBChainable {
+public:
 
     /**
      * Get the type of the chainable element
