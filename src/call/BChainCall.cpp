@@ -87,7 +87,7 @@ void BChainCall::addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc:
         // If function call is inside a class, then start searching for a function member of that class
         auto classScope = scope->findClosestClass();
         if(classScope) {
-            auto functions = classScope->findAllFunctions();
+            auto functions = classScope->findAllFunctions(token->getValue().c_str());
             if(!functions.empty()) {
                 functionCall->setFunction(functions.front());
             }

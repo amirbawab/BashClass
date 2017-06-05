@@ -408,6 +408,10 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_EVAL) {
             // Register function chain call
             m_scopeStack.back()->registerChainCall(m_referenceKey, m_chainBuilderStack.back());
+        } else if(phase == BashClass::PHASE_GENERATE) {
+
+            // Generate function execution statement
+            BBashHelper::functionExec(m_scopeStack.back()->getChainCallByReferenceKey(m_referenceKey));
         }
     };
 

@@ -69,6 +69,12 @@ public:
      * @param chainCall
      */
     static void assignVariable(std::shared_ptr<BChainCall> chainCall);
+
+    /**
+     * Generate call for a function execution
+     * @param chainCall
+     */
+    static void functionExec(std::shared_ptr<BChainCall> chainCall);
 };
 
 #endif

@@ -198,12 +198,18 @@ void BBashHelper::uniqueCounter(std::shared_ptr<BClass> classScope) {
 
 void BBashHelper::createGlobalVar(std::shared_ptr<BVariable> variable, std::string defaultValue) {
     std::stringstream ss;
+    ss << std::endl;
+    ss << "# Create global variable" << std::endl;
+
     ss << variable->getLabel().str() << "=" << defaultValue << std::endl;
     BGenerateCode::get().write(ss);
 }
 
 void BBashHelper::createLocalVar(std::shared_ptr<BVariable> variable, std::string defaultValue) {
     std::stringstream ss;
+    ss << std::endl;
+    ss << "# Create local variable" << std::endl;
+
     _indent(variable->getParentScope(), ss);
     ss << "local " << variable->getLabel().str() << "=" << defaultValue << std::endl;
     BGenerateCode::get().write(ss);
@@ -211,6 +217,9 @@ void BBashHelper::createLocalVar(std::shared_ptr<BVariable> variable, std::strin
 
 void BBashHelper::bash(std::shared_ptr<ecc::LexicalToken> token) {
     std::stringstream ss;
+    ss << std::endl;
+    ss << "# Run BASH code" << std::endl;
+
     if(token->getName() == BType::TYPE_NAME_BASH_INLINE) {
         ss << token->getValue().substr(2,token->getValue().length()-2);
     } else if(token->getName() == BType::TYPE_NAME_BASH_SUB || token->getName() == BType::TYPE_NAME_BASH_BLOCK) {
@@ -224,8 +233,10 @@ void BBashHelper::bash(std::shared_ptr<ecc::LexicalToken> token) {
 
 void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
     std::stringstream ss;
-    ss << "function " << function->getLabel().str() << "() {" << std::endl;
+    ss << std::endl;
+    ss << "# Create function" << std::endl;
 
+    ss << "function " << function->getLabel().str() << "() {" << std::endl;
     // Create parameters
     int paramPos = 1;
     for(auto param : function->findAllParameters()) {
@@ -251,7 +262,7 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
 void BBashHelper::closeFunction(std::shared_ptr<BFunction> function) {
     std::stringstream ss;
     _indent(function->getParentScope(), ss);
-    ss << "}" << std::endl << std::endl;
+    ss << "}" << std::endl;
     BGenerateCode::get().write(ss);
 }
 
@@ -259,6 +270,25 @@ void BBashHelper::assignVariable(std::shared_ptr<BChainCall> chainCall) {
     std::stringstream ss;
 
     // Convert chain to code
+    ss << std::endl;
+    _indent(chainCall->getParentScope(), ss);
+    ss << "# Assign variable" << std::endl;
     ss << _chainCallToCode(chainCall) << std::endl;
+
+    // TOD Add expression
+
     BGenerateCode::get().write(ss);
+}
+
+void BBashHelper::functionExec(std::shared_ptr<BChainCall> chainCall) {
+    std::stringstream ss;
+
+    // Convert chain to code
+    ss << std::endl;
+    _indent(chainCall->getParentScope(), ss);
+    ss << "# Execute a function" << std::endl;
+    ss << _chainCallToCode(chainCall) << std::endl;
+
+    BGenerateCode::get().write(ss);
+
 }
