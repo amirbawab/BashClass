@@ -35,9 +35,8 @@ std::vector<std::shared_ptr<BVariable>> BScope::findAllParameters(const char *na
 std::vector<std::shared_ptr<BClass>> BScope::findAllClasses(const char* name) {
     std::vector<std::shared_ptr<BClass>> classes;
     for(auto scope : m_scopes) {
-        std::shared_ptr<BClass> classScope = scope.second->findClosestClass();
-        if(scope.second == classScope) {
-
+        std::shared_ptr<BClass> classScope = std::dynamic_pointer_cast<BClass>(scope.second);
+        if(classScope) {
             if(!classScope->getName()) {
                 throw BException("Finding classes requires a class name to be defined");
             }
@@ -53,8 +52,8 @@ std::vector<std::shared_ptr<BClass>> BScope::findAllClasses(const char* name) {
 std::vector<std::shared_ptr<BFunction>> BScope::findAllFunctions(const char *name) {
     std::vector<std::shared_ptr<BFunction>> functions;
     for(auto scope : m_scopes) {
-        std::shared_ptr<BFunction> functionScope = scope.second->findClosestFunction();
-        if(scope.second == functionScope) {
+        std::shared_ptr<BFunction> functionScope = std::dynamic_pointer_cast<BFunction>(scope.second);
+        if(functionScope) {
             if(!functionScope->getName()) {
                 throw BException("Finding functions requires a function name to be defined");
             }

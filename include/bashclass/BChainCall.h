@@ -73,7 +73,7 @@ public:
      * @param scope
      * @param token
      */
-    void addFunction(std::shared_ptr<BScope> globalScope, std::shared_ptr<ecc::LexicalToken> token);
+    void addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token);
 
     /**
      * Add token to the chain

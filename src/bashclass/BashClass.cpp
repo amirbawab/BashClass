@@ -365,7 +365,7 @@ void BashClass::initHandlers() {
 
     m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_chainBuilderStack.back()->addFunction(BGlobal::getInstance(), lexicalVector[index]);
+            m_chainBuilderStack.back()->addFunction(m_scopeStack.back(), lexicalVector[index]);
         }
     };
 

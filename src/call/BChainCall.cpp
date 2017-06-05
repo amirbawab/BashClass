@@ -5,6 +5,7 @@
 #include <iostream>
 #include <bashclass/BException.h>
 #include <bashclass/BReport.h>
+#include <bashclass/BGlobal.h>
 
 std::string BChainCall::getTypeValueAsString() {
     return last()->getTypeValueAsString();
@@ -74,7 +75,7 @@ void BChainCall::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc:
     m_callables.push_back(variableCall);
 }
 
-void BChainCall::addFunction(std::shared_ptr<BScope> globalScope, std::shared_ptr<ecc::LexicalToken> token) {
+void BChainCall::addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
 
     // Prepare function call
     auto functionCall = std::make_shared<BFunctionCall>();
@@ -82,15 +83,29 @@ void BChainCall::addFunction(std::shared_ptr<BScope> globalScope, std::shared_pt
 
     // Check if the function is the first callable item to be added
     if(m_callables.empty()) {
-        auto functions = globalScope->findAllFunctions(token->getValue().c_str());
-        if(!functions.empty()) {
-            functionCall->setFunction(functions.front());
-        } else {
-            BReport::getInstance().error()
-                    << "Undefined function " << token->getValue()
-                    << " at line " << token->getLine() << " and column "
-                    << token->getColumn() << std::endl;
-            BReport::getInstance().printError();
+
+        // If function call is inside a class, then start searching for a function member of that class
+        auto classScope = scope->findClosestClass();
+        if(classScope) {
+            auto functions = classScope->findAllFunctions();
+            if(!functions.empty()) {
+                functionCall->setFunction(functions.front());
+            }
+        }
+
+        // If not a class member, then search in the global scope
+        if(!functionCall->getFunction()) {
+            auto functions = BGlobal::getInstance()->findAllFunctions(token->getValue().c_str());
+            if(!functions.empty()) {
+                functionCall->setFunction(functions.front());
+            } else {
+                BReport::getInstance().error()
+                        << "Undefined function " << token->getValue()
+                        << " at line " << token->getLine() << " and column "
+                        << token->getColumn() << std::endl;
+                BReport::getInstance().printError();
+            }
+
         }
     } else {
 
