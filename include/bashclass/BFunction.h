@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <memory>
-#include <bashclass/IBCallable.h>
 #include <bashclass/BClass.h>
 
 class BFunction : public BScope {

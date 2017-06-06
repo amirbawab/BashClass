@@ -119,7 +119,7 @@ private:
     std::shared_ptr<BClass> m_focusClass;
 
     // Hold chains and expressions operands
-    std::vector<std::shared_ptr<IBCompositeCallable>> m_expressionOperandStack;
+    std::vector<std::shared_ptr<IBExpression>> m_expressionOperandStack;
 
     // Hold expression operators
     std::vector<std::shared_ptr<ecc::LexicalToken>> m_expressionOperatorStack;

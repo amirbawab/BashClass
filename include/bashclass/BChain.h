@@ -3,19 +3,18 @@
 
 #include <memory>
 #include <vector>
-#include <bashclass/IBCompositeCallable.h>
-#include <bashclass/IBSimpleCallable.h>
 #include <bashclass/BScope.h>
 #include <bashclass/BTokenUse.h>
 #include <bashclass/BThisChainAccess.h>
+#include <bashclass/IBChainable.h>
 
-class BChain : public IBCompositeCallable {
+class BChain {
 private:
 
     // Vector containing the variables and functions calls
     // in their order of insertion.
     // e.g. a.b().c.d() => [a,b(),c,d()]
-    std::vector<std::shared_ptr<IBSimpleCallable>> m_callables;
+    std::vector<std::shared_ptr<IBChainable>> m_callables;
 
     // Parent scope of this chain call
     std::shared_ptr<BScope> m_parentScope;
@@ -34,7 +33,7 @@ public:
      * @param index
      * @return callable item
      */
-    std::shared_ptr<IBSimpleCallable> operator[](int index);
+    std::shared_ptr<IBChainable> operator[](int index);
 
     /**
      * Check if chain is empty
@@ -48,12 +47,7 @@ public:
      * Get the last element or nullptr
      * @return last or nullptr
      */
-    std::shared_ptr<IBSimpleCallable> last() {
-        if(m_callables.empty()) {
-            throw std::runtime_error("Accessing last element of an empty chain");
-        }
-        return m_callables.back();
-    }
+    std::shared_ptr<IBChainable> last();
 
     /**
      * Get chain type

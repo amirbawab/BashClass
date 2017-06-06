@@ -2,14 +2,14 @@
 #define BASHCLASS_BRETURN_H
 
 #include <memory>
-#include <bashclass/IBCompositeCallable.h>
 #include <bashclass/BFunction.h>
+#include <bashclass/IBExpression.h>
 
 class BReturn {
 private:
 
     // Expression assigned to this return statement
-    std::shared_ptr<IBCompositeCallable> m_expression;
+    std::shared_ptr<IBExpression> m_expression;
 
     // Set the parent scope of this return statement
     std::shared_ptr<BScope> m_parentScope;
@@ -19,13 +19,13 @@ public:
      * Set return statement expression
      * @param return statement expression
      */
-    void setExpression(std::shared_ptr<IBCompositeCallable> expression) {m_expression = expression;}
+    void setExpression(std::shared_ptr<IBExpression> expression) {m_expression = expression;}
 
     /**
      * Get return statement expression
      * @return return statement expression
      */
-    std::shared_ptr<IBCompositeCallable> getExpression(){return m_expression;}
+    std::shared_ptr<IBExpression> getExpression(){return m_expression;}
 
     /**
      * Verify return

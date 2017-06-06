@@ -2,13 +2,13 @@
 #define BASHCLASS_BWHILE_H
 
 #include <bashclass/BScope.h>
-#include <bashclass/IBCompositeCallable.h>
+#include <bashclass/IBExpression.h>
 
 class BWhile : public BScope {
 private:
 
     // Condition/Expression for this if statement
-    std::shared_ptr<IBCompositeCallable> m_expression;
+    std::shared_ptr<IBExpression> m_expression;
 public:
     /**
      * Get while label
@@ -19,13 +19,13 @@ public:
      * Get expression/condition
      * @return expression
      */
-    std::shared_ptr<IBCompositeCallable> getExpression(){return m_expression;}
+    std::shared_ptr<IBExpression> getExpression(){return m_expression;}
 
     /**
      * Set expression/condition
      * @param expression
      */
-    void setExpression(std::shared_ptr<IBCompositeCallable> expression);
+    void setExpression(std::shared_ptr<IBExpression> expression);
 
     /**
      * Find closest function by asking the parent scope

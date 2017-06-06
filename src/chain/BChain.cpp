@@ -180,9 +180,16 @@ void BChain::addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisChainAc
     m_callables.push_back(thisReference);
 }
 
-std::shared_ptr<IBSimpleCallable> BChain::operator[](int index) {
+std::shared_ptr<IBChainable> BChain::operator[](int index) {
     if(index < 0 || index >= m_callables.size()) {
         throw BException("Accessing an index out of bound in a chain call");
     }
     return m_callables[index];
+}
+
+std::shared_ptr<IBChainable> BChain::last() {
+    if(m_callables.empty()) {
+        throw std::runtime_error("Accessing last element of an empty chain");
+    }
+    return m_callables.back();
 }

@@ -5,7 +5,6 @@
 #include <sstream>
 #include <memory>
 #include <easycc/LexicalToken.h>
-#include <bashclass/IBCallable.h>
 #include <bashclass/BClass.h>
 
 class BVariable {
