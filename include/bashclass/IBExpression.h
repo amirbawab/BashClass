@@ -1,6 +1,8 @@
 #ifndef BASHCLASS_IBEXPRESSION_H
 #define BASHCLASS_IBEXPRESSION_H
 
+#include <string>
+
 class IBExpression {
 public:
 

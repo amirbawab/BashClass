@@ -50,14 +50,14 @@ int main(int argc, char *argv[]) {
 
     easyCC.registerSemanticAction("#startOuterCall#", bashClass.m_startOuterCall);
     easyCC.registerSemanticAction("#endOuterCall#", bashClass.m_endOuterCall);
+    easyCC.registerSemanticAction("#tokenAccess#", bashClass.m_tokenAccess);
+    easyCC.registerSemanticAction("#thisAccess#", bashClass.m_thisAccess);
 
     easyCC.registerSemanticAction("#startInnerCall#", bashClass.m_startInnerCall);
     easyCC.registerSemanticAction("#endInnerCall#", bashClass.m_endInnerCall);
-
-    easyCC.registerSemanticAction("#varCall#", bashClass.m_varCall);
-    easyCC.registerSemanticAction("#functionCall#", bashClass.m_functionCall);
-    easyCC.registerSemanticAction("#tokenCall#", bashClass.m_tokenCall);
-    easyCC.registerSemanticAction("#thisCall#", bashClass.m_thisCall);
+    easyCC.registerSemanticAction("#varChainAccess#", bashClass.m_varChainAccess);
+    easyCC.registerSemanticAction("#functionChainCall#", bashClass.m_functionChainCall);
+    easyCC.registerSemanticAction("#thisChainAccess#", bashClass.m_thisChainAccess);
 
     easyCC.registerSemanticAction("#bashCode#", bashClass.m_bashCode);
 
@@ -72,6 +72,8 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#endReturn#", bashClass.m_endReturn);
 
     easyCC.registerSemanticAction("#varAssign#", bashClass.m_varAssign);
+    easyCC.registerSemanticAction("#varAccess#", bashClass.m_varAccess);
+    easyCC.registerSemanticAction("#functionCall#", bashClass.m_functionCall);
     easyCC.registerSemanticAction("#functionExec#", bashClass.m_functionExec);
 
     easyCC.registerSemanticAction("#setArgument#", bashClass.m_setArgument);

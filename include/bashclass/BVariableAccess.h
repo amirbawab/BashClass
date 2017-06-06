@@ -24,6 +24,18 @@ public:
      * @return variable chain access
      */
     std::shared_ptr<BVariableChainAccess> last();
+
+    /**
+     * Get chain
+     * @return chain
+     */
+    std::shared_ptr<BChain> getChain() {return m_chain;}
+
+    /**
+     * Set chain
+     * @param chain
+     */
+    void setChain(std::shared_ptr<BChain> chain) { m_chain = chain;}
 };
 
 #endif

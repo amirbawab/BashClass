@@ -3,7 +3,7 @@
 
 std::string BThisAccess::getTypeValueAsString() {
     if(!m_thisChainAccess) {
-        throw BException("Cannot get type value of the 'this' access' without setting the 'this' chain access");
+        throw BException("Cannot get type value of 'this' access without setting 'this' chain access");
     }
     return m_thisChainAccess->getTypeValueAsString();
 }

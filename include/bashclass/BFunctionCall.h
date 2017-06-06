@@ -10,6 +10,9 @@ private:
 
     // Hold chain for the function call
     std::shared_ptr<BChain> m_chain;
+
+    // Hold parent scope
+    std::shared_ptr<BScope> m_parentScope;
 public:
 
     /**
@@ -25,6 +28,29 @@ public:
      */
     std::shared_ptr<BFunctionChainCall> last();
 
+    /**
+     * Get parent scope
+     * @return parent scope
+     */
+    std::shared_ptr<BScope> getParentScope() {return m_parentScope;}
+
+    /**
+     * Set parent scope
+     * @param parentScope
+     */
+    void setParentScope(std::shared_ptr<BScope> parentScope) {m_parentScope = parentScope;}
+
+    /**
+     * Get chain
+     * @return chain
+     */
+    std::shared_ptr<BChain> getChain() { return m_chain;}
+
+    /**
+     * Set chain
+     * @param chain
+     */
+    void setChain(std::shared_ptr<BChain> chain) {m_chain = chain;}
 };
 
 #endif

@@ -4,7 +4,6 @@
 #include <memory>
 #include <vector>
 #include <bashclass/BScope.h>
-#include <bashclass/BTokenUse.h>
 #include <bashclass/BThisChainAccess.h>
 #include <bashclass/IBChainable.h>
 
@@ -15,9 +14,6 @@ private:
     // in their order of insertion.
     // e.g. a.b().c.d() => [a,b(),c,d()]
     std::vector<std::shared_ptr<IBChainable>> m_callables;
-
-    // Parent scope of this chain call
-    std::shared_ptr<BScope> m_parentScope;
 public:
 
     /**
@@ -75,18 +71,6 @@ public:
      * @param thisReference
      */
     void addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisChainAccess> thisReference);
-
-    /**
-     * Set parent scope
-     * @param parentScope
-     */
-    void setParentScope(std::shared_ptr<BScope> parentScope) {m_parentScope = parentScope;}
-
-    /**
-     * Get parent scope
-     * @return parent scope
-     */
-    std::shared_ptr<BScope> getParentScope() {return m_parentScope;}
 };
 
 #endif

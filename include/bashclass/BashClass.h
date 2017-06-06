@@ -68,10 +68,11 @@ public:
     SemanticActionHandler m_startInnerCall;
     SemanticActionHandler m_endInnerCall;
 
-    SemanticActionHandler m_varCall;
-    SemanticActionHandler m_functionCall;
-    SemanticActionHandler m_tokenCall;
-    SemanticActionHandler m_thisCall;
+    SemanticActionHandler m_varChainAccess;
+    SemanticActionHandler m_functionChainCall;
+    SemanticActionHandler m_tokenAccess;
+    SemanticActionHandler m_thisChainAccess;
+    SemanticActionHandler m_thisAccess;
 
     SemanticActionHandler m_bashCode;
 
@@ -90,6 +91,8 @@ public:
     SemanticActionHandler m_endExpr;
 
     SemanticActionHandler m_varAssign;
+    SemanticActionHandler m_varAccess;
+    SemanticActionHandler m_functionCall;
     SemanticActionHandler m_functionExec;
 
     SemanticActionHandler m_setArgument;

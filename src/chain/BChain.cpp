@@ -1,7 +1,6 @@
 #include <bashclass/BChain.h>
 #include <bashclass/BVariableChainAccess.h>
 #include <bashclass/BFunctionChainCall.h>
-#include <bashclass/BClass.h>
 #include <iostream>
 #include <bashclass/BException.h>
 #include <bashclass/BReport.h>
@@ -185,7 +184,7 @@ std::shared_ptr<IBChainable> BChain::operator[](int index) {
 
 std::shared_ptr<IBChainable> BChain::last() {
     if(m_callables.empty()) {
-        throw std::runtime_error("Accessing last element of an empty chain");
+        throw BException("Accessing last element of an empty chain");
     }
     return m_callables.back();
 }

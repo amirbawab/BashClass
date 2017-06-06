@@ -7,6 +7,7 @@
 #include <bashclass/BFunctionChainCall.h>
 #include <iostream>
 #include <bashclass/BArithOperation.h>
+#include <bashclass/BVariableAssign.h>
 
 // Constants
 std::string FUNCTION_THIS = "_this_";
@@ -89,7 +90,7 @@ void _varCall_nonMember(std::shared_ptr<BVariableChainAccess> variableCall, std:
 void _chainCallToCode(std::shared_ptr<BChain> chainCall, std::stringstream &ss) {
 
     // Have a unique key for each result of an element call
-    std::map<std::shared_ptr<IBExpression>, std::string> returnMap;
+    std::map<std::shared_ptr<IBChainable>, std::string> returnMap;
 
     // Assign a unique key for each result
     static unsigned int uniqueId = 0;
@@ -101,10 +102,6 @@ void _chainCallToCode(std::shared_ptr<BChain> chainCall, std::stringstream &ss) 
         auto variableCallCast = std::dynamic_pointer_cast<BVariableChainAccess>((*chainCall)[i]);
         auto functionCallCast = std::dynamic_pointer_cast<BFunctionChainCall>((*chainCall)[i]);
         auto thisCallCast = std::dynamic_pointer_cast<BThisChainAccess>((*chainCall)[i]);
-        auto tokenCallCast = std::dynamic_pointer_cast<BTokenUse>((*chainCall)[i]);
-
-        // Generate indentation
-        _indent(chainCall->getParentScope(), ss);
 
         if (variableCallCast) {
             if(i == chainCall->size()-1) {
@@ -168,38 +165,10 @@ void _chainCallToCode(std::shared_ptr<BChain> chainCall, std::stringstream &ss) 
             std::string newKey = _generateResultKey(uniqueId++);
             returnMap[thisCallCast] = newKey;
             ss  << newKey << "=" << FUNCTION_THIS << std::endl;
-        } else if(tokenCallCast) {
-            ss << tokenCallCast->getLexicalToken()->getValue();
         } else {
             throw BException("Cannot generate code for an unrecognized element call");
         }
     }
-}
-
-void _expressionToCode(std::shared_ptr<BExpressionCall> expression, std::stringstream &ss) {
-    auto leftOperandExpression = std::dynamic_pointer_cast<BExpressionCall>(expression->getLeftOperand());
-    auto leftOperandChain = std::dynamic_pointer_cast<BChain>(expression->getLeftOperand());
-    auto rightOperandExpression = std::dynamic_pointer_cast<BExpressionCall>(expression->getRightOperand());
-    auto rightOperandChain = std::dynamic_pointer_cast<BChain>(expression->getRightOperand());
-
-    if(leftOperandExpression) {
-        _expressionToCode(leftOperandExpression, ss);
-    } else if(leftOperandChain) {
-        _chainCallToCode(leftOperandChain, ss);
-    } else {
-        throw BException("Left operand is not recognized");
-    }
-
-    ss << " " << expression->getOperator()->getValue() << " ";
-
-    if(rightOperandExpression) {
-        _expressionToCode(rightOperandExpression, ss);
-    } else if(rightOperandChain) {
-        _chainCallToCode(rightOperandChain, ss);
-    } else {
-        throw BException("Right operand is not recognized");
-    }
-    ss << std::endl;
 }
 
 void BBashHelper::header() {
@@ -293,45 +262,36 @@ void BBashHelper::closeFunction(std::shared_ptr<BFunction> function) {
     BGenerateCode::get().write(ss);
 }
 
-void BBashHelper::assignVariable(std::shared_ptr<BChain> chainCall) {
+void BBashHelper::assignVariable(std::shared_ptr<BVariableAssign> variableAssign) {
     std::stringstream ss;
 
-    // TOD Add expression
-    auto variableCall = std::static_pointer_cast<BVariableChainAccess>(chainCall->last());
-    auto expressionComposite = std::dynamic_pointer_cast<BExpressionCall>(variableCall->getExpression());
-    auto chainComposite = std::dynamic_pointer_cast<BChain>(variableCall->getExpression());
+    // TODO Add expression
+    auto variableChainAccess = variableAssign->getVariableAccess()->last();
+    auto expression = variableAssign->getExpression();
 
     // Start converting the expression
     ss << std::endl;
-    _indent(chainCall->getParentScope(), ss);
+    _indent(variableAssign->getParentScope(), ss);
     ss << "# Evaluating expression" << std::endl;
-    // TODO Create a function/Adjust current one to convert chain into code for inner calls
-    if(chainComposite) {
-        _chainCallToCode(chainComposite, ss);
-    } else if(expressionComposite) {
-        _expressionToCode(expressionComposite, ss);
-    } else {
-        throw BException("Unrecognized value of a variable call");
-    }
 
     // Convert chain to code
     ss << std::endl;
-    _indent(chainCall->getParentScope(), ss);
+    _indent(variableAssign->getParentScope(), ss);
     ss << "# Assign variable" << std::endl;
-    _chainCallToCode(chainCall, ss);
+    _chainCallToCode(variableAssign->getVariableAccess()->getChain(), ss);
 
     ss << std::endl;
     BGenerateCode::get().write(ss);
 }
 
-void BBashHelper::functionExec(std::shared_ptr<BChain> chainCall) {
+void BBashHelper::functionExec(std::shared_ptr<BFunctionCall> functionCall) {
     std::stringstream ss;
 
     // Convert chain to code
     ss << std::endl;
-    _indent(chainCall->getParentScope(), ss);
+    _indent(functionCall->getParentScope(), ss);
     ss << "# Execute a function" << std::endl;
-    _chainCallToCode(chainCall, ss);
+    _chainCallToCode(functionCall->getChain(), ss);
     ss << std::endl;
 
     BGenerateCode::get().write(ss);

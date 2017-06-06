@@ -20,7 +20,7 @@
 
     "VAR_ASSIGN_OR_FUNC_CALL" : ["#newKey# #startOuterCall# THIS_OPT VAR_ASSIGN_OR_FUNC_CALL_A #endOuterCall#"],
     "VAR_ASSIGN_OR_FUNC_CALL_A" : ["IDENTIFIER VAR_ASSIGN_OR_FUNC_CALL_B"],
-    "VAR_ASSIGN_OR_FUNC_CALL_B" : ["#functionCall# IDENTIFIER_FUNCTION_CALL VAR_ASSIGN_OR_FUNC_CALL_C","#varCall# DOT VAR_ASSIGN_OR_FUNC_CALL_A","#varCall# ASSIGN EXPR_DEC SEMICOLON #varAssign#"],
+    "VAR_ASSIGN_OR_FUNC_CALL_B" : ["#varChainAccess# ASSIGN EXPR_DEC SEMICOLON #varAssign#","#varChainAccess# DOT VAR_ASSIGN_OR_FUNC_CALL_A","#functionChainCall# IDENTIFIER_FUNCTION_CALL VAR_ASSIGN_OR_FUNC_CALL_C"],
     "VAR_ASSIGN_OR_FUNC_CALL_C" : ["SEMICOLON #functionExec#","DOT VAR_ASSIGN_OR_FUNC_CALL_A"],
 
     "THIS_OPT" : ["THIS #thisCall# DOT","EPSILON"],
@@ -85,20 +85,20 @@
     "EXPR_Y" : ["OPEN_PAR EXPR_A CLOSE_PAR","ARITH_ID"],
 
     "ARITH_ID" : [
-        "#startInnerCall# 'integer' #tokenCall# #endInnerCall#",
-        "#startInnerCall# 'character' #tokenCall# #endInnerCall#",
-        "#startInnerCall# 'truefalse' #tokenCall# #endInnerCall#",
-        "#startInnerCall# 'string' #tokenCall# #endInnerCall#",
-        "#startInnerCall# BASH_SUB #tokenCall# #endInnerCall#",
+        "'integer' #tokenAccess#",
+        "'character' #tokenAccess#",
+        "'truefalse' #tokenAccess#",
+        "'string' #tokenAccess#",
+        "BASH_SUB #tokenAccess#",
         "ARITH_VAR_OR_FUNC_CALL"
         ],
 
     "ARITH_VAR_OR_FUNC_CALL" : ["#startInnerCall# ARITH_VAR_OR_FUNC_CALL_A #endInnerCall#"],
-    "ARITH_VAR_OR_FUNC_CALL_A" : ["THIS #thisCall# ARITH_VAR_OR_FUNC_CALL_E", "ARITH_VAR_OR_FUNC_CALL_B"],
+    "ARITH_VAR_OR_FUNC_CALL_A" : ["THIS ARITH_VAR_OR_FUNC_CALL_E", "ARITH_VAR_OR_FUNC_CALL_B"],
     "ARITH_VAR_OR_FUNC_CALL_B" : ["IDENTIFIER ARITH_VAR_OR_FUNC_CALL_C"],
-    "ARITH_VAR_OR_FUNC_CALL_C" : ["#varCall# EPSILON","#functionCall# IDENTIFIER_FUNCTION_CALL ARITH_VAR_OR_FUNC_CALL_D","#varCall# DOT ARITH_VAR_OR_FUNC_CALL_B"],
-    "ARITH_VAR_OR_FUNC_CALL_D" : ["EPSILON","DOT ARITH_VAR_OR_FUNC_CALL_B"],
-    "ARITH_VAR_OR_FUNC_CALL_E" : ["DOT ARITH_VAR_OR_FUNC_CALL_B","EPSILON"],
+    "ARITH_VAR_OR_FUNC_CALL_C" : ["#varAccess# EPSILON","#varChainAccess# DOT ARITH_VAR_OR_FUNC_CALL_B","#functionChainCall# IDENTIFIER_FUNCTION_CALL ARITH_VAR_OR_FUNC_CALL_D"],
+    "ARITH_VAR_OR_FUNC_CALL_D" : ["#functionCall# EPSILON","DOT ARITH_VAR_OR_FUNC_CALL_B"],
+    "ARITH_VAR_OR_FUNC_CALL_E" : ["#thisCall# DOT ARITH_VAR_OR_FUNC_CALL_B","#thisAccess# EPSILON"],
 
     "OP_GROUP_A" : ["'logical_or'"],
     "OP_GROUP_B" : ["'logical_and'"],

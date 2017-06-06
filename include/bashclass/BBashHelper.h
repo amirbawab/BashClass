@@ -6,6 +6,8 @@
 #include <bashclass/BVariable.h>
 #include <bashclass/BFunction.h>
 #include <bashclass/BChain.h>
+#include <bashclass/BVariableAssign.h>
+#include <bashclass/BFunctionCall.h>
 
 class BBashHelper {
 public:
@@ -66,15 +68,15 @@ public:
 
     /**
      * Generate a variable assign
-     * @param chainCall
+     * @param variableAssign
      */
-    static void assignVariable(std::shared_ptr<BChain> chainCall);
+    static void assignVariable(std::shared_ptr<BVariableAssign> variableAssign);
 
     /**
      * Generate call for a function execution
-     * @param chainCall
+     * @param functionCall
      */
-    static void functionExec(std::shared_ptr<BChain> chainCall);
+    static void functionExec(std::shared_ptr<BFunctionCall> functionCall);
 };
 
 #endif
