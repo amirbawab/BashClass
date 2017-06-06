@@ -6,8 +6,8 @@
 #include <bashclass/IBCompositeCallable.h>
 #include <bashclass/IBSimpleCallable.h>
 #include <bashclass/BScope.h>
-#include <bashclass/BTokenCall.h>
-#include <bashclass/BThisChainCall.h>
+#include <bashclass/BTokenUse.h>
+#include <bashclass/BThisChainAccess.h>
 
 class BChain : public IBCompositeCallable {
 private:

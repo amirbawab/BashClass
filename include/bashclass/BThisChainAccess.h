@@ -1,12 +1,12 @@
-#ifndef BASHCLASS_BTHISCHAINCALL_H
-#define BASHCLASS_BTHISCHAINCALL_H
+#ifndef BASHCLASS_BTHISCHAINACCESS_H
+#define BASHCLASS_BTHISCHAINACCESS_H
 
-#include <bashclass/IBSimpleCallable.h>
+#include <bashclass/IBChainable.h>
 #include <bashclass/BClass.h>
 #include <easycc/LexicalToken.h>
 #include <memory>
 
-class BThisChainCall : public IBSimpleCallable {
+class BThisChainAccess : public IBChainable {
 private:
 
     // The class that this reference points to

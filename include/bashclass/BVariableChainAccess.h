@@ -1,21 +1,17 @@
-#ifndef BASHCLASS_BVARIABLECHAINCALL_H
-#define BASHCLASS_BVARIABLECHAINCALL_H
+#ifndef BASHCLASS_BVARIABLECHAINACCESS_H
+#define BASHCLASS_BVARIABLECHAINACCESS_H
 
 #include <bashclass/BVariable.h>
-#include <bashclass/IBSimpleCallable.h>
-#include <bashclass/IBCompositeCallable.h>
+#include <bashclass/IBChainable.h>
 #include <memory>
 
-class BVariableChainCall : public IBSimpleCallable {
+class BVariableChainAccess : public IBChainable {
 private:
 
     // The variable this variable call refers to.
     // If this variable is not set, then the actual variable
     // was not found
     std::shared_ptr<BVariable> m_variable;
-
-    // Expression assigned to this variable call
-    std::shared_ptr<IBCompositeCallable> m_expression;
 
     // Lexical token for the variable call.
     // The value of this token and the actual variable
@@ -34,18 +30,6 @@ public:
      * @param variable
      */
     void setVariable(std::shared_ptr<BVariable> variable) {m_variable = variable;}
-
-    /**
-     * Get expression
-     * @return expression
-     */
-    std::shared_ptr<IBCompositeCallable> getExpression() {return m_expression;}
-
-    /**
-     * Set expression
-     * @param expression
-     */
-    void setExpression(std::shared_ptr<IBCompositeCallable> expression);
 
     /**
      * Get type of the variable

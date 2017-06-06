@@ -1,32 +1,32 @@
-#include <bashclass/BExpressionCall.h>
+#include <bashclass/BArithOperation.h>
 #include <bashclass/BTypes.h>
 #include <iostream>
 #include <bashclass/BException.h>
 #include <bashclass/BReport.h>
 
-const std::string BExpressionCall::BOOL_LOGICAL_OR = "logical_or";
-const std::string BExpressionCall::BOOL_LOGICAL_AND = "logical_and";
-const std::string BExpressionCall::BOOL_IS_EQUAL = "is_equal";
-const std::string BExpressionCall::BOOL_IS_NOT_EQUAL = "is_not_equal";
-const std::string BExpressionCall::BOOL_LESS_THAN = "less_than";
-const std::string BExpressionCall::BOOL_GREATER_THAN = "greater_than";
-const std::string BExpressionCall::BOOL_LESS_OR_EQUAL = "less_equal_than";
-const std::string BExpressionCall::BOOL_GREATER_OR_EQUAL = "greater_equal_than";
-const std::string BExpressionCall::BOOL_NOT = "not";
+const std::string BArithOperation::BOOL_LOGICAL_OR = "logical_or";
+const std::string BArithOperation::BOOL_LOGICAL_AND = "logical_and";
+const std::string BArithOperation::BOOL_IS_EQUAL = "is_equal";
+const std::string BArithOperation::BOOL_IS_NOT_EQUAL = "is_not_equal";
+const std::string BArithOperation::BOOL_LESS_THAN = "less_than";
+const std::string BArithOperation::BOOL_GREATER_THAN = "greater_than";
+const std::string BArithOperation::BOOL_LESS_OR_EQUAL = "less_equal_than";
+const std::string BArithOperation::BOOL_GREATER_OR_EQUAL = "greater_equal_than";
+const std::string BArithOperation::BOOL_NOT = "not";
 
-const std::string BExpressionCall::INT_BIT_OR = "bit_or";
-const std::string BExpressionCall::INT_BIT_XOR = "bit_xor";
-const std::string BExpressionCall::INT_BIT_AND = "bit_and";
-const std::string BExpressionCall::INT_LEFT_SHIFT = "left_shift";
-const std::string BExpressionCall::INT_RIGHT_SHIFT = "right_shift";
-const std::string BExpressionCall::INT_PLUS = "plus";
-const std::string BExpressionCall::INT_MINUS = "minus";
-const std::string BExpressionCall::INT_MULTIPLY = "multiply";
-const std::string BExpressionCall::INT_DIVIDE = "divide";
-const std::string BExpressionCall::INT_MOD = "mod";
-const std::string BExpressionCall::INT_EXPONENTIAL = "exponential";
+const std::string BArithOperation::INT_BIT_OR = "bit_or";
+const std::string BArithOperation::INT_BIT_XOR = "bit_xor";
+const std::string BArithOperation::INT_BIT_AND = "bit_and";
+const std::string BArithOperation::INT_LEFT_SHIFT = "left_shift";
+const std::string BArithOperation::INT_RIGHT_SHIFT = "right_shift";
+const std::string BArithOperation::INT_PLUS = "plus";
+const std::string BArithOperation::INT_MINUS = "minus";
+const std::string BArithOperation::INT_MULTIPLY = "multiply";
+const std::string BArithOperation::INT_DIVIDE = "divide";
+const std::string BArithOperation::INT_MOD = "mod";
+const std::string BArithOperation::INT_EXPONENTIAL = "exponential";
 
-std::string BExpressionCall::getTypeValueAsString() {
+std::string BArithOperation::getTypeValueAsString() {
 
     // Check if expression is composed of a one operand or two operands
     if(m_rightOperand) {

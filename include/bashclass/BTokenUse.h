@@ -1,12 +1,11 @@
-#ifndef BASHCLASS_BTOKENCALL_H
-#define BASHCLASS_BTOKENCALL_H
+#ifndef BASHCLASS_BTOKENUSE_H
+#define BASHCLASS_BTOKENUSE_H
 
-#include <bashclass/IBSimpleCallable.h>
+#include <bashclass/IBExpression.h>
 #include <bashclass/BClass.h>
 #include <easycc/LexicalToken.h>
-#include <memory>
 
-class BTokenCall : public IBSimpleCallable {
+class BTokenCall : public IBExpression {
 private:
 
     // Lexical token for the variable call.
@@ -36,19 +35,6 @@ public:
      *          BType::UNDEFINED
      */
     std::string getTypeValueAsString();
-
-    /**
-     * A token call is always known because it does not refer to
-     * any variable or other scope
-     * e.g. 1, true, 'a', etc ...
-     * @return true
-     */
-    bool isKnown();
-
-    /**
-     * A token call does not have any type scope
-     */
-    std::shared_ptr<BClass> getTypeScope();
 };
 
 

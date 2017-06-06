@@ -1,4 +1,4 @@
-#include <bashclass/BTokenCall.h>
+#include <bashclass/BTokenUse.h>
 #include <bashclass/BTypes.h>
 #include <bashclass/BException.h>
 
@@ -14,12 +14,4 @@ std::string BTokenCall::getTypeValueAsString() {
         return BType::TYPE_VALUE_BOOLEAN;
     }
     throw BException("Token type value cannot be undefined");
-}
-
-bool BTokenCall::isKnown() {
-    return true;
-}
-
-std::shared_ptr<BClass> BTokenCall::getTypeScope() {
-    throw BException("Cannot get type scope of a token call");
 }

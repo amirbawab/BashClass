@@ -2,12 +2,12 @@
 #define BASHCLASS_BFUNCTIONCHAINCALL_H
 
 #include <bashclass/BFunction.h>
-#include <bashclass/IBSimpleCallable.h>
-#include <bashclass/IBCompositeCallable.h>
+#include <bashclass/IBChainable.h>
+#include <bashclass/IBExpression.h>
 #include <memory>
 #include <vector>
 
-class BFunctionChainCall : public IBSimpleCallable {
+class BFunctionChainCall : public IBChainable {
 private:
 
     // The function this function call refers to.
@@ -16,7 +16,7 @@ private:
     std::shared_ptr<BFunction> m_function;
 
     // Arguments passed to this function call
-    std::vector<std::shared_ptr<IBCompositeCallable>> m_arguments;
+    std::vector<std::shared_ptr<IBExpression>> m_arguments;
 
     // Lexical token for the function call.
     // The value of this token and the actual function
@@ -40,7 +40,7 @@ public:
      * Add argument
      * @param argument
      */
-    void addArgument(std::shared_ptr<IBCompositeCallable> argument);
+    void addArgument(std::shared_ptr<IBExpression> argument);
 
     /**
      * Get function type

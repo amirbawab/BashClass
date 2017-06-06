@@ -26,7 +26,7 @@ void BFunctionChainCall::verifyArguments() {
     // this is already handled by the addArgument() function
 }
 
-void BFunctionChainCall::addArgument(std::shared_ptr<IBCompositeCallable> argument) {
+void BFunctionChainCall::addArgument(std::shared_ptr<IBExpression> argument) {
 
     // Check the index of the parameter to be compared with
     size_t paramIndex = m_arguments.size();

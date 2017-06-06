@@ -5,7 +5,7 @@
 #include <bashclass/BException.h>
 #include <bashclass/BGenerateCode.h>
 #include <bashclass/BBashHelper.h>
-#include <bashclass/BThisChainCall.h>
+#include <bashclass/BThisChainAccess.h>
 #include <bashclass/BReturn.h>
 
 BashClass::BashClass() {
@@ -381,7 +381,7 @@ void BashClass::initHandlers() {
 
     m_thisCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            auto thisCall = std::make_shared<BThisChainCall>();
+            auto thisCall = std::make_shared<BThisChainAccess>();
             thisCall->setLexicalToken(lexicalVector[index]);
             m_chainBuilderStack.back()->addThis(m_scopeStack.back(), thisCall);
         }
@@ -391,7 +391,7 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_EVAL) {
 
             // Configure variable call
-            auto variableCall = std::static_pointer_cast<BVariableChainCall>(m_chainBuilderStack.back()->last());
+            auto variableCall = std::static_pointer_cast<BVariableChainAccess>(m_chainBuilderStack.back()->last());
             variableCall->setExpression(m_expressionOperandStack.back());
 
             // Pop consumed expression

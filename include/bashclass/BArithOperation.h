@@ -1,18 +1,18 @@
-#ifndef BASHCLASS_BEXPRESSIONCALL_H
-#define BASHCLASS_BEXPRESSIONCALL_H
+#ifndef BASHCLASS_BARITHOPERATION_H
+#define BASHCLASS_BARITHOPERATION_H
 
-#include <bashclass/IBCompositeCallable.h>
 #include <easycc/LexicalToken.h>
+#include <bashclass/IBExpression.h>
 #include <memory>
 
-class BExpressionCall : public IBCompositeCallable {
+class BArithOperation : public IBExpression {
 private:
 
     // Left operand of the expression
-    std::shared_ptr<IBCompositeCallable> m_leftOperand;
+    std::shared_ptr<IBExpression> m_leftOperand;
 
     // Right operand of the expression
-    std::shared_ptr<IBCompositeCallable> m_rightOperand;
+    std::shared_ptr<IBExpression> m_rightOperand;
 
     // Operator of the expression
     std::shared_ptr<ecc::LexicalToken> m_operatorToken;

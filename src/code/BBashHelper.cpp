@@ -3,10 +3,10 @@
 #include <bashclass/BTypes.h>
 #include <bashclass/BException.h>
 #include <bashclass/BGlobal.h>
-#include <bashclass/BVariableChainCall.h>
+#include <bashclass/BVariableChainAccess.h>
 #include <bashclass/BFunctionChainCall.h>
 #include <iostream>
-#include <bashclass/BExpressionCall.h>
+#include <bashclass/BArithOperation.h>
 
 // Constants
 std::string FUNCTION_THIS = "_this_";
@@ -44,7 +44,7 @@ std::string _generateResultKey(unsigned int number) {
  * @param variableCall
  * @param ss
  */
-void _varCall_member_first(std::shared_ptr<BVariableChainCall> variableCall, std::stringstream &ss) {
+void _varCall_member_first(std::shared_ptr<BVariableChainAccess> variableCall, std::stringstream &ss) {
     ss << variableCall->getVariable()->getParentScope()->findClosestClass()->getLabel().str()
        << "[" << FUNCTION_THIS << "," << variableCall->getVariable()->getLabel().str() << "]";
 }
@@ -56,7 +56,7 @@ void _varCall_member_first(std::shared_ptr<BVariableChainCall> variableCall, std
  * @param prevResult
  * @param ss
  */
-void _varCall_member_middle(std::shared_ptr<BVariableChainCall> variableCall, std::string prevTypeLabel,
+void _varCall_member_middle(std::shared_ptr<BVariableChainAccess> variableCall, std::string prevTypeLabel,
                             std::string prevResult, std::stringstream &ss) {
     ss << prevTypeLabel << "[" << prevResult << "," << variableCall->getVariable()->getLabel().str() << "]" ;
 }
@@ -67,7 +67,7 @@ void _varCall_member_middle(std::shared_ptr<BVariableChainCall> variableCall, st
  * @param prevResult
  * @param ss
  */
-void _varCall_member_last(std::shared_ptr<BVariableChainCall> variableCall, std::string prevResult, std::stringstream &ss) {
+void _varCall_member_last(std::shared_ptr<BVariableChainAccess> variableCall, std::string prevResult, std::stringstream &ss) {
     ss << variableCall->getVariable()->getParentScope()->findClosestClass()->getLabel().str()
        << "[" << prevResult << "," << variableCall->getVariable()->getLabel().str() << "]";
 }
@@ -77,7 +77,7 @@ void _varCall_member_last(std::shared_ptr<BVariableChainCall> variableCall, std:
  * @param variableCall
  * @param ss
  */
-void _varCall_nonMember(std::shared_ptr<BVariableChainCall> variableCall, std::stringstream &ss) {
+void _varCall_nonMember(std::shared_ptr<BVariableChainAccess> variableCall, std::stringstream &ss) {
     ss << variableCall->getVariable()->getLabel().str();
 }
 
@@ -98,9 +98,9 @@ void _chainCallToCode(std::shared_ptr<BChain> chainCall, std::stringstream &ss) 
     for (size_t i = 0; i < chainCall->size(); i++) {
 
         // Cast element
-        auto variableCallCast = std::dynamic_pointer_cast<BVariableChainCall>((*chainCall)[i]);
+        auto variableCallCast = std::dynamic_pointer_cast<BVariableChainAccess>((*chainCall)[i]);
         auto functionCallCast = std::dynamic_pointer_cast<BFunctionChainCall>((*chainCall)[i]);
-        auto thisCallCast = std::dynamic_pointer_cast<BThisChainCall>((*chainCall)[i]);
+        auto thisCallCast = std::dynamic_pointer_cast<BThisChainAccess>((*chainCall)[i]);
         auto tokenCallCast = std::dynamic_pointer_cast<BTokenCall>((*chainCall)[i]);
 
         // Generate indentation
@@ -297,7 +297,7 @@ void BBashHelper::assignVariable(std::shared_ptr<BChain> chainCall) {
     std::stringstream ss;
 
     // TOD Add expression
-    auto variableCall = std::static_pointer_cast<BVariableChainCall>(chainCall->last());
+    auto variableCall = std::static_pointer_cast<BVariableChainAccess>(chainCall->last());
     auto expressionComposite = std::dynamic_pointer_cast<BExpressionCall>(variableCall->getExpression());
     auto chainComposite = std::dynamic_pointer_cast<BChain>(variableCall->getExpression());
 

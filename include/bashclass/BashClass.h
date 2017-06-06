@@ -6,10 +6,10 @@
 #include <memory>
 #include <bashclass/BGlobal.h>
 #include <bashclass/BChain.h>
-#include <bashclass/BVariableChainCall.h>
+#include <bashclass/BVariableChainAccess.h>
 #include <bashclass/BFunctionChainCall.h>
-#include <bashclass/BTokenCall.h>
-#include <bashclass/BExpressionCall.h>
+#include <bashclass/BTokenUse.h>
+#include <bashclass/BArithOperation.h>
 #include <bashclass/BClass.h>
 
 typedef std::vector<std::shared_ptr<ecc::LexicalToken>> LexicalTokens;
