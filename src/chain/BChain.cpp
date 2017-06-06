@@ -152,10 +152,6 @@ void BChain::addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lex
     m_callables.push_back(functionCall);
 }
 
-void BChain::addToken(std::shared_ptr<BTokenCall> token) {
-    m_callables.push_back(token);
-}
-
 void BChain::addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisChainAccess> thisReference) {
 
     // Callable chain must be empty

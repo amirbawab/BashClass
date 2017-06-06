@@ -70,17 +70,11 @@ public:
     void addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token);
 
     /**
-     * Add token to the chain
-     * @param token
-     */
-    void addToken(std::shared_ptr<BTokenCall> token);
-
-    /**
      * Add this reference to the chain
      * @param scope
      * @param thisReference
      */
-    void addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisChainCall> thisReference);
+    void addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisChainAccess> thisReference);
 
     /**
      * Set parent scope

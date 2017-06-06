@@ -2,7 +2,7 @@
 #include <bashclass/BTypes.h>
 #include <bashclass/BException.h>
 
-std::string BTokenCall::getTypeValueAsString() {
+std::string BTokenUse::getTypeValueAsString() {
     if(m_lexicalToken->getName() == BType::DATA_TYPE_NAME_INT) {
         return BType::TYPE_VALUE_INT;
     } else if(m_lexicalToken->getName() == BType::DATA_TYPE_NAME_STRING

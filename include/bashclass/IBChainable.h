@@ -1,6 +1,10 @@
 #ifndef BASHCLASS_IBCHAINABLE_H
 #define BASHCLASS_IBCHAINABLE_H
 
+#include <memory>
+#include <string>
+#include <bashclass/BClass.h>
+
 class IBChainable {
 public:
 

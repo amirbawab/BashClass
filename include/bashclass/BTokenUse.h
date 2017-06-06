@@ -5,7 +5,7 @@
 #include <bashclass/BClass.h>
 #include <easycc/LexicalToken.h>
 
-class BTokenCall : public IBExpression {
+class BTokenUse : public IBExpression {
 private:
 
     // Lexical token for the variable call.

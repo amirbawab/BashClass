@@ -373,7 +373,7 @@ void BashClass::initHandlers() {
 
     m_tokenCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            auto token = std::make_shared<BTokenCall>();
+            auto token = std::make_shared<BTokenUse>();
             token->setLexicalToken(lexicalVector[index]);
             m_chainBuilderStack.back()->addToken(token);
         }

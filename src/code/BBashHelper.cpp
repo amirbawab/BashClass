@@ -89,7 +89,7 @@ void _varCall_nonMember(std::shared_ptr<BVariableChainAccess> variableCall, std:
 void _chainCallToCode(std::shared_ptr<BChain> chainCall, std::stringstream &ss) {
 
     // Have a unique key for each result of an element call
-    std::map<std::shared_ptr<IBSimpleCallable>, std::string> returnMap;
+    std::map<std::shared_ptr<IBExpression>, std::string> returnMap;
 
     // Assign a unique key for each result
     static unsigned int uniqueId = 0;
@@ -101,7 +101,7 @@ void _chainCallToCode(std::shared_ptr<BChain> chainCall, std::stringstream &ss) 
         auto variableCallCast = std::dynamic_pointer_cast<BVariableChainAccess>((*chainCall)[i]);
         auto functionCallCast = std::dynamic_pointer_cast<BFunctionChainCall>((*chainCall)[i]);
         auto thisCallCast = std::dynamic_pointer_cast<BThisChainAccess>((*chainCall)[i]);
-        auto tokenCallCast = std::dynamic_pointer_cast<BTokenCall>((*chainCall)[i]);
+        auto tokenCallCast = std::dynamic_pointer_cast<BTokenUse>((*chainCall)[i]);
 
         // Generate indentation
         _indent(chainCall->getParentScope(), ss);
