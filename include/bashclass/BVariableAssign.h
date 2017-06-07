@@ -7,7 +7,7 @@
 class BVariableAssign {
 private:
 
-    // Hold the variable that is being assigned
+    // Hold the variable access that is being assigned
     std::shared_ptr<BVariableAccess> m_variableAccess;
 
     // Hold the expression value of the variable
@@ -52,12 +52,6 @@ public:
      * @param variableAccess
      */
     void setVariableAccess(std::shared_ptr<BVariableAccess> variableAccess) {m_variableAccess = variableAccess;}
-
-    /**
-     * Get the last element in the chain
-     * @return variable chain access
-     */
-    std::shared_ptr<BVariableChainAccess> chainLast();
 };
 
 #endif

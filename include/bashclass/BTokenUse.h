@@ -8,15 +8,13 @@
 class BTokenUse : public IBExpression {
 private:
 
-    // Lexical token for the variable call.
-    // The value of this token and the actual function
-    // should always match
+    // Lexical token corresponding to this instance
     std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
 public:
 
     /**
      * Get lexical token
-     * @return  lexical token
+     * @return lexical token
      */
     std::shared_ptr<ecc::LexicalToken> getLexicalToken() const {return m_lexicalToken;}
 

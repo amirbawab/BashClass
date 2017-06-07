@@ -24,7 +24,7 @@ public:
 
     /**
      * Get the last element in the chain
-     * @return function call
+     * @return function chain call
      */
     std::shared_ptr<BFunctionChainCall> last();
 

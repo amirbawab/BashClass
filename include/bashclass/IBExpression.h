@@ -7,7 +7,7 @@ class IBExpression {
 public:
 
     /**
-     * Get the type of the callable element
+     * Get the type of the expression element
      * @return type value as a string
      */
     virtual std::string getTypeValueAsString()=0;

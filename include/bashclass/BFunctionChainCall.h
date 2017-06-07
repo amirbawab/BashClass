@@ -10,15 +10,15 @@
 class BFunctionChainCall : public IBChainable {
 private:
 
-    // The function this function call refers to.
+    // The function this function chain call refers to.
     // If this variable is not set, then the actual function
     // was not found
     std::shared_ptr<BFunction> m_function;
 
-    // Arguments passed to this function call
+    // Arguments passed to this function chain call
     std::vector<std::shared_ptr<IBExpression>> m_arguments;
 
-    // Lexical token for the function call.
+    // Lexical token for the function chain call.
     // The value of this token and the actual function
     // should always match
     std::shared_ptr<ecc::LexicalToken> m_lexicalToken;

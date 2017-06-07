@@ -13,14 +13,14 @@ private:
 public:
 
     /**
-     * Get the type value of the last element
-     * in the chain which is a variable access
+     * Get the type value as a string of the last element
+     * in the chain which is a variable chain access
      * @return type as string
      */
     std::string getTypeValueAsString();
 
     /**
-     * Get the last element in the chain
+     * Get the last element in the chain which is of type variable chain access
      * @return variable chain access
      */
     std::shared_ptr<BVariableChainAccess> last();

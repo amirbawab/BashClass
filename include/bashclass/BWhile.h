@@ -7,7 +7,7 @@
 class BWhile : public BScope {
 private:
 
-    // Condition/Expression for this if statement
+    // Condition/Expression for this while statement
     std::shared_ptr<IBExpression> m_expression;
 public:
     /**

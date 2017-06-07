@@ -10,7 +10,7 @@
 class BChain {
 private:
 
-    // Vector containing the variables and functions calls
+    // Vector containing 'this' references, variables and functions calls
     // in their order of insertion.
     // e.g. a.b().c.d() => [a,b(),c,d()]
     std::vector<std::shared_ptr<IBChainable>> m_callables;
@@ -40,8 +40,8 @@ public:
     }
 
     /**
-     * Get the last element or nullptr
-     * @return last or nullptr
+     * Get the last element or throw an exception
+     * @return last
      */
     std::shared_ptr<IBChainable> last();
 
