@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
 
     easyCC.registerSemanticAction("#startOuterCall#", bashClass.m_startOuterCall);
     easyCC.registerSemanticAction("#endOuterCall#", bashClass.m_endOuterCall);
-    easyCC.registerSemanticAction("#tokenAccess#", bashClass.m_tokenAccess);
+    easyCC.registerSemanticAction("#tokenUse#", bashClass.m_tokenUse);
     easyCC.registerSemanticAction("#thisAccess#", bashClass.m_thisAccess);
 
     easyCC.registerSemanticAction("#startInnerCall#", bashClass.m_startInnerCall);
