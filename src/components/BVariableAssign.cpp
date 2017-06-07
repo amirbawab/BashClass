@@ -20,7 +20,7 @@ void BVariableAssign::setExpression(std::shared_ptr<IBExpression> expression) {
 
         // Compare types
         std::string expressionType = expression->getTypeValueAsString();
-        std::string variableType = m_variableAccess->last()->getVariable()->getType()->getValue();
+        std::string variableType = variableChainAccess->getVariable()->getType()->getValue();
         if(!variableChainAccess->getVariable()->hasKnownType()) {
             BReport::getInstance().error()
                     << "Cannot assign expression to an undefined type for variable "
