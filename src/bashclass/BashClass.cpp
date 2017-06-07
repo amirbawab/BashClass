@@ -329,9 +329,9 @@ void BashClass::initHandlers() {
         }
     };
 
-    /******************************************************
-     *     VARIABLE CHAIN ACCESS AND FUNCTION CHAIN CALL
-     ******************************************************/
+    /**************************
+     *      CHAIN ELEMENTS
+     **************************/
 
     m_startInnerCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
@@ -381,24 +381,6 @@ void BashClass::initHandlers() {
         }
     };
 
-    m_tokenUse = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            auto token = std::make_shared<BTokenUse>();
-            token->setLexicalToken(lexicalVector[index]);
-            m_expressionOperandStack.push_back(token);
-        }
-    };
-
-    m_thisAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            auto thisChainAccess = std::make_shared<BThisChainAccess>();
-            thisChainAccess->setLexicalToken(lexicalVector[index]);
-            auto thisAccess = std::make_shared<BThisAccess>();
-            thisAccess->setThisChainAccess(thisChainAccess);
-            m_expressionOperandStack.push_back(thisAccess);
-        }
-    };
-
     m_varAssign = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
@@ -418,24 +400,6 @@ void BashClass::initHandlers() {
 
             // Generate assign statement
             BBashHelper::assignVariable(m_scopeStack.back()->getVariableAssignByReferenceKey(m_referenceKey));
-        }
-    };
-
-    m_varAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            auto variableAccess = std::make_shared<BVariableAccess>();
-            variableAccess->setChain(m_chainBuilderStack.back());
-            m_expressionOperandStack.push_back(variableAccess);
-        }
-    };
-
-    m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            auto functionCall = std::make_shared<BFunctionCall>();
-            functionCall->setChain(m_chainBuilderStack.back());
-
-            // Push as operand
-            m_expressionOperandStack.push_back(functionCall);
         }
     };
 
@@ -505,7 +469,7 @@ void BashClass::initHandlers() {
     m_endArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
-            // Get function call
+            // Get function chain call
             auto functionCall = std::static_pointer_cast<BFunctionChainCall>(m_chainBuilderStack.back()->last());
 
             // Verify provided arguments
@@ -551,5 +515,39 @@ void BashClass::initHandlers() {
 
     m_endExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         // Do nothing ...
+    };
+
+    m_tokenUse = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            auto token = std::make_shared<BTokenUse>();
+            token->setLexicalToken(lexicalVector[index]);
+            m_expressionOperandStack.push_back(token);
+        }
+    };
+
+    m_thisAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            auto thisChainAccess = std::make_shared<BThisChainAccess>();
+            thisChainAccess->setLexicalToken(lexicalVector[index]);
+            auto thisAccess = std::make_shared<BThisAccess>();
+            thisAccess->setThisChainAccess(thisChainAccess);
+            m_expressionOperandStack.push_back(thisAccess);
+        }
+    };
+
+    m_varAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            auto variableAccess = std::make_shared<BVariableAccess>();
+            variableAccess->setChain(m_chainBuilderStack.back());
+            m_expressionOperandStack.push_back(variableAccess);
+        }
+    };
+
+    m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            auto functionCall = std::make_shared<BFunctionCall>();
+            functionCall->setChain(m_chainBuilderStack.back());
+            m_expressionOperandStack.push_back(functionCall);
+        }
     };
 }
