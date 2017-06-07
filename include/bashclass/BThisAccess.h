@@ -3,12 +3,13 @@
 
 #include <bashclass/IBExpression.h>
 #include <bashclass/BThisChainAccess.h>
+#include <bashclass/BChain.h>
 
 class BThisAccess : public IBExpression {
 private:
 
-    // Hold this reference access
-    std::shared_ptr<BThisChainAccess> m_thisChainAccess;
+    // Hold chain which will contain only a this
+    std::shared_ptr<BChain> m_chain;
 public:
 
     /**
@@ -19,15 +20,15 @@ public:
 
     /**
      * Set this chain access
-     * @param thisChainAccess
+     * @param chain
      */
-    void setThisChainAccess(std::shared_ptr<BThisChainAccess> thisChainAccess) {m_thisChainAccess = thisChainAccess;}
+    void setChain(std::shared_ptr<BChain> chain);
 
     /**
      * Get this chain access
      * @return thisChainAccess
      */
-    std::shared_ptr<BThisChainAccess> getThisChainAccess() {return m_thisChainAccess;}
+    std::shared_ptr<BThisChainAccess> getThisChainAccess();
 };
 
 #endif

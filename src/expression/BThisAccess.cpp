@@ -2,8 +2,19 @@
 #include <bashclass/BException.h>
 
 std::string BThisAccess::getTypeValueAsString() {
-    if(!m_thisChainAccess) {
-        throw BException("Cannot get type value of 'this' access without setting 'this' chain access");
+    return getThisChainAccess()->getTypeValueAsString();
+}
+
+void BThisAccess::setChain(std::shared_ptr<BChain> chain) {
+    if(chain->size() != 1) {
+        throw BException("A 'this' access must contain exactly one 'this' element");
     }
-    return m_thisChainAccess->getTypeValueAsString();
+    m_chain = chain;
+}
+
+std::shared_ptr<BThisChainAccess> BThisAccess::getThisChainAccess() {
+    if(m_chain->empty()) {
+        throw BException("Requesting 'this' reference from an empty 'this' access chain");
+    }
+    return std::static_pointer_cast<BThisChainAccess>(m_chain->last());
 }

@@ -529,8 +529,9 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_EVAL) {
             auto thisChainAccess = std::make_shared<BThisChainAccess>();
             thisChainAccess->setLexicalToken(lexicalVector[index]);
+            m_chainBuilderStack.back()->addThis(m_scopeStack.back(), thisChainAccess);
             auto thisAccess = std::make_shared<BThisAccess>();
-            thisAccess->setThisChainAccess(thisChainAccess);
+            thisAccess->setChain(m_chainBuilderStack.back());
             m_expressionOperandStack.push_back(thisAccess);
         }
     };
