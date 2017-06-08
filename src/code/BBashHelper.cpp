@@ -41,45 +41,46 @@ std::string _generateResultKey(unsigned int number) {
 }
 
 /**
- * Generate code for a variable call that is a member and is placed first in the chain
- * @param variableCall
+ * Generate code for a variable chain access that is a member and is placed first in the chain
+ * @param variableChainAccess
  * @param ss
  */
-void _varCall_member_first(std::shared_ptr<BVariableChainAccess> variableCall, std::stringstream &ss) {
-    ss << variableCall->getVariable()->getParentScope()->findClosestClass()->getLabel().str()
-       << "[" << FUNCTION_THIS << "," << variableCall->getVariable()->getLabel().str() << "]";
+void _varChainAccess_member_first(std::shared_ptr<BVariableChainAccess> variableChainAccess, std::stringstream &ss) {
+    ss << variableChainAccess->getVariable()->getParentScope()->findClosestClass()->getLabel().str()
+       << "[" << FUNCTION_THIS << "," << variableChainAccess->getVariable()->getLabel().str() << "]";
 }
 
 /**
- * Generate code for a variable call that is a member and is placed in the middle of the chain
- * @param variableCall
+ * Generate code for a variable chain access that is a member and is placed in the middle of the chain
+ * @param variableChainAccess
  * @param prevTypeLabel
  * @param prevResult
  * @param ss
  */
-void _varCall_member_middle(std::shared_ptr<BVariableChainAccess> variableCall, std::string prevTypeLabel,
+void _varChainAccess_member_middle(std::shared_ptr<BVariableChainAccess> variableChainAccess, std::string prevTypeLabel,
                             std::string prevResult, std::stringstream &ss) {
-    ss << prevTypeLabel << "[" << prevResult << "," << variableCall->getVariable()->getLabel().str() << "]" ;
+    ss << prevTypeLabel << "[" << prevResult << "," << variableChainAccess->getVariable()->getLabel().str() << "]" ;
 }
 
 /**
- * Generate code for a variable call that is a member and is placed last in the chain
- * @param variableCall
+ * Generate code for a variable chain access that is a member and is placed last in the chain
+ * @param variableChainAccess
  * @param prevResult
  * @param ss
  */
-void _varCall_member_last(std::shared_ptr<BVariableChainAccess> variableCall, std::string prevResult, std::stringstream &ss) {
-    ss << variableCall->getVariable()->getParentScope()->findClosestClass()->getLabel().str()
-       << "[" << prevResult << "," << variableCall->getVariable()->getLabel().str() << "]";
+void _varChainAccess_member_last(std::shared_ptr<BVariableChainAccess> variableChainAccess,
+                          std::string prevResult, std::stringstream &ss) {
+    ss << variableChainAccess->getVariable()->getParentScope()->findClosestClass()->getLabel().str()
+       << "[" << prevResult << "," << variableChainAccess->getVariable()->getLabel().str() << "]";
 }
 
 /**
  * Generate code for a variable call that is not a member
- * @param variableCall
+ * @param variableChainAccess
  * @param ss
  */
-void _varCall_nonMember(std::shared_ptr<BVariableChainAccess> variableCall, std::stringstream &ss) {
-    ss << variableCall->getVariable()->getLabel().str();
+void _varChainAccess_nonMember(std::shared_ptr<BVariableChainAccess> variableChainAccess, std::stringstream &ss) {
+    ss << variableChainAccess->getVariable()->getLabel().str();
 }
 
 /**
@@ -87,7 +88,8 @@ void _varCall_nonMember(std::shared_ptr<BVariableChainAccess> variableCall, std:
  * @param chainCall
  * @return multi-line code representing a chain call
  */
-void _chainCallToCode(std::shared_ptr<BChain> chainCall, std::stringstream &ss) {
+void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, size_t from, size_t to,
+                  std::stringstream &ss) {
 
     // Have a unique key for each result of an element call
     std::map<std::shared_ptr<IBChainable>, std::string> returnMap;
@@ -96,74 +98,59 @@ void _chainCallToCode(std::shared_ptr<BChain> chainCall, std::stringstream &ss) 
     static unsigned int uniqueId = 0;
 
     // Start processing the calls
-    for (size_t i = 0; i < chainCall->size(); i++) {
+    for (size_t i = from; i <= to; i++) {
 
         // Cast element
-        auto variableCallCast = std::dynamic_pointer_cast<BVariableChainAccess>((*chainCall)[i]);
-        auto functionCallCast = std::dynamic_pointer_cast<BFunctionChainCall>((*chainCall)[i]);
-        auto thisCallCast = std::dynamic_pointer_cast<BThisChainAccess>((*chainCall)[i]);
+        auto variableChainAccess = std::dynamic_pointer_cast<BVariableChainAccess>((*chain)[i]);
+        auto functionChainCall = std::dynamic_pointer_cast<BFunctionChainCall>((*chain)[i]);
+        auto thisChainAccess = std::dynamic_pointer_cast<BThisChainAccess>((*chain)[i]);
 
-        if (variableCallCast) {
-            if(i == chainCall->size()-1) {
-                if(variableCallCast->getVariable()->isClassMember()) {
-                    if(i == 0) {
-                        _varCall_member_first(variableCallCast, ss);
-                    } else {
-                        _varCall_member_last(variableCallCast, returnMap[(*chainCall)[i-1]], ss);
-                    }
+        // Add indentation
+        _indent(scope, ss);
+
+        if (variableChainAccess) {
+
+            // Generate new key for this variable
+            std::string newKey = _generateResultKey(uniqueId++);
+            returnMap[variableChainAccess] = newKey;
+            ss << newKey << "=";
+
+            if(i == 0) {
+                if(variableChainAccess->getVariable()->isClassMember()) {
+                    _varChainAccess_member_first(variableChainAccess, ss);
                 } else {
-                    _varCall_nonMember(variableCallCast, ss);
+                    _varChainAccess_nonMember(variableChainAccess, ss);
                 }
-                ss << "=";
-
-            } else if(i == 0) {
-                // Generate new key for this variable
-                std::string newKey = _generateResultKey(uniqueId++);
-                returnMap[variableCallCast] = newKey;
-                ss << newKey << "=";
-
-                if(variableCallCast->getVariable()->isClassMember()) {
-                    _varCall_member_first(variableCallCast, ss);
-                } else {
-                    _varCall_nonMember(variableCallCast, ss);
-                }
-                ss << std::endl;
-
             } else {
-                // Generate new key for this variable
-                std::string newKey = _generateResultKey(uniqueId++);
-                returnMap[variableCallCast] = newKey;
-                ss << newKey << "=";
-
-                _varCall_member_middle(variableCallCast, (*chainCall)[i-1]->getTypeScope()->getLabel().str(),
-                                       returnMap[(*chainCall)[i-1]], ss);
-                ss << std::endl;
+                _varChainAccess_member_middle(variableChainAccess, (*chain)[i-1]->getTypeScope()->getLabel().str(),
+                                       returnMap[(*chain)[i-1]], ss);
             }
+            ss << std::endl;
 
-        } else if (functionCallCast) {
+        } else if (functionChainCall) {
 
-            ss << functionCallCast->getFunction()->getLabel().str();
+            ss << functionChainCall->getFunction()->getLabel().str();
 
             // TODO Put all arguments
             ss << " args...";
 
             if(i == 0) {
-                if(functionCallCast->getFunction()->isClassMember()) {
+                if(functionChainCall->getFunction()->isClassMember()) {
                     ss << " " << FUNCTION_THIS;
                 }
             } else {
-                ss << " " << returnMap[(*chainCall)[i-1]];
+                ss << " " << returnMap[(*chain)[i-1]];
             }
 
-            if(functionCallCast->getFunction()->requiresReturn()) {
+            if(functionChainCall->getFunction()->requiresReturn()) {
                 std::string newKey = _generateResultKey(uniqueId++);
-                returnMap[functionCallCast] = newKey;
+                returnMap[functionChainCall] = newKey;
                 ss << " " << newKey;
             }
             ss << std::endl;
-        } else if(thisCallCast) {
+        } else if(thisChainAccess) {
             std::string newKey = _generateResultKey(uniqueId++);
-            returnMap[thisCallCast] = newKey;
+            returnMap[thisChainAccess] = newKey;
             ss  << newKey << "=" << FUNCTION_THIS << std::endl;
         } else {
             throw BException("Cannot generate code for an unrecognized element call");
@@ -278,8 +265,8 @@ void BBashHelper::assignVariable(std::shared_ptr<BVariableAssign> variableAssign
     ss << std::endl;
     _indent(variableAssign->getParentScope(), ss);
     ss << "# Assign variable" << std::endl;
-    _chainCallToCode(variableAssign->getVariableAccess()->getChain(), ss);
-
+    _chainToCode(variableAssign->getParentScope(), variableAssign->getVariableAccess()->getChain(), 0,
+                     variableAssign->getVariableAccess()->getChain()->size()-2, ss);
     ss << std::endl;
     BGenerateCode::get().write(ss);
 }
@@ -291,7 +278,7 @@ void BBashHelper::functionExec(std::shared_ptr<BFunctionCall> functionCall) {
     ss << std::endl;
     _indent(functionCall->getParentScope(), ss);
     ss << "# Execute a function" << std::endl;
-    _chainCallToCode(functionCall->getChain(), ss);
+    _chainToCode(functionCall->last()->getFunction(), functionCall->getChain(), 0, functionCall->getChain()->size()-1, ss);
     ss << std::endl;
 
     BGenerateCode::get().write(ss);
