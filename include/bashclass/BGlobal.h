@@ -12,6 +12,9 @@ private:
     BGlobal(){}
 public:
 
+    // Set main function name
+    static const std::string MAIN_FUNCTION;
+
     /**
      * Get single instance of this class
      * @return pointer to a singleton instance
@@ -52,6 +55,11 @@ public:
      * @return nullptr
      */
     std::shared_ptr<BClass> findClosestClass() {return nullptr;}
+
+    /**
+     * Verify that the main function exists in the global scope
+     */
+    void verifyMain();
 };
 
 #endif

@@ -1,11 +1,12 @@
 #include <bashclass/BGlobal.h>
-#include <bashclass/BClass.h>
 #include <bashclass/BTypes.h>
 #include <iostream>
 #include <stack>
 #include <set>
 #include <bashclass/BReport.h>
 #include <bashclass/BVariable.h>
+
+const std::string BGlobal::MAIN_FUNCTION = "main";
 
 std::stringstream BGlobal::getLabel() {
     return std::stringstream();
@@ -87,5 +88,14 @@ void BGlobal::detectCircularReference() {
                 }
             }
         }
+    }
+}
+
+void BGlobal::verifyMain() {
+    auto mainFunction = findAllFunctions(BGlobal::MAIN_FUNCTION.c_str());
+    if(mainFunction.empty()) {
+        BReport::getInstance().error()
+                << "A main function is required" << std::endl;
+        BReport::getInstance().printError();
     }
 }

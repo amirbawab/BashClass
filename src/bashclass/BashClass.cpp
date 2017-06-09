@@ -59,6 +59,9 @@ void BashClass::initHandlers() {
 
             // Detect circular references
             BGlobal::getInstance()->detectCircularReference();
+
+            // Check required function
+            BGlobal::getInstance()->verifyMain();
         } else if(phase == BashClass::PHASE_GENERATE) {
 
             // Generate code required before any input

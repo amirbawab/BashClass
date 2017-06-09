@@ -238,6 +238,34 @@ void BBashHelper::header() {
 }
 
 void BBashHelper::footer() {
+
+    std::stringstream ss;
+
+    // Add bash comment
+    ss << std::endl << "# Run main function" << std::endl;
+
+    // Find main function
+    auto functions = BGlobal::getInstance()->findAllFunctions(BGlobal::MAIN_FUNCTION.c_str());
+
+    if(functions.size() != 1) {
+        throw BException("Cannot determine which main function to run");
+    }
+
+    // Get main function
+    std::shared_ptr<BFunction> mainFunction = functions.front();
+
+    // Generate code for the main
+    ss << BGlobal::MAIN_FUNCTION;
+
+    // Generate arguments
+    for(size_t argIndex=0; argIndex < mainFunction->findAllParameters().size(); argIndex++) {
+        ss << " " << "\"$" << argIndex+1 << "\"";
+    }
+
+    ss << std::endl << std::endl;
+
+    // Write footer
+    BGenerateCode::get().write(ss);
     BGenerateCode::get().writePostCode();
 }
 
