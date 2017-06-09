@@ -318,8 +318,11 @@ void BBashHelper::assignVariable(std::shared_ptr<BVariableAssign> variableAssign
     ss << std::endl;
     _indent(variableAssign->getParentScope(), ss);
     ss << "# Assign variable" << std::endl;
-    _chainToCode(variableAssign->getParentScope(), variableAccessChain, 0,
-                     variableAccessChain->size()-2, returnMap, ss);
+
+    if(variableAccessChain->size() >= 2) {
+        _chainToCode(variableAssign->getParentScope(), variableAccessChain, 0, variableAccessChain->size()-2,
+                     returnMap, ss);
+    }
 
     // Add the last assignment statement
     _indent(variableAssign->getParentScope(), ss);
