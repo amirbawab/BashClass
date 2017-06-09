@@ -258,7 +258,7 @@ void BBashHelper::createGlobalVar(std::shared_ptr<BVariable> variable, std::stri
     ss << std::endl;
     ss << "# Create global variable" << std::endl;
 
-    ss << variable->getLabel().str() << "=TODO" << defaultValue << std::endl;
+    ss << variable->getLabel().str() << "=\"TODO\"" << defaultValue << std::endl;
     BGenerateCode::get().write(ss);
 }
 
@@ -269,7 +269,7 @@ void BBashHelper::createLocalVar(std::shared_ptr<BVariable> variable, std::strin
     ss << "# Create local variable" << std::endl;
 
     _indent(variable->getParentScope(), ss);
-    ss << "local " << variable->getLabel().str() << "=TODO" << defaultValue << std::endl;
+    ss << "local " << variable->getLabel().str() << "=\"TODO\"" << defaultValue << std::endl;
     BGenerateCode::get().write(ss);
 }
 
@@ -338,7 +338,7 @@ void BBashHelper::assignVariable(std::shared_ptr<BVariableAssign> variableAssign
     _indent(variableAssign->getParentScope(), ss);
     ss << "# Assign variable" << std::endl;
 
-    // Start converting the expression
+    // Start processing the expression
     std::string expression = _expressionToCode(variableAssign->getParentScope(), variableAssign->getExpression(), ss);
 
     // Convert chain to code
@@ -375,6 +375,25 @@ void BBashHelper::functionExec(std::shared_ptr<BFunctionCall> functionCall) {
     ss << "# Execute a function" << std::endl;
     _chainToCode(functionCall->last()->getFunction(), functionCall->getChain(), 0, functionCall->getChain()->size()-1,
                  returnMap, ss);
+    ss << std::endl;
+    BGenerateCode::get().write(ss);
+}
+
+void BBashHelper::writeReturn(std::shared_ptr<BReturn> rtn) {
+    std::stringstream ss;
+
+    // Add bash comment
+    ss << std::endl;
+    _indent(rtn->getParentScope(), ss);
+    ss << "# Return statement" << std::endl;
+
+    // Start processing the expression
+    std::string expression = _expressionToCode(rtn->getParentScope(), rtn->getExpression(), ss);
+
+    // Write the return statement
+    _indent(rtn->getParentScope(), ss);
+    ss << FUNCTION_RETURN << "=" << expression;
+
     ss << std::endl;
     BGenerateCode::get().write(ss);
 }

@@ -8,6 +8,7 @@
 #include <bashclass/BChain.h>
 #include <bashclass/BVariableAssign.h>
 #include <bashclass/BFunctionCall.h>
+#include <bashclass/BReturn.h>
 
 class BBashHelper {
 public:
@@ -77,6 +78,12 @@ public:
      * @param functionCall
      */
     static void functionExec(std::shared_ptr<BFunctionCall> functionCall);
+
+    /**
+     * Generate code for a return statement
+     * @param rtn
+     */
+    static void writeReturn(std::shared_ptr<BReturn> rtn);
 };
 
 #endif

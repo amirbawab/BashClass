@@ -437,6 +437,10 @@ void BashClass::initHandlers() {
 
             // Remove consumed expression
             m_expressionOperandStack.pop_back();
+        } else if(phase == BashClass::PHASE_GENERATE) {
+
+            // Generate return statement
+            BBashHelper::writeReturn(m_scopeStack.back()->getReturn());
         }
     };
 
