@@ -63,7 +63,7 @@ std::string _generateExpressionKey(unsigned int number) {
  */
 void _varChainAccess_member_first(std::shared_ptr<BVariableChainAccess> variableChainAccess, std::stringstream &ss) {
     ss << variableChainAccess->getVariable()->getParentScope()->findClosestClass()->getLabel().str()
-       << "[" << FUNCTION_THIS << "," << variableChainAccess->getVariable()->getLabel().str() << "]";
+       << "[${" << FUNCTION_THIS << "},\"" << variableChainAccess->getVariable()->getLabel().str() << "\"]";
 }
 
 /**
@@ -75,7 +75,7 @@ void _varChainAccess_member_first(std::shared_ptr<BVariableChainAccess> variable
  */
 void _varChainAccess_member_middle(std::shared_ptr<BVariableChainAccess> variableChainAccess, std::string prevTypeLabel,
                             std::string prevResult, std::stringstream &ss) {
-    ss << prevTypeLabel << "[" << prevResult << "," << variableChainAccess->getVariable()->getLabel().str() << "]" ;
+    ss << prevTypeLabel << "[${" << prevResult << "},\"" << variableChainAccess->getVariable()->getLabel().str() << "\"]" ;
 }
 
 /**
@@ -87,7 +87,7 @@ void _varChainAccess_member_middle(std::shared_ptr<BVariableChainAccess> variabl
 void _varChainAccess_member_last(std::shared_ptr<BVariableChainAccess> variableChainAccess,
                           std::string prevResult, std::stringstream &ss) {
     ss << variableChainAccess->getVariable()->getParentScope()->findClosestClass()->getLabel().str()
-       << "[" << prevResult << "," << variableChainAccess->getVariable()->getLabel().str() << "]";
+       << "[${" << prevResult << "},\"" << variableChainAccess->getVariable()->getLabel().str() << "\"]";
 }
 
 /**
@@ -118,15 +118,15 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
         auto functionChainCall = std::dynamic_pointer_cast<BFunctionChainCall>((*chain)[i]);
         auto thisChainAccess = std::dynamic_pointer_cast<BThisChainAccess>((*chain)[i]);
 
-        // Add indentation
-        _indent(scope, ss);
-
         if (variableChainAccess) {
+
+            // Add indentation
+            _indent(scope, ss);
 
             // Generate new key for this variable
             std::string newKey = _generateResultKey(uniqueId++);
             returnMap[variableChainAccess] = newKey;
-            ss << newKey << "=";
+            ss << newKey << "=${";
 
             if(i == 0) {
                 if(variableChainAccess->getVariable()->isClassMember()) {
@@ -138,7 +138,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
                 _varChainAccess_member_middle(variableChainAccess, (*chain)[i-1]->getTypeScope()->getLabel().str(),
                                        returnMap[(*chain)[i-1]], ss);
             }
-            ss << std::endl;
+            ss << "}" << std::endl;
 
         } else if (functionChainCall) {
 
@@ -146,7 +146,6 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             std::vector<std::string> argumentsValues;
             auto arguments = functionChainCall->getArguments();
             for(size_t argIndex=0; argIndex < arguments.size(); argIndex++){
-                ss << std::endl;
                 argumentsValues.push_back(_expressionToCode(scope, arguments[argIndex], ss));
             }
 
@@ -176,9 +175,10 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             }
             ss << std::endl;
         } else if(thisChainAccess) {
+            _indent(scope, ss);
             std::string newKey = _generateResultKey(uniqueId++);
             returnMap[thisChainAccess] = newKey;
-            ss  << newKey << "=" << FUNCTION_THIS << std::endl;
+            ss  << newKey << "=${" << FUNCTION_THIS << "}" << std::endl;
         } else {
             throw BException("Cannot generate code for an unrecognized element call");
         }
@@ -197,7 +197,7 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
     static unsigned int uniqueId = 0;
 
     if(thisAccess) {
-        return FUNCTION_THIS;
+        return "${" + FUNCTION_THIS + "}";
     }
 
     if(variableAccess) {
@@ -207,7 +207,7 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
         _chainToCode(scope, variableAccess->getChain(), 0, variableAccess->getChain()->size()-1, returnMap, ss);
 
         // Get the variable key of the last element
-        return returnMap[variableAccess->last()];
+        return "${" + returnMap[variableAccess->last()] + "}";
     }
 
     if(functionCall) {
@@ -217,7 +217,7 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
         _chainToCode(scope, functionCall->getChain(), 0, functionCall->getChain()->size()-1, returnMap, ss);
 
         // Get the variable key of the last element
-        return returnMap[functionCall->last()];
+        return "${" + returnMap[functionCall->last()] + "}";
     }
 
     if(tokenUse) {
@@ -228,8 +228,9 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
     auto rightStr = _expressionToCode(scope, arithOperation->getRightOperand(), ss);
     _indent(scope, ss);
     std::string newKey = _generateExpressionKey(uniqueId++);
-    ss << newKey << "=" << leftStr + " " + arithOperation->getOperator()->getValue() + " " + rightStr << std::endl;
-    return newKey;
+    ss << newKey << "=$((" << leftStr + " " + arithOperation->getOperator()->getValue() + " " + rightStr << "))"
+       << std::endl;
+    return "${" + newKey + "}";
 }
 
 void BBashHelper::header() {
@@ -257,7 +258,7 @@ void BBashHelper::createGlobalVar(std::shared_ptr<BVariable> variable, std::stri
     ss << std::endl;
     ss << "# Create global variable" << std::endl;
 
-    ss << variable->getLabel().str() << "=" << defaultValue << std::endl;
+    ss << variable->getLabel().str() << "=TODO" << defaultValue << std::endl;
     BGenerateCode::get().write(ss);
 }
 
@@ -268,7 +269,7 @@ void BBashHelper::createLocalVar(std::shared_ptr<BVariable> variable, std::strin
     ss << "# Create local variable" << std::endl;
 
     _indent(variable->getParentScope(), ss);
-    ss << "local " << variable->getLabel().str() << "=" << defaultValue << std::endl;
+    ss << "local " << variable->getLabel().str() << "=TODO" << defaultValue << std::endl;
     BGenerateCode::get().write(ss);
 }
 
@@ -332,17 +333,15 @@ void BBashHelper::assignVariable(std::shared_ptr<BVariableAssign> variableAssign
     // Store return values in unique keys in a map
     std::map<std::shared_ptr<IBChainable>, std::string> returnMap;
 
-    // Start converting the expression
-    ss << std::endl;
-    _indent(variableAssign->getParentScope(), ss);
-    ss << "# Evaluating expression" << std::endl;
-    std::string expression = _expressionToCode(variableAssign->getParentScope(), variableAssign->getExpression(), ss);
-
-    // Convert chain to code
+    // Add bash comments
     ss << std::endl;
     _indent(variableAssign->getParentScope(), ss);
     ss << "# Assign variable" << std::endl;
 
+    // Start converting the expression
+    std::string expression = _expressionToCode(variableAssign->getParentScope(), variableAssign->getExpression(), ss);
+
+    // Convert chain to code
     if(variableAccessChain->size() >= 2) {
         _chainToCode(variableAssign->getParentScope(), variableAccessChain, 0, variableAccessChain->size()-2,
                      returnMap, ss);
@@ -360,8 +359,7 @@ void BBashHelper::assignVariable(std::shared_ptr<BVariableAssign> variableAssign
     } else {
         _varChainAccess_nonMember(variableAccess->last(), ss);
     }
-    ss << "=" << expression;
-    ss << std::endl;
+    ss << "=" << expression << std::endl;
     BGenerateCode::get().write(ss);
 }
 
