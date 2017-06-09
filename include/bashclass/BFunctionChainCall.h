@@ -43,6 +43,12 @@ public:
     void addArgument(std::shared_ptr<IBExpression> argument);
 
     /**
+     * Get arguments
+     * @return arguments
+     */
+    std::vector<std::shared_ptr<IBExpression>> getArguments() const { return m_arguments;};
+
+    /**
      * Get function type
      * @return function type
      */

@@ -18,6 +18,9 @@ std::string FUNCTION_RETURN = "_return_";
 std::string RESULT = "_result_";
 std::string EXPRESSION = "_expression_";
 
+// Delcare function (when necessary)
+std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression,
+                              std::stringstream &ss);
 /**
  * Indent generated code
  * @param parent
@@ -139,11 +142,24 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
 
         } else if (functionChainCall) {
 
+            // Start processing the arguments
+            std::vector<std::string> argumentsValues;
+            auto arguments = functionChainCall->getArguments();
+            for(size_t argIndex=0; argIndex < arguments.size(); argIndex++){
+                ss << std::endl;
+                argumentsValues.push_back(_expressionToCode(scope, arguments[argIndex], ss));
+            }
+
+            // Write the function call
+            _indent(scope, ss);
             ss << functionChainCall->getFunction()->getLabel().str();
 
-            // TODO Put all arguments
-            ss << " args...";
+            // Write arguments
+            for(size_t argIndex=0; argIndex < arguments.size(); argIndex++) {
+                ss << " " << argumentsValues[argIndex];
+            }
 
+            // Write the reference from previous or this when applicable
             if(i == 0) {
                 if(functionChainCall->getFunction()->isClassMember()) {
                     ss << " " << FUNCTION_THIS;
@@ -152,6 +168,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
                 ss << " " << returnMap[(*chain)[i-1]];
             }
 
+            // Write the return variable if required
             if(functionChainCall->getFunction()->requiresReturn()) {
                 std::string newKey = _generateResultKey(uniqueId++);
                 returnMap[functionChainCall] = newKey;
@@ -184,15 +201,23 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
     }
 
     if(variableAccess) {
-//        std::map<std::shared_ptr<IBChainable>, std::string> returnMap;
-//        _chainToCode(scope, variableAccess->getChain(), 0, variableAccess->getChain()->size(), returnMap, ss);
-        return "VARIABLE_ACCESS";
+
+        // Process chain
+        std::map<std::shared_ptr<IBChainable>, std::string> returnMap;
+        _chainToCode(scope, variableAccess->getChain(), 0, variableAccess->getChain()->size()-1, returnMap, ss);
+
+        // Get the variable key of the last element
+        return returnMap[variableAccess->last()];
     }
 
     if(functionCall) {
-//        std::map<std::shared_ptr<IBChainable>, std::string> returnMap;
-//        _chainToCode(scope, functionCall->getChain(), 0, variableAccess->getChain()->size(), returnMap, ss);
-        return "FUNCTION_CALL";
+
+        // Process chain
+        std::map<std::shared_ptr<IBChainable>, std::string> returnMap;
+        _chainToCode(scope, functionCall->getChain(), 0, functionCall->getChain()->size()-1, returnMap, ss);
+
+        // Get the variable key of the last element
+        return returnMap[functionCall->last()];
     }
 
     if(tokenUse) {
@@ -307,7 +332,6 @@ void BBashHelper::assignVariable(std::shared_ptr<BVariableAssign> variableAssign
     // Store return values in unique keys in a map
     std::map<std::shared_ptr<IBChainable>, std::string> returnMap;
 
-    // TODO Add expression
     // Start converting the expression
     ss << std::endl;
     _indent(variableAssign->getParentScope(), ss);
