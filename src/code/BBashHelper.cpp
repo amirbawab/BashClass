@@ -281,23 +281,23 @@ void BBashHelper::uniqueCounter(std::shared_ptr<BClass> classScope) {
     BGenerateCode::get().write(ss);
 }
 
-void BBashHelper::createGlobalVar(std::shared_ptr<BVariable> variable, std::string defaultValue) {
+void BBashHelper::createGlobalVar(std::shared_ptr<BVariable> variable) {
     std::stringstream ss;
     ss << std::endl;
     ss << "# Create global variable" << std::endl;
 
-    ss << variable->getLabel().str() << "=\"TODO\"" << defaultValue << std::endl;
+    ss << variable->getLabel().str() << "=" << variable->getDefaultValue() << std::endl;
     BGenerateCode::get().write(ss);
 }
 
-void BBashHelper::createLocalVar(std::shared_ptr<BVariable> variable, std::string defaultValue) {
+void BBashHelper::createLocalVar(std::shared_ptr<BVariable> variable) {
     std::stringstream ss;
     ss << std::endl;
     _indent(variable->getParentScope(),ss);
     ss << "# Create local variable" << std::endl;
 
     _indent(variable->getParentScope(), ss);
-    ss << "local " << variable->getLabel().str() << "=\"TODO\"" << defaultValue << std::endl;
+    ss << "local " << variable->getLabel().str() << "=" << variable->getDefaultValue() << std::endl;
     BGenerateCode::get().write(ss);
 }
 

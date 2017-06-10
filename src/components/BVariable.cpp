@@ -23,3 +23,18 @@ bool BVariable::isClassMember() {
 bool BVariable::hasKnownType() const {
     return BType::isBuiltInType(m_type->getName()) || m_typeScope;
 }
+
+std::string BVariable::getDefaultValue() {
+    if(!m_type) {
+        throw BException("Cannot get initial value without setting the variable type");
+    }
+
+    if(m_type->getName() == BType::TYPE_NAME_STRING) {
+        return "\"\"";
+    }
+
+    if(m_type->getName() == BType::TYPE_NAME_INT) {
+        return "0";
+    }
+    return "";
+}

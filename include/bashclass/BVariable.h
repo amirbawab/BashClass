@@ -107,6 +107,12 @@ public:
      * Check if variable has a known type
      */
     bool hasKnownType() const;
+
+    /**
+     * Get the default value
+     * @return default value
+     */
+    std::string getDefaultValue();
 };
 
 #endif

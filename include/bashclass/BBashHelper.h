@@ -40,14 +40,14 @@ public:
      * @param variable
      * @param defaultValue
      */
-    static void createGlobalVar(std::shared_ptr<BVariable> variable, std::string defaultValue="");
+    static void createGlobalVar(std::shared_ptr<BVariable> variable);
 
     /**
      * Genera a local variable in bash
      * @param variable
      * @param defaultValue
      */
-    static void createLocalVar(std::shared_ptr<BVariable> variable, std::string defaultValue="");
+    static void createLocalVar(std::shared_ptr<BVariable> variable);
 
     /**
      * Generate a function in bash
