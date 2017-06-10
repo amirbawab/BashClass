@@ -5,6 +5,7 @@
 #include <set>
 #include <bashclass/BReport.h>
 #include <bashclass/BVariable.h>
+#include <bashclass/BException.h>
 
 const std::string BGlobal::MAIN_FUNCTION = "main";
 
@@ -92,10 +93,23 @@ void BGlobal::detectCircularReference() {
 }
 
 void BGlobal::verifyMain() {
-    auto mainFunction = findAllFunctions(BGlobal::MAIN_FUNCTION.c_str());
-    if(mainFunction.empty()) {
+    auto functions = findAllFunctions(BGlobal::MAIN_FUNCTION.c_str());
+    if(functions.empty()) {
         BReport::getInstance().error()
                 << "A main function is required" << std::endl;
         BReport::getInstance().printError();
+    } else {
+        auto mainFunction = functions.front();
+        if(!mainFunction->getType()) {
+            throw BException("Cannot verify main function without a defined type");
+        }
+
+        // Main function must return an integer
+        if(mainFunction->getType()->getName() != BType::TYPE_NAME_INT) {
+            BReport::getInstance().error()
+                    << "Main function must return an integer" << std::endl;
+            BReport::getInstance().printError();
+
+        }
     }
 }

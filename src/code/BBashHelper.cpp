@@ -255,12 +255,17 @@ void BBashHelper::footer() {
     std::shared_ptr<BFunction> mainFunction = functions.front();
 
     // Generate code for the main
-    ss << BGlobal::MAIN_FUNCTION;
+    ss << mainFunction->getLabel().str();
 
     // Generate arguments
     for(size_t argIndex=0; argIndex < mainFunction->findAllParameters().size(); argIndex++) {
         ss << " " << "\"$" << argIndex+1 << "\"";
     }
+
+    // Generate return variable
+    const char* MAIN_FUNCTION_RETURN = "_main_return_";
+    ss << " " << MAIN_FUNCTION_RETURN << std::endl;
+    ss << "return ${" << MAIN_FUNCTION_RETURN << "}";
 
     ss << std::endl << std::endl;
 
