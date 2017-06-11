@@ -602,7 +602,26 @@ void BashClass::initHandlers() {
         // Do nothing ...
     };
 
-    m_createExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_createExpr1 = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+
+            // Get all expression elements
+            auto rightOperand = m_expressionOperandStack.back();
+            m_expressionOperandStack.pop_back();
+            auto operatorToken = m_expressionOperatorStack.back();
+            m_expressionOperatorStack.pop_back();
+
+            // Create expression
+            auto expression = std::make_shared<BArithOperation>();
+            expression->setRightOperand(rightOperand);
+            expression->setOperator(operatorToken);
+
+            // Push expression again as an operand
+            m_expressionOperandStack.push_back(expression);
+        }
+    };
+
+    m_createExpr2 = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
             // Get all expression elements

@@ -95,7 +95,8 @@ public:
     SemanticActionHandler m_endElse;
 
     SemanticActionHandler m_startExpr;
-    SemanticActionHandler m_createExpr;
+    SemanticActionHandler m_createExpr1;
+    SemanticActionHandler m_createExpr2;
     SemanticActionHandler m_endExpr;
 
     SemanticActionHandler m_varAssign;

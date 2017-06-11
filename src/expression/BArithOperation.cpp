@@ -29,7 +29,7 @@ const std::string BArithOperation::INT_EXPONENTIAL = "exponential";
 std::string BArithOperation::getTypeValueAsString() {
 
     // Check if expression is composed of a one operand or two operands
-    if(m_rightOperand) {
+    if(m_leftOperand && m_rightOperand) {
         std::string leftType = m_leftOperand->getTypeValueAsString();
         std::string rightType = m_rightOperand->getTypeValueAsString();
 
@@ -115,8 +115,8 @@ std::string BArithOperation::getTypeValueAsString() {
         }
 
         throw BException("Undefined operator in an expression with two operands");
-    } else {
-        std::string singleOperandType = m_leftOperand->getTypeValueAsString();
+    } else if(m_rightOperand) {
+        std::string singleOperandType = m_rightOperand->getTypeValueAsString();
 
         // UNDEFINED
         if(singleOperandType == BType::UNDEFINED) {
@@ -131,11 +131,12 @@ std::string BArithOperation::getTypeValueAsString() {
 
             BReport::getInstance().error()
                     << "Operator " << m_operatorToken->getValue()
-                    << " operand to be of boolean type" << std::endl;
+                    << " expects operand to be a boolean" << std::endl;
             BReport::getInstance().printError();
             return BType::UNDEFINED;
         }
 
         throw BException("Undefined operator in an expression with one operand");
     }
+    throw BException("Arithmetic operation is not composed correctly");
 }

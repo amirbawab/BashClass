@@ -71,7 +71,8 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#putOp#", bashClass.m_putOp);
 
     easyCC.registerSemanticAction("#startExpr#", bashClass.m_startExpr);
-    easyCC.registerSemanticAction("#createExpr#", bashClass.m_createExpr);
+    easyCC.registerSemanticAction("#createExpr1#", bashClass.m_createExpr1);
+    easyCC.registerSemanticAction("#createExpr2#", bashClass.m_createExpr2);
     easyCC.registerSemanticAction("#endExpr#", bashClass.m_endExpr);
 
     easyCC.registerSemanticAction("#startReturn#", bashClass.m_startReturn);

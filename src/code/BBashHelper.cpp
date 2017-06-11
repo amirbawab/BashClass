@@ -246,13 +246,22 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
         return tokenUse->getLexicalToken()->getValue();
     }
 
-    auto leftStr = _expressionToCode(scope, arithOperation->getLeftOperand(), ss);
-    auto rightStr = _expressionToCode(scope, arithOperation->getRightOperand(), ss);
-    _indent(scope, ss);
+    // If both operand are defined
     std::string newKey = _generateExpressionKey(uniqueId++);
-    ss << newKey << "=$((" << leftStr + " " + arithOperation->getOperator()->getValue() + " " + rightStr << "))"
-       << std::endl;
-    return "${" + newKey + "}";
+    if(arithOperation->getLeftOperand() && arithOperation->getRightOperand()) {
+        auto leftStr = _expressionToCode(scope, arithOperation->getLeftOperand(), ss);
+        auto rightStr = _expressionToCode(scope, arithOperation->getRightOperand(), ss);
+        _indent(scope, ss);
+        ss << newKey << "=$((" << leftStr << " " << arithOperation->getOperator()->getValue() << " " << rightStr << "))"
+           << std::endl;
+        return "${" + newKey + "}";
+    } else if(arithOperation->getRightOperand()) {
+        auto rightStr = _expressionToCode(scope, arithOperation->getRightOperand(), ss);
+        _indent(scope, ss);
+        ss << newKey << "=$((" << rightStr << " ^ 1))" << std::endl;
+        return "${" + newKey + "}";
+    }
+    throw BException("Cannot generate code for an undefined arithmetic operation composition");
 }
 
 void BBashHelper::header() {
