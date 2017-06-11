@@ -347,9 +347,7 @@ void BashClass::initHandlers() {
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_GENERATE) {
             auto ifScope = std::static_pointer_cast<BIf>(m_scopeStack.back());
-            if(!ifScope->getElse() && ifScope->getElifScopes().empty()) {
-                BBashHelper::closeIf(ifScope);
-            }
+            BBashHelper::closeIf(ifScope);
             m_scopeStack.pop_back();
         }
     };

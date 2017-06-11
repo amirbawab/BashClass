@@ -12,6 +12,9 @@
 #include <bashclass/BReturn.h>
 #include <bashclass/BVariableAssign.h>
 #include <bashclass/BFunctionCall.h>
+#include <bashclass/BIf.h>
+#include <bashclass/BElif.h>
+#include <bashclass/BElse.h>
 
 std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(const char* name) {
     std::vector<std::shared_ptr<BVariable>> variables;
@@ -246,6 +249,24 @@ bool BScope::hasReturn() {
         return true;
     }
 
-    // TODO Check children if/elseif/else scopes if all of them have a return statement
+    // Check if the scopes if/elif/else have a return
+    for(auto scope : m_scopes) {
+        auto ifScope = std::dynamic_pointer_cast<BIf>(scope.second);
+        if(ifScope) {
+
+            // Check if the if statement has a return
+            bool returnExist = ifScope->hasReturn();
+
+            // Check if all the elif has a return
+            for(auto elifScope : ifScope->getElifScopes()) {
+                returnExist &= elifScope->hasReturn();
+            }
+
+            // Check if there is a an else statement and has a return
+            if(returnExist && ifScope->getElse() && ifScope->getElse()->hasReturn()) {
+                return true;
+            }
+        }
+    }
     return false;
 }

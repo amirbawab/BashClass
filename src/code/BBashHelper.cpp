@@ -453,7 +453,7 @@ void BBashHelper::createIf(std::shared_ptr<BIf> ifStatement) {
 
     // Reset if statement lock
     _indent(ifStatement->getParentScope(), ss);
-    ss << _generateIfLock(ifStatement) << "=0" << std::endl;
+    ss << "local " << _generateIfLock(ifStatement) << "=0" << std::endl;
 
     // Write if statement
     _indent(ifStatement->getParentScope(), ss);
