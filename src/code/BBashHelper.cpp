@@ -430,3 +430,30 @@ void BBashHelper::writeReturn(std::shared_ptr<BReturn> rtn) {
     ss << std::endl;
     BGenerateCode::get().write(ss);
 }
+
+void BBashHelper::createIf(std::shared_ptr<BIf> ifStatement) {
+    std::stringstream ss;
+
+    // Add bash comment
+    ss << std::endl;
+    _indent(ifStatement->getParentScope(), ss);
+    ss << "# If statement" << std::endl;
+
+    // Start processing the expression
+    std::string expression = _expressionToCode(ifStatement->getParentScope(), ifStatement->getExpression(), ss);
+
+    // Write if statement
+    _indent(ifStatement->getParentScope(), ss);
+    ss << "if [[ " << expression << " ]] " << std::endl;
+    _indent(ifStatement->getParentScope(), ss);
+    ss << "then" << std::endl;
+
+    BGenerateCode::get().write(ss);
+}
+
+void BBashHelper::closeIf(std::shared_ptr<BIf> ifStatement) {
+    std::stringstream ss;
+    _indent(ifStatement->getParentScope(), ss);
+    ss << "fi" << std::endl;
+    BGenerateCode::get().write(ss);
+}

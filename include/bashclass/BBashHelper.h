@@ -9,6 +9,7 @@
 #include <bashclass/BVariableAssign.h>
 #include <bashclass/BFunctionCall.h>
 #include <bashclass/BReturn.h>
+#include <bashclass/BIf.h>
 
 class BBashHelper {
 public:
@@ -84,6 +85,18 @@ public:
      * @param rtn
      */
     static void writeReturn(std::shared_ptr<BReturn> rtn);
+
+    /**
+     * Generate code for an if statement
+     * @param ifStatement
+     */
+    static void createIf(std::shared_ptr<BIf> ifStatement);
+
+    /**
+     * Generate code for closing the if statement
+     * @param ifStatement
+     */
+    static void closeIf(std::shared_ptr<BIf> ifStatement);
 };
 
 #endif

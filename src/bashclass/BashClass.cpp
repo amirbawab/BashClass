@@ -312,9 +312,15 @@ void BashClass::initHandlers() {
             auto newIf = std::make_shared<BIf>();
             m_scopeStack.back()->registerScope(m_referenceKey, newIf);
             m_scopeStack.push_back(newIf);
-        } else if(phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
+
+        } else if(phase == BashClass::PHASE_EVAL) {
             auto createdIf = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);
             m_scopeStack.push_back(createdIf);
+
+        } else if(phase == BashClass::PHASE_GENERATE) {
+            auto createdIf = std::static_pointer_cast<BIf>(m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey));
+            m_scopeStack.push_back(createdIf);
+            BBashHelper::createIf(createdIf);
         }
     };
 
@@ -327,7 +333,11 @@ void BashClass::initHandlers() {
     };
 
     m_endIf = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
+        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
+            m_scopeStack.pop_back();
+        } else if(phase == BashClass::PHASE_GENERATE) {
+            auto createIf = std::static_pointer_cast<BIf>(m_scopeStack.back());
+            BBashHelper::closeIf(createIf);
             m_scopeStack.pop_back();
         }
     };
