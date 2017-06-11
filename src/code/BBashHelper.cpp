@@ -230,6 +230,19 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
     }
 
     if(tokenUse) {
+
+        // If the token is a true/false
+        if(tokenUse->getLexicalToken()->getName() == BType::DATA_TYPE_NAME_BOOLEAN) {
+            if(tokenUse->getLexicalToken()->getValue() == "true") {
+                return "1";
+            } else if(tokenUse->getLexicalToken()->getValue() == "false") {
+                return "0";
+            } else {
+                throw BException("Unrecognized boolean token value found when trying to generate code");
+            }
+        }
+
+        // Write the lexical token value
         return tokenUse->getLexicalToken()->getValue();
     }
 
