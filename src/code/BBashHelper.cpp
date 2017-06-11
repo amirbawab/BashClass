@@ -479,7 +479,7 @@ void BBashHelper::createIf(std::shared_ptr<BIf> ifStatement) {
 
     // Write if statement
     _indent(ifStatement->getParentScope(), ss);
-    ss << "if [[ " << expression << " ]]; then" << std::endl;
+    ss << "if (( " << expression << " )); then" << std::endl;
 
     // Acquire the lock
     _indent(ifStatement->getParentScope(), ss);
@@ -505,7 +505,7 @@ void BBashHelper::createElif(std::shared_ptr<BElif> elifStatement) {
 
     // Write elif statement
     _indent(elifStatement->getParentScope(), ss);
-    ss << "if [[ " << expression << " ]]; then" << std::endl;
+    ss << "if (( " << expression << " )); then" << std::endl;
 
     // Acquire lock
     _indent(elifStatement->getParentScope(), ss);
