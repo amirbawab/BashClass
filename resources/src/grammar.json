@@ -33,9 +33,12 @@
 
     "RETURN_DEC" : ["RETURN #startReturn# EXPR_DEC #returnExpr# SEMICOLON #endReturn#"],
 
-    "STATEMENT" : ["#newKey# IF #startIf# OPEN_PAR EXPR_DEC #ifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endIf#",
+    "STATEMENT" : ["#newKey# IF #startIf# OPEN_PAR EXPR_DEC #ifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endIf# ELIF_OPT ELSE_OPT",
                     "#newKey# WHILE #startWhile# OPEN_PAR EXPR_DEC #whileCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endWhile#"],
     "STATEMENT_BODY" : ["EPSILON","VARIABLE_DEC STATEMENT_BODY", "VAR_ASSIGN_OR_FUNC_CALL STATEMENT_BODY","STATEMENT STATEMENT_BODY","RETURN_DEC STATEMENT_BODY", "BASH_DEC STATEMENT_BODY"],
+
+    "ELIF_OPT" : ["EPSILON", "#newKey# ELIF #startElif# OPEN_PAR EXPR_DEC #elifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endElif# ELIF_OPT"],
+    "ELSE_OPT" : ["EPSILON", "#newKey# ELSE #startElse# OPEN_CUR STATEMENT_BODY CLOSE_CUR #endElse#"],
 
     "BASH_SUB" : ["'bash_sub'"],
     "BASH_INLINE" : ["'bash_inline'"],
@@ -43,6 +46,8 @@
 
     "RETURN" : ["'return'"],
     "IF" : ["'if'"],
+    "ELIF" : ["'elif'"],
+    "ELSE" : ["'else'"],
     "WHILE" : ["'while'"],
 
     "ASSIGN" : ["'assign'"],

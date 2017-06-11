@@ -3,6 +3,8 @@
 #include <iostream>
 #include <bashclass/BReport.h>
 #include <bashclass/BException.h>
+#include <bashclass/BElif.h>
+#include <bashclass/BElse.h>
 
 std::stringstream BIf::getLabel() {
     std::stringstream stream = m_parentScope->getLabel();
@@ -40,4 +42,15 @@ std::shared_ptr<BClass> BIf::findClosestClass() {
         throw BException("Cannot find closest class for an if statement with an undefined parent scope");
     }
   return m_parentScope->findClosestClass();
+}
+
+void BIf::addElif(std::shared_ptr<BElif> elifScope) {
+    m_elifScopes.push_back(elifScope);
+    elifScope->setParentIf(std::static_pointer_cast<BIf>(shared_from_this()));
+}
+
+void BIf::setElse(std::shared_ptr<BElse> elseScope) {
+    m_elseScope = elseScope;
+    // TODO Test casting
+    elseScope->setParentIf(std::static_pointer_cast<BIf>(shared_from_this()));
 }

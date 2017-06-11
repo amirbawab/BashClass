@@ -10,6 +10,8 @@
 #include <bashclass/BFunctionCall.h>
 #include <bashclass/BReturn.h>
 #include <bashclass/BIf.h>
+#include <bashclass/BElif.h>
+#include <bashclass/BElse.h>
 
 class BBashHelper {
 public:
@@ -91,6 +93,18 @@ public:
      * @param ifStatement
      */
     static void createIf(std::shared_ptr<BIf> ifStatement);
+
+    /**
+     * Generate code for an elif statement
+     * @param elifStatement
+     */
+    static void createElif(std::shared_ptr<BElif> elifStatement);
+
+    /**
+     * Generate code for an else statement
+     * @param elseStatement
+     */
+    static void createElse(std::shared_ptr<BElse> elseStatement);
 
     /**
      * Generate code for closing the if statement

@@ -48,6 +48,13 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#ifCond#", bashClass.m_ifCond);
     easyCC.registerSemanticAction("#endIf#", bashClass.m_endIf);
 
+    easyCC.registerSemanticAction("#startElif#", bashClass.m_startElif);
+    easyCC.registerSemanticAction("#elifCond#", bashClass.m_elifCond);
+    easyCC.registerSemanticAction("#endElif#", bashClass.m_endElif);
+
+    easyCC.registerSemanticAction("#startElse#", bashClass.m_startElse);
+    easyCC.registerSemanticAction("#endElse#", bashClass.m_endElse);
+
     easyCC.registerSemanticAction("#startOuterCall#", bashClass.m_startOuterCall);
     easyCC.registerSemanticAction("#endOuterCall#", bashClass.m_endOuterCall);
     easyCC.registerSemanticAction("#tokenUse#", bashClass.m_tokenUse);

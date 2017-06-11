@@ -333,11 +333,108 @@ void BashClass::initHandlers() {
     };
 
     m_endIf = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            m_focusIf = std::static_pointer_cast<BIf>(m_scopeStack.back());
+            m_scopeStack.pop_back();
+        } else if(phase == BashClass::PHASE_EVAL) {
+            m_scopeStack.pop_back();
+        } else if(phase == BashClass::PHASE_GENERATE) {
+            auto ifScope = std::static_pointer_cast<BIf>(m_scopeStack.back());
+            if(!ifScope->getElse() && ifScope->getElifScopes().empty()) {
+                BBashHelper::closeIf(ifScope);
+            }
+            m_scopeStack.pop_back();
+        }
+    };
+
+    /**************************************
+     *          ELIF STATEMENT
+     **************************************/
+
+    m_startElif = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            auto newElif = std::make_shared<BElif>();
+            m_scopeStack.back()->registerScope(m_referenceKey, newElif);
+            m_scopeStack.push_back(newElif);
+
+            // Link elif to the if scope
+            m_focusIf->addElif(newElif);
+
+            // Clear focus
+            m_focusIf = nullptr;
+        } else if(phase == BashClass::PHASE_EVAL) {
+            auto createdElif = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);
+            m_scopeStack.push_back(createdElif);
+
+        } else if(phase == BashClass::PHASE_GENERATE) {
+            auto createdElif = std::static_pointer_cast<BElif>(m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey));
+            m_scopeStack.push_back(createdElif);
+            BBashHelper::createElif(createdElif);
+        }
+    };
+
+    m_elifCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            auto elifScope = std::static_pointer_cast<BElif>(m_scopeStack.back());
+            elifScope->setExpression(m_expressionOperandStack.back());
+            m_expressionOperandStack.pop_back();
+        }
+    };
+
+    m_endElif = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            // Update focus since a nested if statement might have updated it
+            m_focusIf = std::static_pointer_cast<BElif>(m_scopeStack.back())->getParentIf();
+
+            m_scopeStack.pop_back();
+        } else if(phase == BashClass::PHASE_EVAL) {
+            m_scopeStack.pop_back();
+        } else if(phase == BashClass::PHASE_GENERATE) {
+            auto elifScope = std::static_pointer_cast<BElif>(m_scopeStack.back());
+
+            // If this is the last elif and there is not else statement, then close the if statement
+            if(!elifScope->getParentIf()->getElse() && elifScope->getParentIf()->getElifScopes().back() == elifScope) {
+                BBashHelper::closeIf(elifScope->getParentIf());
+            }
+            m_scopeStack.pop_back();
+        }
+    };
+
+    /**************************************
+     *          ELSE STATEMENT
+     **************************************/
+
+    m_startElse = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            auto newElse = std::make_shared<BElse>();
+            m_scopeStack.back()->registerScope(m_referenceKey, newElse);
+            m_scopeStack.push_back(newElse);
+
+            // Link else to the if scope
+            m_focusIf->setElse(newElse);
+
+            // Clear focus
+            m_focusIf = nullptr;
+
+        } else if(phase == BashClass::PHASE_EVAL) {
+            auto createdElse = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);
+            m_scopeStack.push_back(createdElse);
+
+        } else if(phase == BashClass::PHASE_GENERATE) {
+            auto createdElse = std::static_pointer_cast<BElse>(m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey));
+            m_scopeStack.push_back(createdElse);
+            BBashHelper::createElse(createdElse);
+        }
+    };
+
+    m_endElse = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_GENERATE) {
-            auto createIf = std::static_pointer_cast<BIf>(m_scopeStack.back());
-            BBashHelper::closeIf(createIf);
+            auto ifScope = std::static_pointer_cast<BElse>(m_scopeStack.back())->getParentIf();
+
+            // Generate code for closing the if statement
+            BBashHelper::closeIf(ifScope);
             m_scopeStack.pop_back();
         }
     };

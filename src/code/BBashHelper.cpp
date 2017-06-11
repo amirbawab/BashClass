@@ -444,9 +444,40 @@ void BBashHelper::createIf(std::shared_ptr<BIf> ifStatement) {
 
     // Write if statement
     _indent(ifStatement->getParentScope(), ss);
-    ss << "if [[ " << expression << " ]] " << std::endl;
-    _indent(ifStatement->getParentScope(), ss);
-    ss << "then" << std::endl;
+    ss << "if [[ " << expression << " ]]; then" << std::endl;
+
+    BGenerateCode::get().write(ss);
+}
+
+void BBashHelper::createElif(std::shared_ptr<BElif> elifStatement) {
+    std::stringstream ss;
+
+    // Add bash comment
+    ss << std::endl;
+    _indent(elifStatement->getParentScope(), ss);
+    ss << "# Elif statement" << std::endl;
+
+    // Start processing the expression
+    std::string expression = _expressionToCode(elifStatement->getParentScope(), elifStatement->getExpression(), ss);
+
+    // Write elif statement
+    _indent(elifStatement->getParentScope(), ss);
+    ss << "elif [[ " << expression << " ]]; then" << std::endl;
+
+    BGenerateCode::get().write(ss);
+}
+
+void BBashHelper::createElse(std::shared_ptr<BElse> elseStatement) {
+    std::stringstream ss;
+
+    // Add bash comment
+    ss << std::endl;
+    _indent(elseStatement->getParentScope(), ss);
+    ss << "# Else statement" << std::endl;
+
+    // Write else statement
+    _indent(elseStatement->getParentScope(), ss);
+    ss << "else" << std::endl;
 
     BGenerateCode::get().write(ss);
 }

@@ -18,6 +18,8 @@
     "reserved": {
         "identifier": {
             "if" : "if",
+            "elif" : "elif",
+            "else" : "else",
             "while" : "while",
             "function" : "function",
             "class" : "class",

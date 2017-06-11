@@ -1,21 +1,17 @@
-#ifndef BASHCLASS_BIF_H
-#define BASHCLASS_BIF_H
+#ifndef BASHCLASS_BELIF_H
+#define BASHCLASS_BELIF_H
 
 #include <bashclass/BScope.h>
 #include <bashclass/IBExpression.h>
+#include <bashclass/BIf.h>
 
-class BElif;
-class BElse;
-class BIf : public BScope {
+class BElif : public BScope {
 private:
-    // Condition/Expression for this if statement
+    // Condition/Expression for this elif statement
     std::shared_ptr<IBExpression> m_expression;
 
-    // Elif scopes in order
-    std::vector<std::shared_ptr<BElif>> m_elifScopes;
-
-    // Else scope for this if statement
-    std::shared_ptr<BElse> m_elseScope;
+    // Parent if statement
+    std::shared_ptr<BIf> m_parentIf;
 public:
     /**
      * Get if label
@@ -47,28 +43,16 @@ public:
     std::shared_ptr<BClass> findClosestClass();
 
     /**
-     * Add elif scope
-     * @param elifScope
+     * Set parent if
+     * @param parentIf
      */
-    void addElif(std::shared_ptr<BElif> elifScope);
+    void setParentIf(std::shared_ptr<BIf> parentIf) {m_parentIf = parentIf;}
 
     /**
-     * Get elif scopes in the order of insertion
-     * @return elif scopes
+     * Get parent if
+     * @return parent if
      */
-    const std::vector<std::shared_ptr<BElif>>& getElifScopes() const { return m_elifScopes; }
-
-    /**
-     * Set the else scope
-     * @param elseScope
-     */
-    void setElse(std::shared_ptr<BElse> elseScope);
-
-    /**
-     * Get the else scope
-     * @return else scope
-     */
-    std::shared_ptr<BElse> getElse() {return m_elseScope;}
+    std::shared_ptr<BIf> getParentIf() {return m_parentIf;}
 };
 
 #endif
