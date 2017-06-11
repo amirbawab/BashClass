@@ -98,8 +98,8 @@ std::string BArithOperation::getTypeValueAsString() {
         // +
         if(m_operatorToken->getName() == INT_PLUS) {
 
-            // If left is a string, then it is a string
-            if(leftType == BType::TYPE_VALUE_STRING) {
+            // If left or right is a string, then it is a string
+            if(leftType == BType::TYPE_VALUE_STRING || rightType == BType::TYPE_VALUE_STRING) {
                 return BType::TYPE_VALUE_STRING;
             }
 
@@ -109,7 +109,7 @@ std::string BArithOperation::getTypeValueAsString() {
 
             BReport::getInstance().error()
                     << "Operator " << m_operatorToken->getValue()
-                    << " requires both operands to be of integer or left operand to be a string" << std::endl;
+                    << " requires both operands to be of integer or one operand to be a string" << std::endl;
             BReport::getInstance().printError();
             return BType::UNDEFINED;
         }

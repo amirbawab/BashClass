@@ -17,6 +17,8 @@ private:
     // Operator of the expression
     std::shared_ptr<ecc::LexicalToken> m_operatorToken;
 
+public:
+
     // Boolean expression
     static const std::string BOOL_LOGICAL_OR;
     static const std::string BOOL_LOGICAL_AND;
@@ -40,8 +42,6 @@ private:
     static const std::string INT_DIVIDE;
     static const std::string INT_MOD;
     static const std::string INT_EXPONENTIAL;
-
-public:
 
     /**
      * Set left operator

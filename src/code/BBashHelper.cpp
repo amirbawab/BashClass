@@ -246,22 +246,59 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
         return tokenUse->getLexicalToken()->getValue();
     }
 
-    // If both operand are defined
-    std::string newKey = _generateExpressionKey(uniqueId++);
-    if(arithOperation->getLeftOperand() && arithOperation->getRightOperand()) {
-        auto leftStr = _expressionToCode(scope, arithOperation->getLeftOperand(), ss);
-        auto rightStr = _expressionToCode(scope, arithOperation->getRightOperand(), ss);
-        _indent(scope, ss);
-        ss << newKey << "=$((" << leftStr << " " << arithOperation->getOperator()->getValue() << " " << rightStr << "))"
-           << std::endl;
-        return "${" + newKey + "}";
-    } else if(arithOperation->getRightOperand()) {
-        auto rightStr = _expressionToCode(scope, arithOperation->getRightOperand(), ss);
-        _indent(scope, ss);
-        ss << newKey << "=$((" << rightStr << " ^ 1))" << std::endl;
-        return "${" + newKey + "}";
+    if(arithOperation) {
+        // Get the type of the arithmetic operation
+        std::string arithOperationType = arithOperation->getTypeValueAsString();
+
+        // If both operand are defined
+        if(arithOperation->getLeftOperand() && arithOperation->getRightOperand()) {
+            auto leftStr = _expressionToCode(scope, arithOperation->getLeftOperand(), ss);
+            auto rightStr = _expressionToCode(scope, arithOperation->getRightOperand(), ss);
+
+            _indent(scope, ss);
+            std::string newKey = _generateExpressionKey(uniqueId++);
+
+            if(arithOperationType == BType::TYPE_VALUE_STRING) {
+
+                // String concatenation
+                ss << newKey << "=\"" << leftStr << rightStr << "\"" << std::endl;
+
+            } else if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
+
+                // Boolean expression
+                ss << newKey << "=$([[" << leftStr << " " << arithOperation->getOperator()->getValue()  << " "
+                   << rightStr << "]] && echo 1 || echo 0)" << std::endl;
+
+            } else if(arithOperationType == BType::TYPE_VALUE_INT) {
+
+                // Integer expression
+                ss << newKey << "=$((" << leftStr << " " << arithOperation->getOperator()->getValue() << " "
+                   << rightStr << "))" << std::endl;
+            } else {
+                throw BException("Cannot generate code for an unknown arithmetic operation type with 2 operand");
+            }
+
+            return "${" + newKey + "}";
+        }
+
+        if(arithOperation->getRightOperand()) {
+
+            auto rightStr = _expressionToCode(scope, arithOperation->getRightOperand(), ss);
+            _indent(scope, ss);
+            std::string newKey = _generateExpressionKey(uniqueId++);
+
+            if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
+
+                // Boolean expression
+                ss << newKey << "=$((" << rightStr << " ^ 1))" << std::endl;
+            } else {
+                throw BException("Cannot generate code for an unknown arithmetic operation type with right operand");
+            }
+            return "${" + newKey + "}";
+        }
+        throw BException("Cannot generate code for an undefined arithmetic operation composition");
     }
-    throw BException("Cannot generate code for an undefined arithmetic operation composition");
+    throw BException("Cannot generate code for an undefined expression type");
 }
 
 void BBashHelper::header() {
@@ -293,10 +330,10 @@ void BBashHelper::footer() {
         ss << " " << "\"$" << argIndex+1 << "\"";
     }
 
-    // Generate return variable
+    // Generate exit
     const char* MAIN_FUNCTION_RETURN = "_main_return_";
     ss << " " << MAIN_FUNCTION_RETURN << std::endl;
-    ss << "return ${" << MAIN_FUNCTION_RETURN << "}";
+    ss << "exit ${" << MAIN_FUNCTION_RETURN << "}";
 
     ss << std::endl << std::endl;
 
@@ -498,7 +535,7 @@ void BBashHelper::createElif(std::shared_ptr<BElif> elifStatement) {
 
     // Check if lock acquired already
     _indent(elifStatement->getParentScope(), ss);
-    ss << "if ! (( " << _generateIfLock(elifStatement->getParentIf()) << " )); then" << std::endl;
+    ss << "if ! (( ${" << _generateIfLock(elifStatement->getParentIf()) << "} )); then" << std::endl;
 
     // Start processing the expression
     std::string expression = _expressionToCode(elifStatement->getParentScope(), elifStatement->getExpression(), ss);
@@ -524,7 +561,7 @@ void BBashHelper::createElse(std::shared_ptr<BElse> elseStatement) {
 
     // Check if lock acquired already
     _indent(elseStatement->getParentScope(), ss);
-    ss << "if ! (( " << _generateIfLock(elseStatement->getParentIf()) << " )); then" << std::endl;
+    ss << "if ! (( ${" << _generateIfLock(elseStatement->getParentIf()) << "} )); then" << std::endl;
 
     BGenerateCode::get().write(ss);
 }
