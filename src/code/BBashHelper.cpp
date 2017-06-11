@@ -57,6 +57,15 @@ std::string _generateExpressionKey(unsigned int number) {
 }
 
 /**
+ * Generate a lock for an if statement
+ * @param ifStatement
+ * @return lock string
+ */
+std::string _generateIfLock(std::shared_ptr<BIf> ifStatement) {
+    return ifStatement->getLabel().str() + "_lock";
+}
+
+/**
  * Generate code for a variable chain access that is a member and is placed first in the chain
  * @param variableChainAccess
  * @param ss
@@ -442,9 +451,17 @@ void BBashHelper::createIf(std::shared_ptr<BIf> ifStatement) {
     // Start processing the expression
     std::string expression = _expressionToCode(ifStatement->getParentScope(), ifStatement->getExpression(), ss);
 
+    // Reset if statement lock
+    _indent(ifStatement->getParentScope(), ss);
+    ss << _generateIfLock(ifStatement) << "=0" << std::endl;
+
     // Write if statement
     _indent(ifStatement->getParentScope(), ss);
     ss << "if [[ " << expression << " ]]; then" << std::endl;
+
+    // Acquire the lock
+    _indent(ifStatement->getParentScope(), ss);
+    ss << _generateIfLock(ifStatement) << "=1" << std::endl;
 
     BGenerateCode::get().write(ss);
 }
@@ -457,12 +474,20 @@ void BBashHelper::createElif(std::shared_ptr<BElif> elifStatement) {
     _indent(elifStatement->getParentScope(), ss);
     ss << "# Elif statement" << std::endl;
 
+    // Check if lock acquired already
+    _indent(elifStatement->getParentScope(), ss);
+    ss << "if ! (( " << _generateIfLock(elifStatement->getParentIf()) << " )); then" << std::endl;
+
     // Start processing the expression
     std::string expression = _expressionToCode(elifStatement->getParentScope(), elifStatement->getExpression(), ss);
 
     // Write elif statement
     _indent(elifStatement->getParentScope(), ss);
-    ss << "elif [[ " << expression << " ]]; then" << std::endl;
+    ss << "if [[ " << expression << " ]]; then" << std::endl;
+
+    // Acquire lock
+    _indent(elifStatement->getParentScope(), ss);
+    ss << _generateIfLock(elifStatement->getParentIf()) << "=1" << std::endl;
 
     BGenerateCode::get().write(ss);
 }
@@ -475,9 +500,9 @@ void BBashHelper::createElse(std::shared_ptr<BElse> elseStatement) {
     _indent(elseStatement->getParentScope(), ss);
     ss << "# Else statement" << std::endl;
 
-    // Write else statement
+    // Check if lock acquired already
     _indent(elseStatement->getParentScope(), ss);
-    ss << "else" << std::endl;
+    ss << "if ! (( " << _generateIfLock(elseStatement->getParentIf()) << " )); then" << std::endl;
 
     BGenerateCode::get().write(ss);
 }
@@ -485,6 +510,22 @@ void BBashHelper::createElse(std::shared_ptr<BElse> elseStatement) {
 void BBashHelper::closeIf(std::shared_ptr<BIf> ifStatement) {
     std::stringstream ss;
     _indent(ifStatement->getParentScope(), ss);
+    ss << "fi" << std::endl;
+    BGenerateCode::get().write(ss);
+}
+
+void BBashHelper::closeElif(std::shared_ptr<BElif> elifStatement) {
+    std::stringstream ss;
+    _indent(elifStatement->getParentScope(), ss);
+    ss << "fi" << std::endl;
+    _indent(elifStatement->getParentScope(), ss);
+    ss << "fi" << std::endl;
+    BGenerateCode::get().write(ss);
+}
+
+void BBashHelper::closeElse(std::shared_ptr<BElse> elseStatement) {
+    std::stringstream ss;
+    _indent(elseStatement->getParentScope(), ss);
     ss << "fi" << std::endl;
     BGenerateCode::get().write(ss);
 }

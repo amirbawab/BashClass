@@ -114,6 +114,18 @@ public:
     static void closeIf(std::shared_ptr<BIf> ifStatement);
 
     /**
+     * Generate code for closing the elif statement
+     * @param elifStatement
+     */
+    static void closeElif(std::shared_ptr<BElif> elifStatement);
+
+    /**
+     * Generate code for closing the else statement
+     * @param elseStatement
+     */
+    static void closeElse(std::shared_ptr<BElse> elseStatement);
+
+    /**
      * Generate code for while statement
      * @param whileStatement
      */

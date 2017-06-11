@@ -399,10 +399,8 @@ void BashClass::initHandlers() {
         } else if(phase == BashClass::PHASE_GENERATE) {
             auto elifScope = std::static_pointer_cast<BElif>(m_scopeStack.back());
 
-            // If this is the last elif and there is not else statement, then close the if statement
-            if(!elifScope->getParentIf()->getElse() && elifScope->getParentIf()->getElifScopes().back() == elifScope) {
-                BBashHelper::closeIf(elifScope->getParentIf());
-            }
+            // Generate code to close elif statement
+            BBashHelper::closeElif(elifScope);
             m_scopeStack.pop_back();
         }
     };
@@ -438,10 +436,10 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_GENERATE) {
-            auto ifScope = std::static_pointer_cast<BElse>(m_scopeStack.back())->getParentIf();
+            auto elseScope = std::static_pointer_cast<BElse>(m_scopeStack.back());
 
-            // Generate code for closing the if statement
-            BBashHelper::closeIf(ifScope);
+            // Generate code for closing the else statement
+            BBashHelper::closeElse(elseScope);
             m_scopeStack.pop_back();
         }
     };
