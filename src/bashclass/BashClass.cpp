@@ -283,9 +283,13 @@ void BashClass::initHandlers() {
             auto newWhile = std::make_shared<BWhile>();
             m_scopeStack.back()->registerScope(m_referenceKey, newWhile);
             m_scopeStack.push_back(newWhile);
-        } else if(phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
-            auto createdWhile = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);
+        } else if(phase == BashClass::PHASE_EVAL) {
+            m_scopeStack.push_back(m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey));
+        } else if( phase == BashClass::PHASE_GENERATE) {
+            auto createdWhile = std::static_pointer_cast<BWhile>(
+                    m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey));
             m_scopeStack.push_back(createdWhile);
+            BBashHelper::createWhile(createdWhile);
         }
     };
 
@@ -298,7 +302,10 @@ void BashClass::initHandlers() {
     };
 
     m_endWhile = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
+        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
+            m_scopeStack.pop_back();
+        } else if(phase == BashClass::PHASE_GENERATE) {
+            BBashHelper::closeWhile(std::static_pointer_cast<BWhile>(m_scopeStack.back()));
             m_scopeStack.pop_back();
         }
     };

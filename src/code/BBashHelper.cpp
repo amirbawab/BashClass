@@ -488,3 +488,32 @@ void BBashHelper::closeIf(std::shared_ptr<BIf> ifStatement) {
     ss << "fi" << std::endl;
     BGenerateCode::get().write(ss);
 }
+
+void BBashHelper::createWhile(std::shared_ptr<BWhile> whileStatement) {
+    std::stringstream ss;
+
+    // Add bash comment
+    ss << std::endl;
+    _indent(whileStatement->getParentScope(), ss);
+    ss << "# While statement" << std::endl;
+
+    // Write while statement
+    _indent(whileStatement->getParentScope(), ss);
+    ss << "while true; do" << std::endl;
+
+    // Start processing the expression
+    std::string expression = _expressionToCode(whileStatement->getParentScope(), whileStatement->getExpression(), ss);
+
+    // Create if statement
+    _indent(whileStatement->getParentScope(), ss);
+    ss << "! (( " << expression << " )) && break" << std::endl;
+
+    BGenerateCode::get().write(ss);
+}
+
+void BBashHelper::closeWhile(std::shared_ptr<BWhile> whileStatement) {
+    std::stringstream ss;
+    _indent(whileStatement->getParentScope(), ss);
+    ss << "done" << std::endl;
+    BGenerateCode::get().write(ss);
+}

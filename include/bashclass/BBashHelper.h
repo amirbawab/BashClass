@@ -12,6 +12,7 @@
 #include <bashclass/BIf.h>
 #include <bashclass/BElif.h>
 #include <bashclass/BElse.h>
+#include <bashclass/BWhile.h>
 
 class BBashHelper {
 public:
@@ -111,6 +112,18 @@ public:
      * @param ifStatement
      */
     static void closeIf(std::shared_ptr<BIf> ifStatement);
+
+    /**
+     * Generate code for while statement
+     * @param whileStatement
+     */
+    static void createWhile(std::shared_ptr<BWhile> whileStatement);
+
+    /**
+     * Generate code for closing while statement
+     * @param whileStatement
+     */
+    static void closeWhile(std::shared_ptr<BWhile> whileStatement);
 };
 
 #endif
