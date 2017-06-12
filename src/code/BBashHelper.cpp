@@ -194,6 +194,14 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
     }
 }
 
+std::string _arithOpForm1(std::string left, std::string op, std::string right) {
+    return "$(( " + left + " " + op + " " + right + " ))";
+}
+
+std::string _arithOpForm2(std::string left, std::string op, std::string right) {
+    return "$([[ " + left + " " + op + " " + right + " ]] && echo 1 || echo 0)";
+}
+
 std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression,
                               std::stringstream &ss) {
     auto thisAccess = std::dynamic_pointer_cast<BThisAccess>(expression);
@@ -265,15 +273,22 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
 
             } else if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
 
-                // Boolean expression
-                ss << newKey << "=$([[" << leftStr << " " << arithOperation->getOperator()->getValue()  << " "
-                   << rightStr << "]] && echo 1 || echo 0)" << std::endl;
+                if(arithOperation->getOperator()->getName() == BArithOperation::BOOL_IS_NOT_EQUAL
+                   || arithOperation->getOperator()->getName() == BArithOperation::BOOL_IS_EQUAL
+                   || arithOperation->getOperator()->getName() == BArithOperation::BOOL_LESS_THAN
+                   || arithOperation->getOperator()->getName() == BArithOperation::BOOL_GREATER_THAN) {
+
+                    ss << newKey << "=" << _arithOpForm2(leftStr, arithOperation->getOperator()->getValue(), rightStr)
+                       << std::endl;
+                } else {
+                    ss << newKey << "=" << _arithOpForm1(leftStr, arithOperation->getOperator()->getValue(), rightStr)
+                       << std::endl;
+                }
 
             } else if(arithOperationType == BType::TYPE_VALUE_INT) {
 
-                // Integer expression
-                ss << newKey << "=$((" << leftStr << " " << arithOperation->getOperator()->getValue() << " "
-                   << rightStr << "))" << std::endl;
+                ss << newKey << "=" << _arithOpForm1(leftStr, arithOperation->getOperator()->getValue(), rightStr)
+                   << std::endl;
             } else {
                 throw BException("Cannot generate code for an unknown arithmetic operation type with 2 operand");
             }
@@ -289,8 +304,7 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
 
             if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
 
-                // Boolean expression
-                ss << newKey << "=$((" << rightStr << " ^ 1))" << std::endl;
+                ss << newKey << "=" << _arithOpForm1(rightStr, "^", "1") << std::endl;
             } else {
                 throw BException("Cannot generate code for an unknown arithmetic operation type with right operand");
             }
