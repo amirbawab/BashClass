@@ -6,9 +6,6 @@ const std::string BType::TYPE_NAME_BOOLEAN = "boolean_type";
 const std::string BType::TYPE_NAME_STRING = "string_type";
 const std::string BType::TYPE_NAME_ANY = "any_type";
 const std::string BType::TYPE_NAME_VOID = "void_type";
-const std::string BType::TYPE_NAME_BASH_SUB = "bash_sub";
-const std::string BType::TYPE_NAME_BASH_INLINE = "bash_inline";
-const std::string BType::TYPE_NAME_BASH_BLOCK = "bash_block";
 
 const std::string BType::TYPE_VALUE_INT = "int";
 const std::string BType::TYPE_VALUE_CHAR = "char";
@@ -21,6 +18,9 @@ const std::string BType::DATA_TYPE_NAME_INT = "integer";
 const std::string BType::DATA_TYPE_NAME_CHAR = "character";
 const std::string BType::DATA_TYPE_NAME_BOOLEAN = "truefalse";
 const std::string BType::DATA_TYPE_NAME_STRING = "string";
+const std::string BType::DATA_TYPE_NAME_BASH_SUB = "bash_sub";
+const std::string BType::DATA_TYPE_NAME_BASH_INLINE = "bash_inline";
+const std::string BType::DATA_TYPE_NAME_BASH_BLOCK = "bash_block";
 
 const std::string BType::UNDEFINED = "undefined";
 

@@ -15,9 +15,6 @@ public:
     static const std::string TYPE_NAME_STRING;
     static const std::string TYPE_NAME_ANY;
     static const std::string TYPE_NAME_VOID;
-    static const std::string TYPE_NAME_BASH_SUB;
-    static const std::string TYPE_NAME_BASH_INLINE;
-    static const std::string TYPE_NAME_BASH_BLOCK;
 
     // Values defining the built-in types values. For example:
     // var [int] a;
@@ -41,6 +38,9 @@ public:
     static const std::string DATA_TYPE_NAME_STRING;
     static const std::string DATA_TYPE_NAME_CHAR;
     static const std::string DATA_TYPE_NAME_BOOLEAN;
+    static const std::string DATA_TYPE_NAME_BASH_SUB;
+    static const std::string DATA_TYPE_NAME_BASH_INLINE;
+    static const std::string DATA_TYPE_NAME_BASH_BLOCK;
 
     /**
      * Check if the provided type name is built-in

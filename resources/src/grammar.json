@@ -16,7 +16,7 @@
     "FUNCTION_PARAM_A" : ["#newKey# VARIABLE #startParam# VARIABLE_TYPE #paramType# VARIABLE_NAME #paramName# #endParam# FUNCTION_PARAM_B"],
     "FUNCTION_PARAM_B" : ["EPSILON","COMMA FUNCTION_PARAM_A"],
 
-    "BASH_DEC" : ["BASH_SUB #bashCode#", "BASH_INLINE #bashCode#", "BASH_BLOCK #bashCode#"],
+    "BASH_DEC" : ["BASH_INLINE #bashCode#", "BASH_BLOCK #bashCode#"],
 
     "VAR_ASSIGN_OR_FUNC_CALL" : ["#newKey# #startOuterCall# THIS_OPT VAR_ASSIGN_OR_FUNC_CALL_A #endOuterCall#"],
     "VAR_ASSIGN_OR_FUNC_CALL_A" : ["IDENTIFIER VAR_ASSIGN_OR_FUNC_CALL_B"],
