@@ -507,9 +507,10 @@ void BBashHelper::writeReturn(std::shared_ptr<BReturn> rtn) {
 
     // Write the return statement
     _indent(rtn->getParentScope(), ss);
-    ss << FUNCTION_RETURN << "=" << expression;
+    ss << FUNCTION_RETURN << "=" << expression << std::endl;
+    _indent(rtn->getParentScope(), ss);
+    ss << "return 0" << std::endl;
 
-    ss << std::endl;
     BGenerateCode::get().write(ss);
 }
 
