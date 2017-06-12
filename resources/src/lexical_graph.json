@@ -159,7 +159,7 @@
         {
             "type": "FINAL",
             "id": 29,
-            "token": "great_equal_than",
+            "token": "greater_equal_than",
             "backtrack": false
         },
         {
