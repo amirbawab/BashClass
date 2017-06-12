@@ -136,6 +136,19 @@ std::string BArithOperation::getTypeValueAsString() {
             return BType::UNDEFINED;
         }
 
+        // +, -
+        if(m_operatorToken->getName() == INT_PLUS || m_operatorToken->getName() == INT_MINUS) {
+            if(singleOperandType == BType::TYPE_VALUE_INT) {
+                return BType::TYPE_VALUE_INT;
+            }
+
+            BReport::getInstance().error()
+                    << "Operator " << m_operatorToken->getValue()
+                    << " expects operand to be an integer" << std::endl;
+            BReport::getInstance().printError();
+            return BType::UNDEFINED;
+        }
+
         throw BException("Undefined operator in an expression with one operand");
     }
     throw BException("Arithmetic operation is not composed correctly");

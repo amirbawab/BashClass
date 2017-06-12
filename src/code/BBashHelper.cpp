@@ -309,9 +309,12 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
             std::string newKey = _generateExpressionKey(uniqueId++);
 
             if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
-
                 ss << newKey << "=" << _arithOpForm1(rightStr, "^", "1") << std::endl;
-            } else {
+            } else if (arithOperationType == BType::TYPE_VALUE_INT) {
+                ss << newKey << "="
+                   << _arithOpForm1(rightStr, "*", "(" + arithOperation->getOperator()->getValue() + "1)")
+                   << std::endl;
+            }else {
                 throw BException("Cannot generate code for an unknown arithmetic operation type with right operand");
             }
             return "${" + newKey + "}";

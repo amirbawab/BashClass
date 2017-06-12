@@ -85,8 +85,8 @@
     "EXPR_T" : ["EPSILON","OP_GROUP_J #putOp# EXPR_U #createExpr2# EXPR_T"],
     "EXPR_U" : ["EXPR_W EXPR_V"],
     "EXPR_V" : ["EPSILON","OP_GROUP_K #putOp# EXPR_W #createExpr2# EXPR_V"],
-    "EXPR_W" : ["EXPR_X"],
-    "EXPR_X" : ["EXPR_Y","OP_GROUP_L #putOp# EXPR_Y #createExpr1#"],
+    "EXPR_W" : ["EXPR_X","OP_GROUP_L #putOp# EXPR_X #createExpr1#"],
+    "EXPR_X" : ["EXPR_Y","OP_GROUP_I #putOp# EXPR_Y #createExpr1#"],
     "EXPR_Y" : ["OPEN_PAR EXPR_A CLOSE_PAR","ARITH_ID"],
 
     "ARITH_ID" : [
@@ -96,7 +96,7 @@
         "'string' #tokenUse#",
         "BASH_SUB #tokenUse#",
         "ARITH_VAR_OR_FUNC_CALL"
-        ],
+    ],
 
     "ARITH_VAR_OR_FUNC_CALL" : ["#startInnerCall# ARITH_VAR_OR_FUNC_CALL_A #endInnerCall#"],
     "ARITH_VAR_OR_FUNC_CALL_A" : ["THIS ARITH_VAR_OR_FUNC_CALL_E", "ARITH_VAR_OR_FUNC_CALL_B"],
