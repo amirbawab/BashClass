@@ -95,6 +95,12 @@ public:
      * @return class scope or nullptr if not found
      */
     std::shared_ptr<BClass> findClosestClass();
+
+    /**
+     * Check if a function is a constructor
+     * @return true if the function is a constructor
+     */
+    bool isConstructor();
 };
 
 #endif
