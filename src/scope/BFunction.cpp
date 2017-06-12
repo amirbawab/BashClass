@@ -24,7 +24,8 @@ bool BFunction::hasKnowType() const {
 }
 
 bool BFunction::requiresReturn() {
-    return m_type->getName() != BType::TYPE_NAME_VOID;
+    return m_type->getName() != BType::TYPE_NAME_VOID
+           && m_type->getName() != BType::TYPE_NAME_CONSTRUCTOR;
 }
 
 void BFunction::verifyReturns() {

@@ -15,6 +15,7 @@ public:
     static const std::string TYPE_NAME_STRING;
     static const std::string TYPE_NAME_ANY;
     static const std::string TYPE_NAME_VOID;
+    static const std::string TYPE_NAME_CONSTRUCTOR;
 
     // Values defining the built-in types values. For example:
     // var [int] a;
@@ -25,6 +26,7 @@ public:
     static const std::string TYPE_VALUE_STRING;
     static const std::string TYPE_VALUE_ANY;
     static const std::string TYPE_VALUE_VOID;
+    static const std::string TYPE_VALUE_CONSTRUCTOR;
 
     // This type is used when a variable has an unknown type
     // "undefined" is a reserved word, therefore it cannot refer to a class

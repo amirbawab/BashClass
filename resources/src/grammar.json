@@ -5,8 +5,11 @@
     "CLASS_DEC": ["#newKey# CLASS #startClass# CLASS_NAME #className# OPEN_CUR CLASS_BODY CLOSE_CUR #endClass#"],
     "CLASS" : ["'class'"],
     "CLASS_NAME" : ["'identifier'"],
-    "CLASS_BODY" : ["EPSILON","VARIABLE_DEC CLASS_BODY","FUNCTION_DEC CLASS_BODY"],
+    "CLASS_BODY" : ["EPSILON","VARIABLE_DEC CLASS_BODY","FUNCTION_DEC CLASS_BODY","CONSTRUCTOR_DEC CLASS_BODY"],
     
+    "CONSTRUCTOR_DEC": ["#newKey# CONSTRUCTOR #startFunction# #functionType# #functionName# OPEN_PAR FUNCTION_PARAM_DEC CLOSE_PAR OPEN_CUR FUNCTION_BODY CLOSE_CUR #endFunction#"],
+    "CONSTRUCTOR": ["'constructor_type'"],
+
     "FUNCTION_DEC" : ["#newKey# FUNCTION #startFunction# FUNCTION_TYPE #functionType# FUNCTION_NAME #functionName# OPEN_PAR FUNCTION_PARAM_DEC CLOSE_PAR OPEN_CUR FUNCTION_BODY CLOSE_CUR #endFunction#"],
     "FUNCTION": ["'function'"],
     "FUNCTION_TYPE" : ["'identifier'","'int_type'","'boolean_type'","'char_type'","'string_type'","'void_type'","'any_type'"],

@@ -34,6 +34,7 @@
             "true" : "truefalse",
             "false" : "truefalse",
             "this" : "this_ref",
+            "constructor": "constructor_type",
             "undefined": "undefined"
         }
     }
