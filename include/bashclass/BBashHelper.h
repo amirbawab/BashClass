@@ -67,9 +67,10 @@ public:
 
     /**
      * Write pure bash
+     * @param scope
      * @param lexicalToken
      */
-    static void bash(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+    static void bash(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> lexicalToken);
 
     /**
      * Generate a variable assign

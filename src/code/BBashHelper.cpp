@@ -388,11 +388,13 @@ void BBashHelper::createLocalVar(std::shared_ptr<BVariable> variable) {
     BGenerateCode::get().write(ss);
 }
 
-void BBashHelper::bash(std::shared_ptr<ecc::LexicalToken> token) {
+void BBashHelper::bash(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
     std::stringstream ss;
     ss << std::endl;
+    _indent(scope, ss);
     ss << "# Run BASH code" << std::endl;
 
+    _indent(scope, ss);
     if(token->getName() == BType::TYPE_NAME_BASH_INLINE) {
         ss << token->getValue().substr(2,token->getValue().length()-2);
     } else if(token->getName() == BType::TYPE_NAME_BASH_SUB || token->getName() == BType::TYPE_NAME_BASH_BLOCK) {
@@ -488,9 +490,8 @@ void BBashHelper::functionExec(std::shared_ptr<BFunctionCall> functionCall) {
     ss << std::endl;
     _indent(functionCall->getParentScope(), ss);
     ss << "# Execute a function" << std::endl;
-    _chainToCode(functionCall->last()->getFunction(), functionCall->getChain(), 0, functionCall->getChain()->size()-1,
+    _chainToCode(functionCall->getParentScope(), functionCall->getChain(), 0, functionCall->getChain()->size()-1,
                  returnMap, ss);
-    ss << std::endl;
     BGenerateCode::get().write(ss);
 }
 

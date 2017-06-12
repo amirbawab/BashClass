@@ -100,7 +100,7 @@ void BashClass::initHandlers() {
      **************************************/
     m_bashCode = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_GENERATE) {
-            BBashHelper::bash(lexicalVector[index]);
+            BBashHelper::bash(m_scopeStack.back(), lexicalVector[index]);
         }
     };
 
