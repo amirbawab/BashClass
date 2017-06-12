@@ -16,7 +16,7 @@ bool BFunction::isClassMember() {
     if(!m_parentScope) {
         throw BException("Cannot check if a function is a class member if it does not have a parent scope");
     }
-    return m_parentScope->findClosestClass() != nullptr;
+    return std::dynamic_pointer_cast<BClass>(m_parentScope) != nullptr;
 }
 
 bool BFunction::hasKnowType() const {
