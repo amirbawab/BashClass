@@ -168,6 +168,41 @@ void BScope::registerFunction(unsigned int referenceKey, std::shared_ptr<BFuncti
 
     // Register function in this scope
     registerScope(referenceKey, functionScope);
+
+    // Check the name of the function
+    if(functionScope->isConstructor()) {
+
+        if(!functionScope->isClassMember()) {
+            BReport::getInstance().error()
+                    << "Function " << functionScope->getName()->getValue() << " at line "
+                    << functionScope->getName()->getLine()
+                    <<" cannot be a constructor outside a class" << std::endl;
+            BReport::getInstance().printError();
+        } else {
+            auto parentClass = std::static_pointer_cast<BClass>(functionScope->getParentScope());
+
+            if(!parentClass->getName()) {
+                throw BException("Cannot verify if the constructor name is defined correctly");
+            }
+
+            if(functionScope->getName()->getValue() != parentClass->getName()->getValue()) {
+                BReport::getInstance().error()
+                        << "Constructor " << functionScope->getName()->getValue() << " at line "
+                        << functionScope->getName()->getLine()
+                        <<" must be named " << parentClass->getName()->getValue() << std::endl;
+                BReport::getInstance().printError();
+            }
+        }
+    } else if(functionScope->isClassMember()) {
+        auto parentClass = std::static_pointer_cast<BClass>(functionScope->getParentScope());
+        if(functionScope->getName()->getValue() == parentClass->getName()->getValue()) {
+            BReport::getInstance().error()
+                    << "Function " << functionScope->getName()->getValue() << " at line "
+                    << functionScope->getName()->getLine()
+                    <<" cannot have a constructor name" << std::endl;
+            BReport::getInstance().printError();
+        }
+    }
 }
 
 void BScope::registerScope(unsigned int referenceKey, std::shared_ptr<BScope> scope) {

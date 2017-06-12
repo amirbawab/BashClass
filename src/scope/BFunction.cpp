@@ -49,3 +49,10 @@ std::shared_ptr<BClass> BFunction::findClosestClass() {
     }
     return m_parentScope->findClosestClass();
 }
+
+bool BFunction::isConstructor() {
+    if(!m_type) {
+        throw BException("Cannot check if function is a constructor without setting its type");
+    }
+    return m_type->getName() == BType::TYPE_NAME_CONSTRUCTOR;
+}

@@ -94,9 +94,11 @@
         "'character' #tokenUse#",
         "'truefalse' #tokenUse#",
         "'string' #tokenUse#",
+        "NEW CLASS_NAME #createObject# IDENTIFIER_FUNCTION_CALL",
         "BASH_SUB #tokenUse#",
         "ARITH_VAR_OR_FUNC_CALL"
     ],
+    "NEW": ["'new'"],
 
     "ARITH_VAR_OR_FUNC_CALL" : ["#startInnerCall# ARITH_VAR_OR_FUNC_CALL_A #endInnerCall#"],
     "ARITH_VAR_OR_FUNC_CALL_A" : ["THIS ARITH_VAR_OR_FUNC_CALL_E", "ARITH_VAR_OR_FUNC_CALL_B"],
