@@ -157,6 +157,12 @@ void BashClass::initHandlers() {
         }
     };
 
+    m_functionConstructor = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            m_focusFunction->setIsConstructor(true);
+        }
+    };
+
     m_functionName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
 

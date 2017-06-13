@@ -46,6 +46,7 @@ public:
 
     SemanticActionHandler m_startFunction;
     SemanticActionHandler m_functionType;
+    SemanticActionHandler m_functionConstructor;
     SemanticActionHandler m_functionName;
     SemanticActionHandler m_endFunction;
 

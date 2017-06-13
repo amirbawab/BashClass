@@ -172,26 +172,18 @@ void BScope::registerFunction(unsigned int referenceKey, std::shared_ptr<BFuncti
     // Check the name of the function
     if(functionScope->isConstructor()) {
 
-        if(!functionScope->isClassMember()) {
+        auto parentClass = std::static_pointer_cast<BClass>(functionScope->getParentScope());
+
+        if(!parentClass->getName()) {
+            throw BException("Cannot verify if the constructor name is defined correctly");
+        }
+
+        if(functionScope->getName()->getValue() != parentClass->getName()->getValue()) {
             BReport::getInstance().error()
-                    << "Function " << functionScope->getName()->getValue() << " at line "
+                    << "Constructor " << functionScope->getName()->getValue() << " at line "
                     << functionScope->getName()->getLine()
-                    <<" cannot be a constructor outside a class" << std::endl;
+                    <<" must be named " << parentClass->getName()->getValue() << std::endl;
             BReport::getInstance().printError();
-        } else {
-            auto parentClass = std::static_pointer_cast<BClass>(functionScope->getParentScope());
-
-            if(!parentClass->getName()) {
-                throw BException("Cannot verify if the constructor name is defined correctly");
-            }
-
-            if(functionScope->getName()->getValue() != parentClass->getName()->getValue()) {
-                BReport::getInstance().error()
-                        << "Constructor " << functionScope->getName()->getValue() << " at line "
-                        << functionScope->getName()->getLine()
-                        <<" must be named " << parentClass->getName()->getValue() << std::endl;
-                BReport::getInstance().printError();
-            }
         }
     } else if(functionScope->isClassMember()) {
         auto parentClass = std::static_pointer_cast<BClass>(functionScope->getParentScope());

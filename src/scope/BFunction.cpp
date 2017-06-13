@@ -6,6 +6,10 @@
 #include <bashclass/BReport.h>
 #include <stack>
 
+BFunction::BFunction() {
+    m_isConstructor = false;
+}
+
 std::stringstream BFunction::getLabel() {
     std::stringstream stream = m_parentScope->getLabel();
     stream << "_f_" << m_name->getValue();
@@ -24,8 +28,7 @@ bool BFunction::hasKnowType() const {
 }
 
 bool BFunction::requiresReturn() {
-    return m_type->getName() != BType::TYPE_NAME_VOID
-           && m_type->getName() != BType::TYPE_NAME_CONSTRUCTOR;
+    return m_type->getName() != BType::TYPE_NAME_VOID && !isConstructor();
 }
 
 void BFunction::verifyReturns() {
@@ -51,8 +54,5 @@ std::shared_ptr<BClass> BFunction::findClosestClass() {
 }
 
 bool BFunction::isConstructor() {
-    if(!m_type) {
-        throw BException("Cannot check if function is a constructor without setting its type");
-    }
-    return m_type->getName() == BType::TYPE_NAME_CONSTRUCTOR;
+    return m_isConstructor;
 }

@@ -18,7 +18,15 @@ private:
     // Check hasKnownType() function for more details
     std::shared_ptr<BClass> m_typeScope;
 
+    // Mark function as a constructor
+    bool m_isConstructor;
+
 public:
+
+    /**
+     * Initial variables
+     */
+    BFunction();
 
     /**
      * Get function name token
@@ -95,6 +103,12 @@ public:
      * @return class scope or nullptr if not found
      */
     std::shared_ptr<BClass> findClosestClass();
+
+    /**
+     * Set if the function is a constructor
+     * @param isConstructor
+     */
+    void setIsConstructor(bool isConstructor) { m_isConstructor = isConstructor;}
 
     /**
      * Check if a function is a constructor

@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#endClass#", bashClass.m_endClass);
 
     easyCC.registerSemanticAction("#startFunction#", bashClass.m_startFunction);
+    easyCC.registerSemanticAction("#functionConstructor#", bashClass.m_functionConstructor);
     easyCC.registerSemanticAction("#functionType#", bashClass.m_functionType);
     easyCC.registerSemanticAction("#functionName#", bashClass.m_functionName);
     easyCC.registerSemanticAction("#endFunction#", bashClass.m_endFunction);
