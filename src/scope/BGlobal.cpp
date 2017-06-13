@@ -61,37 +61,6 @@ void BGlobal::linkTypes() {
     }
 }
 
-void BGlobal::detectCircularReference() {
-
-    for(auto cls : findAllClasses()) {
-        std::stack<std::shared_ptr<BScope>> scopeStack;
-        scopeStack.push(cls);
-        std::set<std::shared_ptr<BScope>> visited;
-        while(!scopeStack.empty()) {
-
-            // Get top class scope
-            auto top = scopeStack.top();
-            scopeStack.pop();
-
-            // Mark class as visited
-            visited.insert(top);
-
-            // Evaluate all variables in the class scope
-            for(auto variable : top->findAllVariables()) {
-                if(variable->getTypeScope()) {
-                    if(visited.find(variable->getTypeScope()) == visited.end()) {
-                        scopeStack.push(variable->getTypeScope());
-                    } else {
-                        BReport::getInstance().error()
-                                << "Circular reference detected from class " << cls->getName()->getValue() << std::endl;
-                        BReport::getInstance().printError();
-                    }
-                }
-            }
-        }
-    }
-}
-
 void BGlobal::verifyMain() {
     auto functions = findAllFunctions(BGlobal::MAIN_FUNCTION.c_str());
     if(functions.empty()) {

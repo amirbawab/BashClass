@@ -57,9 +57,6 @@ void BashClass::initHandlers() {
             // Link types of functions and variables
             BGlobal::getInstance()->linkTypes();
 
-            // Detect circular references
-            BGlobal::getInstance()->detectCircularReference();
-
             // Check required function
             BGlobal::getInstance()->verifyMain();
         } else if(phase == BashClass::PHASE_GENERATE) {
