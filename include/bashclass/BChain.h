@@ -66,6 +66,13 @@ public:
     void addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token);
 
     /**
+     * Add constructor to the chain
+     * @param scope
+     * @param token
+     */
+    void addConstructor(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token);
+
+    /**
      * Add this reference to the chain
      * @param scope
      * @param thisReference

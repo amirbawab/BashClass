@@ -151,6 +151,43 @@ void BChain::addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lex
     m_callables.push_back(functionCall);
 }
 
+void BChain::addConstructor(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
+
+    // Prepare function call
+    auto functionCall = std::make_shared<BFunctionChainCall>();
+    functionCall->setLexicalToken(token);
+
+    if(!m_callables.empty()) {
+        throw BException("A constructor call must be at the beginning of the chain");
+    }
+
+    // Search for the class and constructor
+    auto classes = BGlobal::getInstance()->findAllClasses(token->getValue().c_str());
+    if(classes.empty()) {
+        BReport::getInstance().error()
+                << "Undefined class " << token->getValue() << " at line " << token->getLine()
+                << " and column " << token->getColumn() << std::endl;
+        BReport::getInstance().printError();
+    } else {
+
+        // Search for the constructor
+        auto functions = classes.front()->findAllConstructors();
+
+        // Set function if found
+        if(functions.empty()) {
+            BReport::getInstance().error()
+                    << "Call to an undefined constructor for class " << token->getValue() << " at line " << token->getLine()
+                    << " and column " << token->getColumn() << std::endl;
+            BReport::getInstance().printError();
+        } else {
+            functionCall->setFunction(functions.front());
+        }
+    }
+
+    // Add function to the chain
+    m_callables.push_back(functionCall);
+}
+
 void BChain::addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisChainAccess> thisReference) {
 
     // Callable chain must be empty

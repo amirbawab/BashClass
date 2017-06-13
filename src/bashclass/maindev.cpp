@@ -65,6 +65,7 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#endInnerCall#", bashClass.m_endInnerCall);
     easyCC.registerSemanticAction("#varChainAccess#", bashClass.m_varChainAccess);
     easyCC.registerSemanticAction("#functionChainCall#", bashClass.m_functionChainCall);
+    easyCC.registerSemanticAction("#constructorChainCall#", bashClass.m_constructorChainCall);
     easyCC.registerSemanticAction("#thisChainAccess#", bashClass.m_thisChainAccess);
 
     easyCC.registerSemanticAction("#bashCode#", bashClass.m_bashCode);

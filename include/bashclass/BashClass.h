@@ -72,6 +72,7 @@ public:
 
     SemanticActionHandler m_varChainAccess;
     SemanticActionHandler m_functionChainCall;
+    SemanticActionHandler m_constructorChainCall;
     SemanticActionHandler m_tokenUse;
     SemanticActionHandler m_thisChainAccess;
     SemanticActionHandler m_thisAccess;

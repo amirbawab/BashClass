@@ -473,6 +473,12 @@ void BashClass::initHandlers() {
         }
     };
 
+    m_constructorChainCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            m_chainBuilderStack.back()->addConstructor(m_scopeStack.back(), lexicalVector[index]);
+        }
+    };
+
     m_thisChainAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto thisCall = std::make_shared<BThisChainAccess>();

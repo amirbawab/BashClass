@@ -39,6 +39,13 @@ public:
      * @return this scope
      */
     std::shared_ptr<BClass> findClosestClass();
+
+    /**
+     * Find all constructors
+     * @return return the constructors
+     * that matches the class name
+     */
+    std::vector<std::shared_ptr<BFunction>> findAllConstructors();
 };
 
 #endif
