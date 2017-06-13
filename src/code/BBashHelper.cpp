@@ -211,7 +211,7 @@ std::string _arithOpForm1(std::string left, std::string op, std::string right) {
 }
 
 std::string _arithOpForm2(std::string left, std::string op, std::string right) {
-    return "$([[ " + left + " " + op + " " + right + " ]] && echo 1 || echo 0)";
+    return "$([[ \"" + left + "\" " + op + " \"" + right + "\" ]] && echo 1 || echo 0)";
 }
 
 std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression,
@@ -281,6 +281,8 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
     if(arithOperation) {
         // Get the type of the arithmetic operation
         std::string arithOperationType = arithOperation->getTypeValueAsString();
+        std::string leftOperandType = arithOperation->getLeftOperand()->getTypeValueAsString();
+        std::string rightOperandType = arithOperation->getRightOperand()->getTypeValueAsString();
 
         // If both operand are defined
         if(arithOperation->getLeftOperand() && arithOperation->getRightOperand()) {
@@ -302,8 +304,15 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
                    || arithOperation->getOperator()->getName() == BArithOperation::BOOL_LESS_THAN
                    || arithOperation->getOperator()->getName() == BArithOperation::BOOL_GREATER_THAN) {
 
-                    ss << newKey << "=" << _arithOpForm2(leftStr, arithOperation->getOperator()->getValue(), rightStr)
-                       << std::endl;
+                    if(leftOperandType == BType::TYPE_VALUE_STRING || rightOperandType == BType::TYPE_VALUE_STRING) {
+                        ss << newKey << "="
+                           << _arithOpForm2(leftStr, arithOperation->getOperator()->getValue(), rightStr)
+                           << std::endl;
+                    } else {
+                        ss << newKey << "="
+                           << _arithOpForm1(leftStr, arithOperation->getOperator()->getValue(), rightStr)
+                           << std::endl;
+                    }
                 } else {
                     ss << newKey << "=" << _arithOpForm1(leftStr, arithOperation->getOperator()->getValue(), rightStr)
                        << std::endl;
