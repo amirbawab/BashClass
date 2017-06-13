@@ -39,6 +39,15 @@ void _indent(std::shared_ptr<BScope> parent, std::stringstream& ss) {
 }
 
 /**
+ * Generate a unique counter per class
+ * @param classScope
+ * @return class counter
+ */
+std::string _generateCounter(std::shared_ptr<BClass> classScope) {
+    return classScope->getLabel().str() + "_uid_";
+}
+
+/**
  * Generate a unique result key/variable per element call
  * @param number
  * @return unique result string
@@ -168,16 +177,19 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             }
 
             // Write the reference from previous or this when applicable
-            if(i == 0) {
-                if(functionChainCall->getFunction()->isClassMember()) {
-                    ss << " " << FUNCTION_THIS;
+            if(!functionChainCall->getFunction()->isConstructor()) {
+                if (i == 0) {
+                    if (functionChainCall->getFunction()->isClassMember()) {
+                        ss << " ${" << FUNCTION_THIS << "}";
+                    }
+                } else {
+                    ss << " ${" << returnMap[(*chain)[i - 1]] << "}";
                 }
-            } else {
-                ss << " " << returnMap[(*chain)[i-1]];
             }
 
             // Write the return variable if required
-            if(functionChainCall->getFunction()->requiresReturn()) {
+            if(functionChainCall->getFunction()->requiresReturn()
+               || functionChainCall->getFunction()->isConstructor()) {
                 std::string newKey = _generateResultKey(uniqueId++);
                 returnMap[functionChainCall] = newKey;
                 ss << " " << newKey;
@@ -254,6 +266,12 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
         if(tokenUse->getLexicalToken()->getName() == BType::DATA_TYPE_NAME_BASH_SUB) {
             return "$( " + tokenUse->getLexicalToken()->getValue().
                     substr(2, tokenUse->getLexicalToken()->getValue().length()-4) + " )";
+        }
+
+        // If the token is a string
+        if(tokenUse->getLexicalToken()->getName() == BType::DATA_TYPE_NAME_STRING) {
+            return tokenUse->getLexicalToken()->getValue()
+                    .substr(1,tokenUse->getLexicalToken()->getValue().length()-2);
         }
 
         // Write the lexical token value
@@ -368,12 +386,7 @@ void BBashHelper::footer() {
 void BBashHelper::declareClass(std::shared_ptr<BClass> classScope) {
     std::stringstream ss;
     ss << "declare -A " << classScope->getLabel().str() << "=()" << std::endl;
-    BGenerateCode::get().write(ss);
-}
-
-void BBashHelper::uniqueCounter(std::shared_ptr<BClass> classScope) {
-    std::stringstream ss;
-    ss << "_" << classScope->getName()->getValue() << "_=0" << std::endl;
+    ss << _generateCounter(classScope) << "=1" << std::endl;
     BGenerateCode::get().write(ss);
 }
 
@@ -430,12 +443,31 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
 
     // Generate 'this' if function is a class member
     if(function->isClassMember()) {
-        _indent(function, ss);
-        ss << "local " << FUNCTION_THIS << "=$" << paramPos++ << std::endl;
+        if(function->isConstructor()) {
+
+            // Assign `this` and increment counter
+            auto classScope = std::static_pointer_cast<BClass>(function->getParentScope());
+            _indent(function, ss);
+            ss << "local " << FUNCTION_THIS << "=${" << _generateCounter(classScope) << "}" << std::endl;
+            _indent(function, ss);
+            ss << _generateCounter(classScope) << "=" << _arithOpForm1("${"+_generateCounter(classScope)+"}", "+", "1")
+               << std::endl;
+
+            // Initialize members
+            for(auto variable : classScope->findAllVariables()) {
+                _indent(function, ss);
+                ss << classScope->getLabel().str() << "[${" << FUNCTION_THIS << "},\""
+                   << variable->getLabel().str() << "\"]=" << variable->getDefaultValue() << std::endl;
+            }
+
+        } else {
+            _indent(function, ss);
+            ss << "local " << FUNCTION_THIS << "=$" << paramPos++ << std::endl;
+        }
     }
 
     // Generate return reference if function requires a return statement
-    if(function->requiresReturn()) {
+    if(function->requiresReturn() || function->isConstructor()) {
         _indent(function, ss);
         ss << "declare -n " << FUNCTION_RETURN << "=$" << paramPos++ << std::endl;
     }
@@ -445,6 +477,12 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
 
 void BBashHelper::closeFunction(std::shared_ptr<BFunction> function) {
     std::stringstream ss;
+
+    if(function->isConstructor()) {
+        _indent(function, ss);
+        ss << FUNCTION_RETURN << "=${" << FUNCTION_THIS << "}" << std::endl;
+    }
+
     _indent(function->getParentScope(), ss);
     ss << "}" << std::endl;
     BGenerateCode::get().write(ss);

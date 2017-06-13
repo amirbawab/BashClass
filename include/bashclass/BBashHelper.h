@@ -34,12 +34,6 @@ public:
     static void declareClass(std::shared_ptr<BClass> classScope);
 
     /**
-     * Generate a unique counter for a class
-     * @param classScope
-     */
-    static void uniqueCounter(std::shared_ptr<BClass> classScope);
-
-    /**
      * Generate a global variable in bash
      * @param variable
      * @param defaultValue
