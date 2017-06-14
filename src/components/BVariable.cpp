@@ -33,8 +33,9 @@ std::string BVariable::getDefaultValue() {
         return "\"\"";
     }
 
-    if(m_type->getName() == BType::TYPE_NAME_INT) {
-        return "0";
+    if(m_type->getName() == BType::TYPE_NAME_CHAR) {
+        return "\"$(echo -n -e \"\\u0000\")\"";
     }
-    return "";
+
+    return "0";
 }
