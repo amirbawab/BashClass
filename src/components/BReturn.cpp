@@ -35,12 +35,14 @@ void BReturn::verifyReturn() {
                         << "Cannot return expression in function " << function->getName()->getValue()
                         << " of undefined type" << std::endl;
                 BReport::getInstance().printError();
-            } else if(expressionType == BType::UNDEFINED) {
+            } else if(BType::isUndefined(expressionType)) {
                 BReport::getInstance().error()
                         << "Function " << function->getName()->getValue()
                         << " has return statement but of undefined type" << std::endl;
                 BReport::getInstance().printError();
-            } else if(functionType != BType::TYPE_VALUE_ANY && functionType != expressionType) {
+            } else if(functionType != BType::TYPE_VALUE_ANY
+                      // TODO Add return null
+                      && functionType != expressionType) {
                 BReport::getInstance().error()
                         << "Function " << function->getName()->getValue() << " is of type " << functionType
                         << " but return expression is of type " << expressionType << std::endl;

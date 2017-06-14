@@ -34,7 +34,7 @@ std::string BArithOperation::getTypeValueAsString() {
         std::string rightType = m_rightOperand->getTypeValueAsString();
 
         // UNDEFINED
-        if(leftType == BType::UNDEFINED || rightType == BType::UNDEFINED) {
+        if(BType::isUndefined(leftType) || BType::isUndefined(rightType)) {
             return BType::UNDEFINED;
         }
 
@@ -119,7 +119,7 @@ std::string BArithOperation::getTypeValueAsString() {
         std::string singleOperandType = m_rightOperand->getTypeValueAsString();
 
         // UNDEFINED
-        if(singleOperandType == BType::UNDEFINED) {
+        if(BType::isUndefined(singleOperandType)) {
             return BType::UNDEFINED;
         }
 

@@ -26,7 +26,7 @@ void BVariableAssign::setExpression(std::shared_ptr<IBExpression> expression) {
                     << "Cannot assign expression to an undefined type for variable "
                     << variableChainAccess->getVariable()->getName()->getValue() << std::endl;
             BReport::getInstance().printError();
-        } else if(expressionType == BType::UNDEFINED) {
+        } else if(BType::isUndefined(expressionType)) {
             BReport::getInstance().error()
                     << "Variable " << variableChainAccess->getVariable()->getName()->getValue()
                     << " cannot be assigned an undefined expression" << std::endl;

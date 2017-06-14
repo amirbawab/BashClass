@@ -19,7 +19,7 @@ void BIf::setExpression(std::shared_ptr<IBExpression> expression) {
 
     // Verify the type of the expression is boolean
     std::string expressionType = expression->getTypeValueAsString();
-    if(expressionType == BType::UNDEFINED) {
+    if(BType::isUndefined(expressionType)) {
         BReport::getInstance().error()
                 << "If statement condition cannot be of undefined type" << std::endl;
         BReport::getInstance().printError();
