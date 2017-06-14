@@ -173,7 +173,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
 
             // Write arguments
             for(size_t argIndex=0; argIndex < arguments.size(); argIndex++) {
-                ss << " " << argumentsValues[argIndex];
+                ss << " \"" << argumentsValues[argIndex] << "\"";
             }
 
             // Write the reference from previous or this when applicable
@@ -382,7 +382,7 @@ void BBashHelper::footer() {
 
     // Generate arguments
     for(size_t argIndex=0; argIndex < mainFunction->findAllParameters().size(); argIndex++) {
-        ss << " " << "\"$" << argIndex+1 << "\"";
+        ss << " " << "\"${" << argIndex+1 << "}\"";
     }
 
     // Generate exit
@@ -452,7 +452,7 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
     int paramPos = 1;
     for(auto param : function->findAllParameters()) {
         _indent(param->getParentScope(), ss);
-        ss << "local " << param->getLabel().str() << "=\"$" << paramPos++ << "\"" << std::endl;
+        ss << "local " << param->getLabel().str() << "=\"${" << paramPos++ << "}\"" << std::endl;
     }
 
     // Generate 'this' if function is a class member
@@ -476,14 +476,14 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
 
         } else {
             _indent(function, ss);
-            ss << "local " << FUNCTION_THIS << "=$" << paramPos++ << std::endl;
+            ss << "local " << FUNCTION_THIS << "=${" << paramPos++ << "}" << std::endl;
         }
     }
 
     // Generate return reference if function requires a return statement
     if(function->requiresReturn() || function->isConstructor()) {
         _indent(function, ss);
-        ss << "declare -n " << FUNCTION_RETURN << "=$" << paramPos++ << std::endl;
+        ss << "declare -n " << FUNCTION_RETURN << "=${" << paramPos++ << "}" << std::endl;
     }
 
     BGenerateCode::get().write(ss);
