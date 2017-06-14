@@ -73,7 +73,7 @@ void BFunctionChainCall::addArgument(std::shared_ptr<IBExpression> argument) {
         }
     } else {
         BReport::getInstance().error()
-                << "Arguments number " << m_arguments.size()+1
+                << "Arguments number " << m_arguments.size()
                 << " for function call " << m_lexicalToken->getValue()
                 << " cannot be verified because the function is undefined" << std::endl;
         BReport::getInstance().printError();

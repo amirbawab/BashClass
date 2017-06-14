@@ -12,6 +12,8 @@ std::string BTokenUse::getTypeValueAsString() {
         return BType::TYPE_VALUE_CHAR;
     } else if(m_lexicalToken->getName() == BType::DATA_TYPE_NAME_BOOLEAN) {
         return BType::TYPE_VALUE_BOOLEAN;
+    } else if(m_lexicalToken->getName() == BType::NULL_VALUE) {
+        return BType::NULL_VALUE;
     }
     throw BException("Token type value cannot be undefined");
 }

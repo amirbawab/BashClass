@@ -251,6 +251,11 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
 
     if(tokenUse) {
 
+        // If the token is null
+        if(tokenUse->getLexicalToken()->getName() == BType::NULL_VALUE) {
+            return "0";
+        }
+
         // If the token is a true/false
         if(tokenUse->getLexicalToken()->getName() == BType::DATA_TYPE_NAME_BOOLEAN) {
             if(tokenUse->getLexicalToken()->getValue() == "true") {
