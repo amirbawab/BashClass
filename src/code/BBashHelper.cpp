@@ -564,14 +564,19 @@ void BBashHelper::writeReturn(std::shared_ptr<BReturn> rtn) {
     _indent(rtn->getParentScope(), ss);
     ss << "# Return statement" << std::endl;
 
-    // Start processing the expression
-    std::string expression = _expressionToCode(rtn->getParentScope(), rtn->getExpression(), ss);
+    // Check if function has an expression, or is void
+    if(rtn->getExpression()) {
+        // Start processing the expression
+        std::string expression = _expressionToCode(rtn->getParentScope(), rtn->getExpression(), ss);
 
-    // Write the return statement
+        // Write the return statement
+        _indent(rtn->getParentScope(), ss);
+        ss << FUNCTION_RETURN << "=" << expression << std::endl;
+    }
+
+    // Return from bash function
     _indent(rtn->getParentScope(), ss);
-    ss << FUNCTION_RETURN << "=" << expression << std::endl;
-    _indent(rtn->getParentScope(), ss);
-    ss << "return 0" << std::endl;
+    ss << "return" << std::endl;
 
     BGenerateCode::get().write(ss);
 }

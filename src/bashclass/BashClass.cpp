@@ -547,6 +547,15 @@ void BashClass::initHandlers() {
         // Do nothing ...
     };
 
+    m_returnVoid = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable) {
+        if(phase == BashClass::PHASE_EVAL) {
+
+            // Create a void return
+            auto returnComp = std::make_shared<BReturn>();
+            m_scopeStack.back()->setReturn(returnComp);
+        }
+    };
+
     m_returnExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
@@ -559,15 +568,14 @@ void BashClass::initHandlers() {
 
             // Remove consumed expression
             m_expressionOperandStack.pop_back();
-        } else if(phase == BashClass::PHASE_GENERATE) {
-
-            // Generate return statement
-            BBashHelper::writeReturn(m_scopeStack.back()->getReturn());
         }
     };
 
     m_endReturn = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        // Do nothing ...
+        if(phase == BashClass::PHASE_GENERATE) {
+            // Generate return statement
+            BBashHelper::writeReturn(m_scopeStack.back()->getReturn());
+        }
     };
 
     /**************************************

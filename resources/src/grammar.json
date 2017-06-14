@@ -34,7 +34,8 @@
     "VARIABLE_TYPE" : ["'identifier'","'int_type'","'boolean_type'","'char_type'","'string_type'","'any_type'"],
     "VARIABLE_NAME" : ["'identifier'"],
 
-    "RETURN_DEC" : ["RETURN #startReturn# EXPR_DEC #returnExpr# SEMICOLON #endReturn#"],
+    "RETURN_DEC" : ["RETURN #startReturn# RETURN_OPT_EXPR SEMICOLON #endReturn#"],
+    "RETURN_OPT_EXPR": ["EXPR_DEC #returnExpr#","EPSILON #returnVoid#"],
 
     "STATEMENT" : ["#newKey# IF #startIf# OPEN_PAR EXPR_DEC #ifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endIf# ELIF_OPT ELSE_OPT",
                     "#newKey# WHILE #startWhile# OPEN_PAR EXPR_DEC #whileCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endWhile#"],

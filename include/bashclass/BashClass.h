@@ -52,6 +52,7 @@ public:
 
     SemanticActionHandler m_startReturn;
     SemanticActionHandler m_returnExpr;
+    SemanticActionHandler m_returnVoid;
     SemanticActionHandler m_endReturn;
 
     SemanticActionHandler m_startVar;

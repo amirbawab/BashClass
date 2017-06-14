@@ -79,6 +79,7 @@ int main(int argc, char *argv[]) {
 
     easyCC.registerSemanticAction("#startReturn#", bashClass.m_startReturn);
     easyCC.registerSemanticAction("#returnExpr#", bashClass.m_returnExpr);
+    easyCC.registerSemanticAction("#returnVoid#", bashClass.m_returnVoid);
     easyCC.registerSemanticAction("#endReturn#", bashClass.m_endReturn);
 
     easyCC.registerSemanticAction("#varAssign#", bashClass.m_varAssign);

@@ -232,7 +232,7 @@ void BScope::setReturn(std::shared_ptr<BReturn> ret) {
         auto function = findClosestFunction();
         BReport::getInstance().error()
                 << "Multiple return statements are set within the same scope in function "
-                << function << std::endl;
+                << function->getName()->getValue() << std::endl;
         BReport::getInstance().printError();
     } else {
 
