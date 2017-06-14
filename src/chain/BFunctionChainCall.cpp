@@ -64,7 +64,8 @@ void BFunctionChainCall::addArgument(std::shared_ptr<IBExpression> argument) {
                         << " is given an undefined argument" << std::endl;
                 BReport::getInstance().printError();
             } else if(parameterType != BType::TYPE_VALUE_ANY
-                      // TODO Add null
+                      && (BType::isBuiltInType(parameters[paramIndex]->getType()->getName())
+                          || argumentType != BType::NULL_VALUE)
                       && parameterType != argumentType) {
                 BReport::getInstance().error()
                         << "Function " << m_function->getName()->getValue()

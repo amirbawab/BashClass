@@ -41,7 +41,8 @@ void BReturn::verifyReturn() {
                         << " has return statement but of undefined type" << std::endl;
                 BReport::getInstance().printError();
             } else if(functionType != BType::TYPE_VALUE_ANY
-                      // TODO Add return null
+                      && (BType::isBuiltInType(function->getType()->getName())
+                          || expressionType != BType::NULL_VALUE)
                       && functionType != expressionType) {
                 BReport::getInstance().error()
                         << "Function " << function->getName()->getValue() << " is of type " << functionType
