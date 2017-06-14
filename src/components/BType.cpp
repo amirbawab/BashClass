@@ -24,6 +24,8 @@ const std::string BType::DATA_TYPE_NAME_BASH_BLOCK = "bash_block";
 
 const std::string BType::UNDEFINED = "undefined";
 
+const std::string BType::NULL_VALUE = "null";
+
 bool BType::isBuiltInType(std::string type) {
     return type == TYPE_NAME_INT
            || type == TYPE_NAME_STRING
@@ -31,4 +33,8 @@ bool BType::isBuiltInType(std::string type) {
            || type == TYPE_NAME_VOID
            || type == TYPE_NAME_BOOLEAN
            || type == TYPE_NAME_CHAR;
+}
+
+bool BType::isUndefined(std::string type) {
+    return type == UNDEFINED;
 }
