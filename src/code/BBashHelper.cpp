@@ -144,7 +144,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             // Generate new key for this variable
             std::string newKey = _generateResultKey(uniqueId++);
             returnMap[variableChainAccess] = newKey;
-            ss << newKey << "=${";
+            ss << "local " << newKey << "=${";
 
             if(i == 0) {
                 if(variableChainAccess->getVariable()->isClassMember()) {
@@ -199,7 +199,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             _indent(scope, ss);
             std::string newKey = _generateResultKey(uniqueId++);
             returnMap[thisChainAccess] = newKey;
-            ss  << newKey << "=${" << FUNCTION_THIS << "}" << std::endl;
+            ss  << "local " << newKey << "=${" << FUNCTION_THIS << "}" << std::endl;
         } else {
             throw BException("Cannot generate code for an unrecognized element call");
         }
@@ -300,7 +300,7 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
             if(arithOperationType == BType::TYPE_VALUE_STRING) {
 
                 // String concatenation
-                ss << newKey << "=\"" << leftStr << rightStr << "\"" << std::endl;
+                ss << "local " << newKey << "=\"" << leftStr << rightStr << "\"" << std::endl;
 
             } else if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
 
@@ -310,22 +310,22 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
                    || arithOperation->getOperator()->getName() == BArithOperation::BOOL_GREATER_THAN) {
 
                     if(leftOperandType == BType::TYPE_VALUE_STRING || rightOperandType == BType::TYPE_VALUE_STRING) {
-                        ss << newKey << "="
+                        ss << "local " << newKey << "="
                            << _arithOpForm2(leftStr, arithOperation->getOperator()->getValue(), rightStr)
                            << std::endl;
                     } else {
-                        ss << newKey << "="
+                        ss << "local " << newKey << "="
                            << _arithOpForm1(leftStr, arithOperation->getOperator()->getValue(), rightStr)
                            << std::endl;
                     }
                 } else {
-                    ss << newKey << "=" << _arithOpForm1(leftStr, arithOperation->getOperator()->getValue(), rightStr)
+                    ss << "local " << newKey << "=" << _arithOpForm1(leftStr, arithOperation->getOperator()->getValue(), rightStr)
                        << std::endl;
                 }
 
             } else if(arithOperationType == BType::TYPE_VALUE_INT) {
 
-                ss << newKey << "=" << _arithOpForm1(leftStr, arithOperation->getOperator()->getValue(), rightStr)
+                ss << "local " << newKey << "=" << _arithOpForm1(leftStr, arithOperation->getOperator()->getValue(), rightStr)
                    << std::endl;
             } else {
                 throw BException("Cannot generate code for an unknown arithmetic operation type with 2 operand");
@@ -341,9 +341,9 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
             std::string newKey = _generateExpressionKey(uniqueId++);
 
             if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
-                ss << newKey << "=" << _arithOpForm1(rightStr, "^", "1") << std::endl;
+                ss << "local " << newKey << "=" << _arithOpForm1(rightStr, "^", "1") << std::endl;
             } else if (arithOperationType == BType::TYPE_VALUE_INT) {
-                ss << newKey << "="
+                ss << "local " << newKey << "="
                    << _arithOpForm1(rightStr, "*", "(" + arithOperation->getOperator()->getValue() + "1)")
                    << std::endl;
             }else {
