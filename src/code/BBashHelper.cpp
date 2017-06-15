@@ -15,6 +15,7 @@
 // Constants
 std::string FUNCTION_THIS = "_this_";
 std::string FUNCTION_RETURN = "_return_";
+std::string TMP_FUNCTION_RETURN = "_tmp_return_";
 std::string RESULT = "_result_";
 std::string EXPRESSION = "_expression_";
 
@@ -167,6 +168,15 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
                 argumentsValues.push_back(_expressionToCode(scope, arguments[argIndex], ss));
             }
 
+            // Prepare the return variable if required
+            if(functionChainCall->getFunction()->requiresReturn()
+               || functionChainCall->getFunction()->isConstructor()) {
+                std::string newKey = _generateResultKey(uniqueId++);
+                returnMap[functionChainCall] = newKey;
+                _indent(scope, ss);
+                ss << "local " << newKey << std::endl;
+            }
+
             // Write the function call
             _indent(scope, ss);
             ss << functionChainCall->getFunction()->getLabel().str();
@@ -187,14 +197,16 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
                 }
             }
 
-            // Write the return variable if required
+            // Write the return part
             if(functionChainCall->getFunction()->requiresReturn()
                || functionChainCall->getFunction()->isConstructor()) {
-                std::string newKey = _generateResultKey(uniqueId++);
-                returnMap[functionChainCall] = newKey;
-                ss << " " << newKey;
+                ss << " " << TMP_FUNCTION_RETURN << std::endl;
+                _indent(scope, ss);
+                ss << returnMap[functionChainCall] << "=${" << TMP_FUNCTION_RETURN << "}";
             }
+
             ss << std::endl;
+
         } else if(thisChainAccess) {
             _indent(scope, ss);
             std::string newKey = _generateResultKey(uniqueId++);
