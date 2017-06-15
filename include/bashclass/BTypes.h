@@ -55,6 +55,13 @@ public:
     static bool isBuiltInType(std::string type);
 
     /**
+     * Check if the type is defined by the user
+     * @param type
+     * @return true if the type is defined by the user
+     */
+    static bool isUserDefinedType(std::string type);
+
+    /**
      * Check if an expression type is undefined
      * @return true if expression type is undefined
      */

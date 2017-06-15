@@ -35,6 +35,10 @@ bool BType::isBuiltInType(std::string type) {
            || type == TYPE_NAME_CHAR;
 }
 
+bool BType::isUserDefinedType(std::string type) {
+    return !isBuiltInType(type) && type != NULL_VALUE;
+}
+
 bool BType::isUndefined(std::string type) {
     return type == UNDEFINED;
 }

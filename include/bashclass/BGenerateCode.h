@@ -2,12 +2,16 @@
 #define BASHCLASS_BGENERATECODE_H
 
 #include <sstream>
+#include <fstream>
 
 class BGenerateCode {
 private:
 
     // Mark destructor as private
     BGenerateCode(){}
+
+    // Output bash file
+    std::ofstream m_bashFile;
 public:
 
     /**
@@ -22,6 +26,17 @@ public:
     // Delete constructor and operator
     BGenerateCode(BGenerateCode const&) = delete;
     void operator=(BGenerateCode const&) = delete;
+
+    /**
+     * Create/Open the file to be written
+     * @param name
+     */
+    void openFile(std::string name);
+
+    /**
+     * Close file
+     */
+    void closeFile();
 
     /**
      * Code generated before parsing the input

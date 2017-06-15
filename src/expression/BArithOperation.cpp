@@ -40,7 +40,9 @@ std::string BArithOperation::getTypeValueAsString() {
 
         // ==, !=
         if(m_operatorToken->getName() == BOOL_IS_EQUAL || m_operatorToken->getName() == BOOL_IS_NOT_EQUAL) {
-            if(leftType == rightType) {
+            if(leftType == rightType
+               || (BType::isUserDefinedType(leftType) && rightType == BType::NULL_VALUE)
+               || (BType::isUserDefinedType(rightType) && leftType == BType::NULL_VALUE)) {
                 return BType::TYPE_VALUE_BOOLEAN;
             }
 

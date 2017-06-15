@@ -8,6 +8,7 @@
 #include <bashclass/BThisAccess.h>
 #include <bashclass/BVariableAssign.h>
 #include <bashclass/BFunctionCall.h>
+#include <bashclass/BGenerateCode.h>
 
 BashClass::BashClass() {
     initHandlers();
@@ -51,8 +52,11 @@ void BashClass::initHandlers() {
         // Push global scope
         m_scopeStack.push_back(BGlobal::getInstance());
 
-        // Connect elements after building the structure
-        if(phase == BashClass::PHASE_EVAL) {
+        if(phase == BashClass::PHASE_CREATE) {
+
+            // Open output file
+            BGenerateCode::get().openFile("/tmp/test/file.sh");
+        } else if(phase == BashClass::PHASE_EVAL) {
 
             // Link types of functions and variables
             BGlobal::getInstance()->linkTypes();
@@ -80,6 +84,9 @@ void BashClass::initHandlers() {
 
             // Generate code required after the input
             BBashHelper::footer();
+
+            // Close output file
+            BGenerateCode::get().closeFile();
         }
     };
 
