@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
             }
 
             // Print structure of the compiled files
-            bashClass.printStructure();
+            //bashClass.printStructure();
         }
 
         // Set the phase number
