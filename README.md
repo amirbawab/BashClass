@@ -1,4 +1,4 @@
-# BashClass
+# BashClass [![Build Status](https://travis-ci.org/amirbawab/BashClass.svg?branch=master)](https://travis-ci.org/amirbawab/BashClass)
 
 ### TLDR; 
 BashClass is a programming language with classes and functions, and it compiles into BASH 4.3+.
