@@ -4,7 +4,7 @@ compiler:
   - g++
 
 before_script:
-  - $WORKSPACE=pwd
+  - WORKSPACE=$PWD
   - sudo apt remove cmake
   - curl https://cmake.org/files/v3.9/cmake-3.9.0-rc3.tar.gz > /tmp/cmake.tar.gz
   - cd /tmp; tar xvf cmake.tar.gz; cd cmake-3.9.0-rc3/; ./configure; make; sudo make install
