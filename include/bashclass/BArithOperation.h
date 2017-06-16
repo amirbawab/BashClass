@@ -36,12 +36,15 @@ public:
     static const std::string INT_BIT_AND;
     static const std::string INT_LEFT_SHIFT;
     static const std::string INT_RIGHT_SHIFT;
-    static const std::string INT_PLUS;
     static const std::string INT_MINUS;
     static const std::string INT_MULTIPLY;
     static const std::string INT_DIVIDE;
     static const std::string INT_MOD;
     static const std::string INT_EXPONENTIAL;
+
+    // Dynamic expression
+    static const std::string DYNAMIC_ASSIGN;
+    static const std::string DYNAMIC_PLUS;
 
     /**
      * Set left operator

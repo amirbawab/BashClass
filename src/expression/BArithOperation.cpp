@@ -19,12 +19,14 @@ const std::string BArithOperation::INT_BIT_XOR = "bit_xor";
 const std::string BArithOperation::INT_BIT_AND = "bit_and";
 const std::string BArithOperation::INT_LEFT_SHIFT = "left_shift";
 const std::string BArithOperation::INT_RIGHT_SHIFT = "right_shift";
-const std::string BArithOperation::INT_PLUS = "plus";
 const std::string BArithOperation::INT_MINUS = "minus";
 const std::string BArithOperation::INT_MULTIPLY = "multiply";
 const std::string BArithOperation::INT_DIVIDE = "divide";
 const std::string BArithOperation::INT_MOD = "mod";
 const std::string BArithOperation::INT_EXPONENTIAL = "exponential";
+
+const std::string BArithOperation::DYNAMIC_PLUS = "plus";
+const std::string BArithOperation::DYNAMIC_ASSIGN = "assign";
 
 std::string BArithOperation::getTypeValueAsString() {
 
@@ -98,7 +100,7 @@ std::string BArithOperation::getTypeValueAsString() {
         }
 
         // +
-        if(m_operatorToken->getName() == INT_PLUS) {
+        if(m_operatorToken->getName() == DYNAMIC_PLUS) {
 
             // If left or right is a string, then it is a string
             if(leftType == BType::TYPE_VALUE_STRING || rightType == BType::TYPE_VALUE_STRING) {
@@ -114,6 +116,13 @@ std::string BArithOperation::getTypeValueAsString() {
                     << " requires both operands to be of integer or one operand to be a string" << std::endl;
             BReport::getInstance().printError();
             return BType::UNDEFINED;
+        }
+
+        // =
+        if(m_operatorToken->getName() == DYNAMIC_ASSIGN) {
+
+            // TODO Test
+            return leftType;
         }
 
         throw BException("Undefined operator in an expression with two operands");
@@ -139,7 +148,7 @@ std::string BArithOperation::getTypeValueAsString() {
         }
 
         // +, -
-        if(m_operatorToken->getName() == INT_PLUS || m_operatorToken->getName() == INT_MINUS) {
+        if(m_operatorToken->getName() == DYNAMIC_PLUS || m_operatorToken->getName() == INT_MINUS) {
             if(singleOperandType == BType::TYPE_VALUE_INT) {
                 return BType::TYPE_VALUE_INT;
             }

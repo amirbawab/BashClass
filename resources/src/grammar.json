@@ -14,19 +14,13 @@
     "FUNCTION": ["'function'"],
     "FUNCTION_TYPE" : ["'identifier'","'int_type'","'boolean_type'","'char_type'","'string_type'","'void_type'","'any_type'"],
     "FUNCTION_NAME" : ["'identifier'"],
-    "FUNCTION_BODY" : ["EPSILON","VARIABLE_DEC FUNCTION_BODY","VAR_ASSIGN_OR_FUNC_CALL FUNCTION_BODY","STATEMENT FUNCTION_BODY","RETURN_DEC FUNCTION_BODY","BASH_DEC FUNCTION_BODY"],
+    "FUNCTION_BODY" : ["EPSILON","VARIABLE_DEC FUNCTION_BODY","EXPR_DEC SEMICOLON FUNCTION_BODY","STATEMENT FUNCTION_BODY","RETURN_DEC FUNCTION_BODY","BASH_DEC FUNCTION_BODY"],
     "FUNCTION_PARAM_DEC" : ["EPSILON","FUNCTION_PARAM_A"],
     "FUNCTION_PARAM_A" : ["#newKey# VARIABLE #startParam# VARIABLE_TYPE #paramType# VARIABLE_NAME #paramName# #endParam# FUNCTION_PARAM_B"],
     "FUNCTION_PARAM_B" : ["EPSILON","COMMA FUNCTION_PARAM_A"],
 
     "BASH_DEC" : ["BASH_INLINE #bashCode#", "BASH_BLOCK #bashCode#"],
 
-    "VAR_ASSIGN_OR_FUNC_CALL" : ["#newKey# #startOuterCall# THIS_OPT VAR_ASSIGN_OR_FUNC_CALL_A #endOuterCall#"],
-    "VAR_ASSIGN_OR_FUNC_CALL_A" : ["IDENTIFIER VAR_ASSIGN_OR_FUNC_CALL_B"],
-    "VAR_ASSIGN_OR_FUNC_CALL_B" : ["#varChainAccess# ASSIGN EXPR_DEC SEMICOLON #varAssign#","#varChainAccess# DOT VAR_ASSIGN_OR_FUNC_CALL_A","#functionChainCall# IDENTIFIER_FUNCTION_CALL VAR_ASSIGN_OR_FUNC_CALL_C"],
-    "VAR_ASSIGN_OR_FUNC_CALL_C" : ["SEMICOLON #functionExec#","DOT VAR_ASSIGN_OR_FUNC_CALL_A"],
-
-    "THIS_OPT" : ["THIS #thisChainAccess# DOT","EPSILON"],
     "THIS" : ["'this_ref'"],
     
     "VARIABLE_DEC" : ["#newKey# VARIABLE #startVar# VARIABLE_TYPE #varType# VARIABLE_NAME #varName# SEMICOLON #endVar#"],
@@ -39,7 +33,7 @@
 
     "STATEMENT" : ["#newKey# IF #startIf# OPEN_PAR EXPR_DEC #ifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endIf# ELIF_OPT ELSE_OPT",
                     "#newKey# WHILE #startWhile# OPEN_PAR EXPR_DEC #whileCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endWhile#"],
-    "STATEMENT_BODY" : ["EPSILON","VARIABLE_DEC STATEMENT_BODY", "VAR_ASSIGN_OR_FUNC_CALL STATEMENT_BODY","STATEMENT STATEMENT_BODY","RETURN_DEC STATEMENT_BODY", "BASH_DEC STATEMENT_BODY"],
+    "STATEMENT_BODY" : ["EPSILON","VARIABLE_DEC STATEMENT_BODY", "EXPR_DEC SEMICOLON STATEMENT_BODY","STATEMENT STATEMENT_BODY","RETURN_DEC STATEMENT_BODY", "BASH_DEC STATEMENT_BODY"],
 
     "ELIF_OPT" : ["EPSILON", "#newKey# ELIF #startElif# OPEN_PAR EXPR_DEC #elifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endElif# ELIF_OPT"],
     "ELSE_OPT" : ["EPSILON", "#newKey# ELSE #startElse# OPEN_CUR STATEMENT_BODY CLOSE_CUR #endElse#"],
@@ -54,8 +48,6 @@
     "ELSE" : ["'else'"],
     "WHILE" : ["'while'"],
 
-    "ASSIGN" : ["'assign'"],
-
     "OPEN_PAR" : ["'open_parenthesis'"],
     "CLOSE_PAR" : ["'close_parenthesis'"],
 
@@ -66,7 +58,9 @@
     "SEMICOLON" : ["'semicolon'"],
     "DOT" : ["'dot'"],
 
-    "EXPR_DEC" : ["#startExpr# EXPR_A #endExpr#"],
+    "EXPR_DEC" : ["#startExpr# EXPR_AA #endExpr#"],
+    "EXPR_AA" : ["EXPR_A EXPR_AB"],
+    "EXPR_AB" : ["EPSILON","OP_GROUP_AA #putOp# EXPR_A EXPR_AB #createExpr2#"],
     "EXPR_A" : ["EXPR_C EXPR_B"],
     "EXPR_B" : ["EPSILON","OP_GROUP_A #putOp# EXPR_C #createExpr2# EXPR_B"],
     "EXPR_C" : ["EXPR_E EXPR_D"],
@@ -91,7 +85,7 @@
     "EXPR_V" : ["EPSILON","OP_GROUP_K #putOp# EXPR_W #createExpr2# EXPR_V"],
     "EXPR_W" : ["EXPR_X","OP_GROUP_L #putOp# EXPR_X #createExpr1#"],
     "EXPR_X" : ["EXPR_Y","OP_GROUP_I #putOp# EXPR_Y #createExpr1#"],
-    "EXPR_Y" : ["OPEN_PAR EXPR_A CLOSE_PAR","ARITH_ID"],
+    "EXPR_Y" : ["OPEN_PAR EXPR_AA CLOSE_PAR","ARITH_ID"],
 
     "ARITH_ID" : [
         "'integer' #tokenUse#",
@@ -112,6 +106,7 @@
     "ARITH_VAR_OR_FUNC_CALL_D" : ["#functionCall# EPSILON","DOT ARITH_VAR_OR_FUNC_CALL_B"],
     "ARITH_VAR_OR_FUNC_CALL_E" : ["#thisChainAccess# DOT ARITH_VAR_OR_FUNC_CALL_B","#thisAccess# EPSILON"],
 
+    "OP_GROUP_AA" : ["'assign'"],
     "OP_GROUP_A" : ["'logical_or'"],
     "OP_GROUP_B" : ["'logical_and'"],
     "OP_GROUP_C" : ["'bit_or'"],
