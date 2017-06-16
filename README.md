@@ -34,5 +34,6 @@ serve as an input to EasyCC-C++ to parse the user files and validate it against 
 * No inheritance
 * Can't declare and initialize on the same line
 
-### Additional info
+### Additional links
 UML for some classes (check tabs): https://drive.google.com/file/d/0B8fWEFscW3Z4c2pvSHNaSmRiVEE/view?usp=sharing
+Examples of BashClass language syntax: https://github.com/amirbawab/BashClass/tree/master/resources/src/input
