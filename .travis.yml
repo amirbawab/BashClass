@@ -1,7 +1,5 @@
-language: cpp
-
 compiler:
-  - g++
+  - c++
 
 sudo: required
 
