@@ -20,9 +20,9 @@
     "FUNCTION_PARAM_B" : ["EPSILON","COMMA FUNCTION_PARAM_A"],
 
     "BASH_DEC" : ["BASH_INLINE #bashCode#", "BASH_BLOCK #bashCode#"],
+    "BASH_INLINE" : ["'bash_inline'"],
+    "BASH_BLOCK" : ["'bash_block'"],
 
-    "THIS" : ["'this_ref'"],
-    
     "VARIABLE_DEC" : ["#newKey# VARIABLE #startVar# VARIABLE_TYPE #varType# VARIABLE_NAME #varName# SEMICOLON #endVar#"],
     "VARIABLE" : ["'var'"],
     "VARIABLE_TYPE" : ["'identifier'","'int_type'","'boolean_type'","'char_type'","'string_type'","'any_type'"],
@@ -30,6 +30,7 @@
 
     "RETURN_DEC" : ["RETURN #startReturn# RETURN_OPT_EXPR SEMICOLON #endReturn#"],
     "RETURN_OPT_EXPR": ["EXPR_DEC #returnExpr#","EPSILON #returnVoid#"],
+    "RETURN" : ["'return'"],
 
     "STATEMENT" : ["#newKey# IF #startIf# OPEN_PAR EXPR_DEC #ifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endIf# ELIF_OPT ELSE_OPT",
                     "#newKey# WHILE #startWhile# OPEN_PAR EXPR_DEC #whileCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endWhile#"],
@@ -38,11 +39,6 @@
     "ELIF_OPT" : ["EPSILON", "#newKey# ELIF #startElif# OPEN_PAR EXPR_DEC #elifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endElif# ELIF_OPT"],
     "ELSE_OPT" : ["EPSILON", "#newKey# ELSE #startElse# OPEN_CUR STATEMENT_BODY CLOSE_CUR #endElse#"],
 
-    "BASH_SUB" : ["'bash_sub'"],
-    "BASH_INLINE" : ["'bash_inline'"],
-    "BASH_BLOCK" : ["'bash_block'"],
-
-    "RETURN" : ["'return'"],
     "IF" : ["'if'"],
     "ELIF" : ["'elif'"],
     "ELSE" : ["'else'"],
@@ -97,6 +93,7 @@
         "BASH_SUB #tokenUse#",
         "ARITH_VAR_OR_FUNC_CALL"
     ],
+    "BASH_SUB" : ["'bash_sub'"],
     "NEW": ["'new'"],
 
     "ARITH_VAR_OR_FUNC_CALL" : ["#startChain# ARITH_VAR_OR_FUNC_CALL_A #endChain#"],
@@ -105,6 +102,7 @@
     "ARITH_VAR_OR_FUNC_CALL_C" : ["#varAccess# EPSILON","#varChainAccess# DOT ARITH_VAR_OR_FUNC_CALL_B","#functionChainCall# IDENTIFIER_FUNCTION_CALL ARITH_VAR_OR_FUNC_CALL_D"],
     "ARITH_VAR_OR_FUNC_CALL_D" : ["#functionCall# EPSILON","DOT ARITH_VAR_OR_FUNC_CALL_B"],
     "ARITH_VAR_OR_FUNC_CALL_E" : ["#thisChainAccess# DOT ARITH_VAR_OR_FUNC_CALL_B","#thisAccess# EPSILON"],
+    "THIS" : ["'this_ref'"],
 
     "OP_GROUP_AA" : ["'assign'"],
     "OP_GROUP_A" : ["'logical_or'"],
