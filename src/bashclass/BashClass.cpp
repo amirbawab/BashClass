@@ -584,6 +584,9 @@ void BashClass::initHandlers() {
             expression->setRightOperand(rightOperand);
             expression->setOperator(operatorToken);
 
+            // Evaluate expression
+            expression->evaluate();
+
             // Push expression again as an operand
             m_expressionOperandStack.push_back(expression);
         }
@@ -605,6 +608,9 @@ void BashClass::initHandlers() {
             expression->setRightOperand(rightOperand);
             expression->setLeftOperand(leftOperand);
             expression->setOperator(operatorToken);
+
+            // Evaluate expression
+            expression->evaluate();
 
             // Push expression again as an operand
             m_expressionOperandStack.push_back(expression);

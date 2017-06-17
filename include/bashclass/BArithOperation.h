@@ -17,6 +17,21 @@ private:
     // Operator of the expression
     std::shared_ptr<ecc::LexicalToken> m_operatorToken;
 
+    // Type of this arithmetic operation
+    std::string m_typeValue;
+
+    /**
+     * Evaluate arith operation with two operands
+     * @return arith operation type
+     */
+    std::string _evaluateTwoOperands();
+
+    /**
+     * Evaluate arith operation with right operand only
+     * @return arith operation type
+     */
+    std::string _evaluateRightOperand();
+
 public:
 
     // Boolean expression
@@ -86,7 +101,12 @@ public:
      * Get expression type
      * @return expression type
      */
-    std::string getTypeValueAsString();
+    std::string getTypeValueAsString() { return m_typeValue;};
+
+    /**
+     * Evaluate arithmetic operation
+     */
+    void evaluate();
 };
 
 #endif
