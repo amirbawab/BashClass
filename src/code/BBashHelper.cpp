@@ -4,7 +4,6 @@
 #include <bashclass/BException.h>
 #include <bashclass/BGlobal.h>
 #include <bashclass/BVariableChainAccess.h>
-#include <bashclass/BFunctionChainCall.h>
 #include <iostream>
 #include <bashclass/BArithOperation.h>
 #include <bashclass/BVariableAccess.h>
@@ -18,8 +17,20 @@ std::string TMP_FUNCTION_RETURN = "_tmp_return_";
 std::string RESULT = "_result_";
 std::string EXPRESSION = "_expression_";
 
-// Delcare function (when necessary)
-std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression,
+/**
+ * Structure for the return of an expression
+ */
+struct ExprReturn {
+    const static short DATA = 0;
+    const static short VARIABLE = 1;
+    ExprReturn(std::string value, short type): value(value), type(type){}
+    std::string value;
+    int type;
+    std::string formattedValue() { return type == VARIABLE ? "${" + value + "}" : value;}
+};
+
+// Declare function (when necessary)
+ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression,
                               std::stringstream &ss);
 /**
  * Indent generated code
@@ -97,18 +108,6 @@ void _varChainAccess_member_middle(std::shared_ptr<BVariableChainAccess> variabl
 }
 
 /**
- * Generate code for a variable chain access that is a member and is placed last in the chain
- * @param variableChainAccess
- * @param prevResult
- * @param ss
- */
-void _varChainAccess_member_last(std::shared_ptr<BVariableChainAccess> variableChainAccess,
-                          std::string prevResult, std::stringstream &ss) {
-    ss << variableChainAccess->getVariable()->getParentScope()->findClosestClass()->getLabel().str()
-       << "[${" << prevResult << "},\"" << variableChainAccess->getVariable()->getLabel().str() << "\"]";
-}
-
-/**
  * Generate code for a variable call that is not a member
  * @param variableChainAccess
  * @param ss
@@ -164,7 +163,8 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             std::vector<std::string> argumentsValues;
             auto arguments = functionChainCall->getArguments();
             for(size_t argIndex=0; argIndex < arguments.size(); argIndex++){
-                argumentsValues.push_back(_expressionToCode(scope, arguments[argIndex], ss));
+                auto expression = _expressionToCode(scope, arguments[argIndex], ss);
+                argumentsValues.push_back(expression.formattedValue());
             }
 
             // Prepare the return variable if required
@@ -217,16 +217,39 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
     }
 }
 
+/**
+ * Generate code for an arithmetic operation (1)
+ * @param left
+ * @param op
+ * @param right
+ * @return arithmetic operation code
+ */
 std::string _arithOpForm1(std::string left, std::string op, std::string right) {
     return "$(( " + left + " " + op + " " + right + " ))";
 }
 
+/**
+ * Generate code for an arithmetic operation (2)
+ * @param left
+ * @param op
+ * @param right
+ * @return arithmetic operation code
+ */
 std::string _arithOpForm2(std::string left, std::string op, std::string right) {
     return "$([[ \"" + left + "\" " + op + " \"" + right + "\" ]] && echo 1 || echo 0)";
 }
 
-std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression,
+/**
+ * Convert expression to code
+ * @param scope
+ * @param expression
+ * @param ss
+ * @return ExprReturn object
+ */
+ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression,
                               std::stringstream &ss) {
+
+    // Cast expression
     auto thisAccess = std::dynamic_pointer_cast<BThisAccess>(expression);
     auto variableAccess = std::dynamic_pointer_cast<BVariableAccess>(expression);
     auto functionCall = std::dynamic_pointer_cast<BFunctionCall>(expression);
@@ -236,10 +259,16 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
     // Assign a unique key for each expression
     static unsigned int uniqueId = 0;
 
+    /********************
+     *       THIS
+     ********************/
     if(thisAccess) {
-        return "${" + FUNCTION_THIS + "}";
+        return ExprReturn(FUNCTION_THIS, ExprReturn::VARIABLE);
     }
 
+    /********************
+     *   VARIABLE ACCESS
+     ********************/
     if(variableAccess) {
 
         // Process chain
@@ -247,9 +276,12 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
         _chainToCode(scope, variableAccess->getChain(), 0, variableAccess->getChain()->size()-1, returnMap, ss);
 
         // Get the variable key of the last element
-        return "${" + returnMap[variableAccess->last()] + "}";
+        return ExprReturn(returnMap[variableAccess->last()], ExprReturn::VARIABLE);
     }
 
+    /********************
+     *   FUNCTION CALL
+     ********************/
     if(functionCall) {
 
         // Process chain
@@ -257,120 +289,217 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
         _chainToCode(scope, functionCall->getChain(), 0, functionCall->getChain()->size()-1, returnMap, ss);
 
         // Get the variable key of the last element
-        return "${" + returnMap[functionCall->last()] + "}";
+        return ExprReturn(returnMap[functionCall->last()], ExprReturn::VARIABLE);
     }
 
+    /********************
+     *    TOKEN USE
+     ********************/
     if(tokenUse) {
 
         // If the token is null
         if(tokenUse->getLexicalToken()->getName() == BType::NULL_VALUE) {
-            return "0";
+            // TODO Store in const
+            return ExprReturn("0", ExprReturn::DATA);
         }
 
         // If the token is a true/false
         if(tokenUse->getLexicalToken()->getName() == BType::DATA_TYPE_NAME_BOOLEAN) {
             if(tokenUse->getLexicalToken()->getValue() == "true") {
-                return "1";
-            } else if(tokenUse->getLexicalToken()->getValue() == "false") {
-                return "0";
-            } else {
-                throw BException("Unrecognized boolean token value found when trying to generate code");
+                return ExprReturn("1", ExprReturn::DATA);
             }
+
+            if(tokenUse->getLexicalToken()->getValue() == "false") {
+                return ExprReturn("0", ExprReturn::DATA);
+            }
+            throw BException("Unrecognized boolean token value found when trying to generate code");
         }
 
         // If the token is a bash subshell
         if(tokenUse->getLexicalToken()->getName() == BType::DATA_TYPE_NAME_BASH_SUB) {
-            return "$( " + tokenUse->getLexicalToken()->getValue().
-                    substr(2, tokenUse->getLexicalToken()->getValue().length()-4) + " )";
+            return ExprReturn("$( " + tokenUse->getLexicalToken()->getValue().
+                    substr(2, tokenUse->getLexicalToken()->getValue().length()-4) + " )", ExprReturn::DATA);
         }
 
         // If the token is a string
         if(tokenUse->getLexicalToken()->getName() == BType::DATA_TYPE_NAME_STRING) {
-            return tokenUse->getLexicalToken()->getValue()
-                    .substr(1,tokenUse->getLexicalToken()->getValue().length()-2);
+            return ExprReturn(tokenUse->getLexicalToken()->getValue()
+                    .substr(1,tokenUse->getLexicalToken()->getValue().length()-2), ExprReturn::DATA);
         }
 
         // Write the lexical token value
-        return tokenUse->getLexicalToken()->getValue();
+        return ExprReturn(tokenUse->getLexicalToken()->getValue(), ExprReturn::DATA);
     }
 
+    /********************
+     *  ARITH OPERATION
+     ********************/
     if(arithOperation) {
+
         // Get the type of the arithmetic operation
         std::string arithOperationType = arithOperation->getTypeValueAsString();
         std::string leftOperandType = arithOperation->getLeftOperand()->getTypeValueAsString();
         std::string rightOperandType = arithOperation->getRightOperand()->getTypeValueAsString();
+        std::string arithOperator = arithOperation->getOperator()->getName();
 
         // If both operand are defined
         if(arithOperation->getLeftOperand() && arithOperation->getRightOperand()) {
-            auto leftStr = _expressionToCode(scope, arithOperation->getLeftOperand(), ss);
-            auto rightStr = _expressionToCode(scope, arithOperation->getRightOperand(), ss);
 
+            // Process left and right operands
+            ExprReturn leftOp = _expressionToCode(scope, arithOperation->getLeftOperand(), ss);
+            ExprReturn rightOp = _expressionToCode(scope, arithOperation->getRightOperand(), ss);
+
+            // Generate a new key to store the new expression result
             _indent(scope, ss);
             std::string newKey = _generateExpressionKey(uniqueId++);
 
-            if(arithOperationType == BType::TYPE_VALUE_STRING) {
+            // +
+            if(arithOperator == BArithOperation::DYNAMIC_PLUS) {
 
                 // String concatenation
-                ss << "local " << newKey << "=\"" << leftStr << rightStr << "\"" << std::endl;
-
-            } else if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
-
-                if(arithOperation->getOperator()->getName() == BArithOperation::BOOL_IS_NOT_EQUAL
-                   || arithOperation->getOperator()->getName() == BArithOperation::BOOL_IS_EQUAL
-                   || arithOperation->getOperator()->getName() == BArithOperation::BOOL_LESS_THAN
-                   || arithOperation->getOperator()->getName() == BArithOperation::BOOL_GREATER_THAN) {
-
-                    if(leftOperandType == BType::TYPE_VALUE_STRING || rightOperandType == BType::TYPE_VALUE_STRING) {
-                        ss << "local " << newKey << "="
-                           << _arithOpForm2(leftStr, arithOperation->getOperator()->getValue(), rightStr)
-                           << std::endl;
-                    } else {
-                        ss << "local " << newKey << "="
-                           << _arithOpForm1(leftStr, arithOperation->getOperator()->getValue(), rightStr)
-                           << std::endl;
-                    }
-                } else {
-                    ss << "local " << newKey << "=" << _arithOpForm1(leftStr, arithOperation->getOperator()->getValue(), rightStr)
-                       << std::endl;
+                if(arithOperationType == BType::TYPE_VALUE_STRING) {
+                    ss << "local " << newKey << "=\"" << leftOp.formattedValue() << rightOp.formattedValue()
+                       << "\"" << std::endl;
+                    return ExprReturn(newKey, ExprReturn::VARIABLE);
                 }
 
-            } else if(arithOperationType == BType::TYPE_VALUE_INT || BType::isUserDefinedType(arithOperationType)) {
+                // Integer addition
+                if(arithOperationType == BType::TYPE_VALUE_INT) {
+                    ss << "local " << newKey << "="
+                       << _arithOpForm1(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
+                                        rightOp.formattedValue())
+                       << std::endl;
+                    return ExprReturn(newKey, ExprReturn::VARIABLE);
+                }
 
-                ss << "local " << newKey << "=" << _arithOpForm1(leftStr, arithOperation->getOperator()->getValue(), rightStr)
-                   << std::endl;
-            } else {
-                throw BException("Cannot generate code for an unknown arithmetic operation type with 2 operand");
+                throw BException("Cannot generator code for the + operator with an unexpected return type");
             }
 
-            return "${" + newKey + "}";
+            // |, ^, &, <<, >>, -, *, /, %, **
+            if(arithOperator == BArithOperation::INT_BIT_OR || arithOperator == BArithOperation::INT_BIT_XOR
+               || arithOperator == BArithOperation::INT_BIT_AND || arithOperator == BArithOperation::INT_LEFT_SHIFT
+               || arithOperator == BArithOperation::INT_RIGHT_SHIFT || arithOperator == BArithOperation::INT_MINUS
+               || arithOperator == BArithOperation::INT_MULTIPLY || arithOperator == BArithOperation::INT_DIVIDE
+               || arithOperator == BArithOperation::INT_MOD || arithOperator == BArithOperation::INT_EXPONENTIAL) {
+
+                // Integer
+                if(arithOperationType == BType::TYPE_VALUE_INT) {
+                    ss << "local " << newKey << "="
+                       << _arithOpForm1(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
+                                        rightOp.formattedValue())
+                       << std::endl;
+                    return ExprReturn(newKey, ExprReturn::VARIABLE);
+                }
+
+                throw BException("Cannot generator code for the " + arithOperator +
+                                         " operator with an unexpected return type");
+            }
+
+            // !=, ==, <, >
+            if(arithOperator == BArithOperation::BOOL_IS_NOT_EQUAL || arithOperator == BArithOperation::BOOL_IS_EQUAL
+               || arithOperator == BArithOperation::BOOL_LESS_THAN || arithOperator == BArithOperation::BOOL_GREATER_THAN) {
+
+                // Boolean comparison
+                if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
+
+                    // String comparison
+                    if(leftOperandType == BType::TYPE_VALUE_STRING || rightOperandType == BType::TYPE_VALUE_STRING) {
+                        ss << "local " << newKey << "="
+                           << _arithOpForm2(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
+                                            rightOp.formattedValue())
+                           << std::endl;
+                        return ExprReturn(newKey, ExprReturn::VARIABLE);
+                    }
+
+                    // All other types comparison
+                    ss << "local " << newKey << "="
+                       << _arithOpForm1(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
+                                        rightOp.formattedValue())
+                       << std::endl;
+                    return ExprReturn(newKey, ExprReturn::VARIABLE);
+                }
+                throw BException("Cannot generator code for the " + arithOperationType +
+                                         " operator with an unexpected return type");
+            }
+
+            // ||, &&, <=, >=
+            if(arithOperator == BArithOperation::BOOL_LOGICAL_OR || arithOperator == BArithOperation::BOOL_LOGICAL_AND
+               || arithOperator == BArithOperation::BOOL_LESS_OR_EQUAL || arithOperator == BArithOperation::BOOL_GREATER_OR_EQUAL) {
+
+                // Boolean comparison
+                if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
+                    ss << "local " << newKey << "="
+                       << _arithOpForm1(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
+                                        rightOp.formattedValue())
+                       << std::endl;
+                    return ExprReturn(newKey, ExprReturn::VARIABLE);
+                }
+            }
+
+            // =
+            if(arithOperator == BArithOperation::DYNAMIC_ASSIGN) {
+
+               // All types have the same code generated
+                ss << "local " << newKey << "="
+                   << _arithOpForm1(leftOp.value, arithOperation->getOperator()->getValue(), rightOp.formattedValue())
+                   << std::endl;
+                return ExprReturn(newKey, ExprReturn::VARIABLE);
+            }
+
+            throw BException("Cannot generator code for an arithmetic operation with two operands and unknown operator");
         }
 
+        // If only the right operand is defined
         if(arithOperation->getRightOperand()) {
 
+            // Process right operand
             auto rightStr = _expressionToCode(scope, arithOperation->getRightOperand(), ss);
+
+            // Generate new key to store the new expression
             _indent(scope, ss);
             std::string newKey = _generateExpressionKey(uniqueId++);
 
-            if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
-                ss << "local " << newKey << "=" << _arithOpForm1(rightStr, "^", "1") << std::endl;
-            } else if (arithOperationType == BType::TYPE_VALUE_INT) {
-                ss << "local " << newKey << "="
-                   << _arithOpForm1(rightStr, "*", "(" + arithOperation->getOperator()->getValue() + "1)")
-                   << std::endl;
-            }else {
-                throw BException("Cannot generate code for an unknown arithmetic operation type with right operand");
+            // !
+            if(arithOperator == BArithOperation::BOOL_NOT) {
+
+                // Boolean toggle
+                if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
+                    ss << "local " << newKey << "=" << _arithOpForm1(rightStr.formattedValue(), "^", "1") << std::endl;
+                    return ExprReturn(newKey, ExprReturn::VARIABLE);
+                }
+                throw BException("Cannot generator code for the ! operator with an unexpected return type");
             }
-            return "${" + newKey + "}";
+
+            // +, -
+            if(arithOperator == BArithOperation::DYNAMIC_PLUS || arithOperator == BArithOperation::INT_MINUS) {
+
+                // Integer sign
+                if(arithOperationType == BType::TYPE_VALUE_INT) {
+                    ss << "local " << newKey << "="
+                       << _arithOpForm1(rightStr.formattedValue(), "*", "(" + arithOperation->getOperator()->getValue() + "1)")
+                       << std::endl;
+                    return ExprReturn(newKey, ExprReturn::VARIABLE);
+                }
+                throw BException("Cannot generator code for the " + arithOperator +
+                                         " operator with an unexpected return type");
+            }
+            throw BException("Cannot generator code for an arithmetic operation with one operand and unknown operator");
         }
         throw BException("Cannot generate code for an undefined arithmetic operation composition");
     }
     throw BException("Cannot generate code for an undefined expression type");
 }
 
+/**
+ * Generate bash header
+ */
 void BBashHelper::header() {
     BGenerateCode::get().writePreCode();
 }
 
+/**
+ * Generate bash footer
+ */
 void BBashHelper::footer() {
 
     std::stringstream ss;
@@ -408,6 +537,10 @@ void BBashHelper::footer() {
     BGenerateCode::get().writePostCode();
 }
 
+/**
+ * Create class
+ * @param classScope
+ */
 void BBashHelper::declareClass(std::shared_ptr<BClass> classScope) {
     std::stringstream ss;
     ss << "declare -A " << classScope->getLabel().str() << "=()" << std::endl;
@@ -415,6 +548,10 @@ void BBashHelper::declareClass(std::shared_ptr<BClass> classScope) {
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Create global variable
+ * @param variable
+ */
 void BBashHelper::createGlobalVar(std::shared_ptr<BVariable> variable) {
     std::stringstream ss;
     ss << std::endl;
@@ -424,6 +561,10 @@ void BBashHelper::createGlobalVar(std::shared_ptr<BVariable> variable) {
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Create local variable
+ * @param variable
+ */
 void BBashHelper::createLocalVar(std::shared_ptr<BVariable> variable) {
     std::stringstream ss;
     ss << std::endl;
@@ -435,6 +576,11 @@ void BBashHelper::createLocalVar(std::shared_ptr<BVariable> variable) {
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Write bash
+ * @param scope
+ * @param token
+ */
 void BBashHelper::bash(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
     std::stringstream ss;
     ss << std::endl;
@@ -453,6 +599,10 @@ void BBashHelper::bash(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lexic
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Create function
+ * @param function
+ */
 void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
     std::stringstream ss;
     ss << std::endl;
@@ -500,6 +650,10 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Close function
+ * @param function
+ */
 void BBashHelper::closeFunction(std::shared_ptr<BFunction> function) {
     std::stringstream ss;
 
@@ -513,6 +667,11 @@ void BBashHelper::closeFunction(std::shared_ptr<BFunction> function) {
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Write expression
+ * @param scope
+ * @param expression
+ */
 void BBashHelper::writeExpression(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression) {
     std::stringstream ss;
     ss << std::endl;
@@ -522,6 +681,10 @@ void BBashHelper::writeExpression(std::shared_ptr<BScope> scope, std::shared_ptr
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Write return statement
+ * @param rtn
+ */
 void BBashHelper::writeReturn(std::shared_ptr<BReturn> rtn) {
     std::stringstream ss;
 
@@ -533,11 +696,11 @@ void BBashHelper::writeReturn(std::shared_ptr<BReturn> rtn) {
     // Check if function has an expression, or is void
     if(rtn->getExpression()) {
         // Start processing the expression
-        std::string expression = _expressionToCode(rtn->getParentScope(), rtn->getExpression(), ss);
+        ExprReturn expression = _expressionToCode(rtn->getParentScope(), rtn->getExpression(), ss);
 
         // Write the return statement
         _indent(rtn->getParentScope(), ss);
-        ss << FUNCTION_RETURN << "=" << expression << std::endl;
+        ss << FUNCTION_RETURN << "=" << expression.formattedValue() << std::endl;
     }
 
     // Return from bash function
@@ -547,6 +710,10 @@ void BBashHelper::writeReturn(std::shared_ptr<BReturn> rtn) {
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Create if statement
+ * @param ifStatement
+ */
 void BBashHelper::createIf(std::shared_ptr<BIf> ifStatement) {
     std::stringstream ss;
 
@@ -556,7 +723,7 @@ void BBashHelper::createIf(std::shared_ptr<BIf> ifStatement) {
     ss << "# If statement" << std::endl;
 
     // Start processing the expression
-    std::string expression = _expressionToCode(ifStatement->getParentScope(), ifStatement->getExpression(), ss);
+    ExprReturn expression = _expressionToCode(ifStatement->getParentScope(), ifStatement->getExpression(), ss);
 
     // Reset if statement lock
     _indent(ifStatement->getParentScope(), ss);
@@ -564,7 +731,7 @@ void BBashHelper::createIf(std::shared_ptr<BIf> ifStatement) {
 
     // Write if statement
     _indent(ifStatement->getParentScope(), ss);
-    ss << "if (( " << expression << " )); then" << std::endl;
+    ss << "if (( " << expression.formattedValue() << " )); then" << std::endl;
 
     // Acquire the lock
     _indent(ifStatement->getParentScope(), ss);
@@ -573,6 +740,10 @@ void BBashHelper::createIf(std::shared_ptr<BIf> ifStatement) {
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Create elif statement
+ * @param elifStatement
+ */
 void BBashHelper::createElif(std::shared_ptr<BElif> elifStatement) {
     std::stringstream ss;
 
@@ -586,11 +757,11 @@ void BBashHelper::createElif(std::shared_ptr<BElif> elifStatement) {
     ss << "if ! (( ${" << _generateIfLock(elifStatement->getParentIf()) << "} )); then" << std::endl;
 
     // Start processing the expression
-    std::string expression = _expressionToCode(elifStatement->getParentScope(), elifStatement->getExpression(), ss);
+    ExprReturn expression = _expressionToCode(elifStatement->getParentScope(), elifStatement->getExpression(), ss);
 
     // Write elif statement
     _indent(elifStatement->getParentScope(), ss);
-    ss << "if (( " << expression << " )); then" << std::endl;
+    ss << "if (( " << expression.formattedValue() << " )); then" << std::endl;
 
     // Acquire lock
     _indent(elifStatement->getParentScope(), ss);
@@ -599,6 +770,10 @@ void BBashHelper::createElif(std::shared_ptr<BElif> elifStatement) {
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Create else statement
+ * @param elseStatement
+ */
 void BBashHelper::createElse(std::shared_ptr<BElse> elseStatement) {
     std::stringstream ss;
 
@@ -614,6 +789,10 @@ void BBashHelper::createElse(std::shared_ptr<BElse> elseStatement) {
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Close if statement
+ * @param ifStatement
+ */
 void BBashHelper::closeIf(std::shared_ptr<BIf> ifStatement) {
     std::stringstream ss;
     _indent(ifStatement->getParentScope(), ss);
@@ -621,6 +800,10 @@ void BBashHelper::closeIf(std::shared_ptr<BIf> ifStatement) {
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Close elif statement
+ * @param elifStatement
+ */
 void BBashHelper::closeElif(std::shared_ptr<BElif> elifStatement) {
     std::stringstream ss;
     _indent(elifStatement->getParentScope(), ss);
@@ -630,6 +813,10 @@ void BBashHelper::closeElif(std::shared_ptr<BElif> elifStatement) {
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Close else statement
+ * @param elseStatement
+ */
 void BBashHelper::closeElse(std::shared_ptr<BElse> elseStatement) {
     std::stringstream ss;
     _indent(elseStatement->getParentScope(), ss);
@@ -637,6 +824,10 @@ void BBashHelper::closeElse(std::shared_ptr<BElse> elseStatement) {
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Create while statement
+ * @param whileStatement
+ */
 void BBashHelper::createWhile(std::shared_ptr<BWhile> whileStatement) {
     std::stringstream ss;
 
@@ -650,15 +841,19 @@ void BBashHelper::createWhile(std::shared_ptr<BWhile> whileStatement) {
     ss << "while true; do" << std::endl;
 
     // Start processing the expression
-    std::string expression = _expressionToCode(whileStatement->getParentScope(), whileStatement->getExpression(), ss);
+    ExprReturn expression = _expressionToCode(whileStatement->getParentScope(), whileStatement->getExpression(), ss);
 
     // Create if statement
     _indent(whileStatement->getParentScope(), ss);
-    ss << "! (( " << expression << " )) && break" << std::endl;
+    ss << "! (( " << expression.formattedValue() << " )) && break" << std::endl;
 
     BGenerateCode::get().write(ss);
 }
 
+/**
+ * Close while statement
+ * @param whileStatement
+ */
 void BBashHelper::closeWhile(std::shared_ptr<BWhile> whileStatement) {
     std::stringstream ss;
     _indent(whileStatement->getParentScope(), ss);
