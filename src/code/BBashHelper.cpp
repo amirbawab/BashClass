@@ -144,7 +144,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             // Generate new key for this variable
             std::string newKey = _generateResultKey(uniqueId++);
             returnMap[variableChainAccess] = newKey;
-            ss << "local " << newKey << "=${";
+            ss << "local -n " << newKey << "=";
 
             if(i == 0) {
                 if(variableChainAccess->getVariable()->isClassMember()) {
@@ -156,7 +156,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
                 _varChainAccess_member_middle(variableChainAccess, (*chain)[i-1]->getTypeScope()->getLabel().str(),
                                        returnMap[(*chain)[i-1]], ss);
             }
-            ss << "}" << std::endl;
+            ss << std::endl;
 
         } else if (functionChainCall) {
 
@@ -334,7 +334,7 @@ std::string _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBE
                        << std::endl;
                 }
 
-            } else if(arithOperationType == BType::TYPE_VALUE_INT) {
+            } else if(arithOperationType == BType::TYPE_VALUE_INT || BType::isUserDefinedType(arithOperationType)) {
 
                 ss << "local " << newKey << "=" << _arithOpForm1(leftStr, arithOperation->getOperator()->getValue(), rightStr)
                    << std::endl;
