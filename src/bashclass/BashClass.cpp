@@ -6,7 +6,7 @@
 #include <bashclass/BBashHelper.h>
 #include <bashclass/BReturn.h>
 #include <bashclass/BThisAccess.h>
-#include <bashclass/BVariableAssign.h>
+#include <bashclass/BVariableAccess.h>
 #include <bashclass/BFunctionCall.h>
 #include <bashclass/BGenerateCode.h>
 
@@ -494,58 +494,6 @@ void BashClass::initHandlers() {
         }
     };
 
-    /***********************************************************
-     *     VARIABLE ASSIGN, VARIABLE ACCESS AND FUNCTION CALL
-     ***********************************************************/
-
-    m_startOuterCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            m_chainBuilderStack.push_back(std::make_shared<BChain>());
-        }
-    };
-
-    m_endOuterCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            m_chainBuilderStack.pop_back();
-        }
-    };
-
-    m_varAssign = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-
-            // Configure variable assignment
-            auto variableAccess = std::make_shared<BVariableAccess>();
-            variableAccess->setChain(m_chainBuilderStack.back());
-            auto variableAssign = std::make_shared<BVariableAssign>();
-            variableAssign->setVariableAccess(variableAccess);
-            variableAssign->setExpression(m_expressionOperandStack.back());
-
-            // Pop consumed expression
-            m_expressionOperandStack.pop_back();
-
-            // Register variable assignment
-            m_scopeStack.back()->registerVariableAssign(m_referenceKey, variableAssign);
-        } else if(phase == BashClass::PHASE_GENERATE) {
-
-            // Generate assign statement
-            BBashHelper::assignVariable(m_scopeStack.back()->getVariableAssignByReferenceKey(m_referenceKey));
-        }
-    };
-
-    m_functionExec = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            auto functionCall = std::make_shared<BFunctionCall>();
-            functionCall->setChain(m_chainBuilderStack.back());
-
-            // Register function call
-            m_scopeStack.back()->registerFunctionCall(m_referenceKey, functionCall);
-        } else if(phase == BashClass::PHASE_GENERATE) {
-
-            // Generate function execution statement
-            BBashHelper::functionExec(m_scopeStack.back()->getFunctionCallByReferenceKey(m_referenceKey));
-        }
-    };
-
     /**************************************
      *          RETURN STATEMENT
      **************************************/
@@ -710,6 +658,19 @@ void BashClass::initHandlers() {
             auto functionCall = std::make_shared<BFunctionCall>();
             functionCall->setChain(m_chainBuilderStack.back());
             m_expressionOperandStack.push_back(functionCall);
+        }
+    };
+
+    m_evalExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable) {
+        if(phase == BashClass::PHASE_EVAL) {
+            auto expression = m_expressionOperandStack.back();
+            m_scopeStack.back()->registerExpression(m_referenceKey, expression);
+
+            // Remove consumed epxression
+            m_expressionOperandStack.pop_back();
+        } else if(phase == BashClass::PHASE_GENERATE) {
+            auto expression = m_scopeStack.back()->getExpressionByReferenceKey(m_referenceKey);
+            BBashHelper::writeExpression(m_scopeStack.back(), expression);
         }
     };
 }

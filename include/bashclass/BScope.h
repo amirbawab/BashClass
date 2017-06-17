@@ -6,9 +6,8 @@
 #include <memory>
 #include <sstream>
 #include <easycc/LexicalToken.h>
+#include <bashclass/IBExpression.h>
 
-class BVariableAssign;
-class BFunctionCall;
 class BVariable;
 class BFunction;
 class BClass;
@@ -23,11 +22,8 @@ protected:
     // Register the scopes defines in this scope
     std::map<unsigned int,std::shared_ptr<BScope>> m_scopes;
 
-    // Register variable assignment statements
-    std::map<unsigned int,std::shared_ptr<BVariableAssign>> m_variablesAssignments;
-
-    // Register function calls
-    std::map<unsigned int,std::shared_ptr<BFunctionCall>> m_functionCalls;
+    // Register expressions
+    std::map<unsigned int,std::shared_ptr<IBExpression>> m_expressions;
 
     // Register the return statements defined in this scope
     std::shared_ptr<BReturn> m_return;
@@ -163,32 +159,18 @@ public:
     void registerVariable(unsigned int referenceKey, std::shared_ptr<BVariable> variable);
 
     /**
-     * Register a variable assignment
+     * Register an expression
      * @param referenceKey
-     * @param variableAssign
+     * @param expression
      */
-    void registerVariableAssign(unsigned int referenceKey, std::shared_ptr<BVariableAssign> variableAssign);
+    void registerExpression(unsigned int referenceKey, std::shared_ptr<IBExpression> expression);
 
     /**
-     * Register a function call
-     * @param referenceKey
-     * @param functionCall
-     */
-    void registerFunctionCall(unsigned int referenceKey, std::shared_ptr<BFunctionCall> functionCall);
-
-    /**
-     * Get a variable assignment
-     * @param referenceKey
-     * @return variable assignment
-     */
-    std::shared_ptr<BVariableAssign> getVariableAssignByReferenceKey(unsigned int referenceKey);
-
-    /**
-     * Get a function call
+     * Get an expression
      * @param referenceKey
      * @return function call
      */
-    std::shared_ptr<BFunctionCall> getFunctionCallByReferenceKey(unsigned int referenceKey);
+    std::shared_ptr<IBExpression> getExpressionByReferenceKey(unsigned int referenceKey);
 
     /**
      * Set return statement

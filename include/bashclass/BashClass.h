@@ -65,9 +65,6 @@ public:
     SemanticActionHandler m_paramName;
     SemanticActionHandler m_endParam;
 
-    SemanticActionHandler m_startOuterCall;
-    SemanticActionHandler m_endOuterCall;
-
     SemanticActionHandler m_startInnerCall;
     SemanticActionHandler m_endInnerCall;
 
@@ -102,10 +99,9 @@ public:
     SemanticActionHandler m_createExpr2;
     SemanticActionHandler m_endExpr;
 
-    SemanticActionHandler m_varAssign;
     SemanticActionHandler m_varAccess;
     SemanticActionHandler m_functionCall;
-    SemanticActionHandler m_functionExec;
+    SemanticActionHandler m_evalExpr;
 
     SemanticActionHandler m_setArgument;
     SemanticActionHandler m_startArgument;

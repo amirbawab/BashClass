@@ -10,7 +10,6 @@
 #include <bashclass/BException.h>
 #include <bashclass/BReport.h>
 #include <bashclass/BReturn.h>
-#include <bashclass/BVariableAssign.h>
 #include <bashclass/BFunctionCall.h>
 #include <bashclass/BIf.h>
 #include <bashclass/BElif.h>
@@ -245,28 +244,15 @@ void BScope::setReturn(std::shared_ptr<BReturn> ret) {
     }
 }
 
-void BScope::registerVariableAssign(unsigned int referenceKey, std::shared_ptr<BVariableAssign> variableAssign) {
-    m_variablesAssignments[referenceKey] = variableAssign;
-    variableAssign->setParentScope(shared_from_this());
+void BScope::registerExpression(unsigned int referenceKey, std::shared_ptr<IBExpression> expression) {
+    m_expressions[referenceKey] = expression;
 }
 
-std::shared_ptr<BVariableAssign> BScope::getVariableAssignByReferenceKey(unsigned int referenceKey) {
-    if(m_variablesAssignments.find(referenceKey) == m_variablesAssignments.end()) {
-        throw BException("Requesting a variable assignment with an unrecognized reference key");
+std::shared_ptr<IBExpression> BScope::getExpressionByReferenceKey(unsigned int referenceKey) {
+    if(m_expressions.find(referenceKey) == m_expressions.end()) {
+        throw BException("Requesting an expression with an unrecognized reference key");
     }
-    return m_variablesAssignments[referenceKey];
-}
-
-void BScope::registerFunctionCall(unsigned int referenceKey, std::shared_ptr<BFunctionCall> functionCall) {
-    m_functionCalls[referenceKey] = functionCall;
-    functionCall->setParentScope(shared_from_this());
-}
-
-std::shared_ptr<BFunctionCall> BScope::getFunctionCallByReferenceKey(unsigned int referenceKey) {
-    if(m_functionCalls.find(referenceKey) == m_functionCalls.end()) {
-        throw BException("Requesting a variable assignment with an unrecognized reference key");
-    }
-    return m_functionCalls[referenceKey];
+    return m_expressions[referenceKey];
 }
 
 bool BScope::hasReturn() {

@@ -56,8 +56,6 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#startElse#", bashClass.m_startElse);
     easyCC.registerSemanticAction("#endElse#", bashClass.m_endElse);
 
-    easyCC.registerSemanticAction("#startOuterCall#", bashClass.m_startOuterCall);
-    easyCC.registerSemanticAction("#endOuterCall#", bashClass.m_endOuterCall);
     easyCC.registerSemanticAction("#tokenUse#", bashClass.m_tokenUse);
     easyCC.registerSemanticAction("#thisAccess#", bashClass.m_thisAccess);
 
@@ -82,10 +80,9 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#returnVoid#", bashClass.m_returnVoid);
     easyCC.registerSemanticAction("#endReturn#", bashClass.m_endReturn);
 
-    easyCC.registerSemanticAction("#varAssign#", bashClass.m_varAssign);
+    easyCC.registerSemanticAction("#evalExpr#", bashClass.m_evalExpr);
     easyCC.registerSemanticAction("#varAccess#", bashClass.m_varAccess);
     easyCC.registerSemanticAction("#functionCall#", bashClass.m_functionCall);
-    easyCC.registerSemanticAction("#functionExec#", bashClass.m_functionExec);
 
     easyCC.registerSemanticAction("#setArgument#", bashClass.m_setArgument);
     easyCC.registerSemanticAction("#startArgument#", bashClass.m_startArgument);

@@ -6,7 +6,6 @@
 #include <bashclass/BVariable.h>
 #include <bashclass/BFunction.h>
 #include <bashclass/BChain.h>
-#include <bashclass/BVariableAssign.h>
 #include <bashclass/BFunctionCall.h>
 #include <bashclass/BReturn.h>
 #include <bashclass/BIf.h>
@@ -67,16 +66,11 @@ public:
     static void bash(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> lexicalToken);
 
     /**
-     * Generate a variable assign
-     * @param variableAssign
+     * Write expression
+     * @param scope
+     * @param expression
      */
-    static void assignVariable(std::shared_ptr<BVariableAssign> variableAssign);
-
-    /**
-     * Generate call for a function execution
-     * @param functionCall
-     */
-    static void functionExec(std::shared_ptr<BFunctionCall> functionCall);
+    static void writeExpression(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression);
 
     /**
      * Generate code for a return statement

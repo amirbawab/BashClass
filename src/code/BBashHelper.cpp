@@ -7,7 +7,6 @@
 #include <bashclass/BFunctionChainCall.h>
 #include <iostream>
 #include <bashclass/BArithOperation.h>
-#include <bashclass/BVariableAssign.h>
 #include <bashclass/BVariableAccess.h>
 #include <bashclass/BThisAccess.h>
 #include <bashclass/BTokenUse.h>
@@ -514,57 +513,12 @@ void BBashHelper::closeFunction(std::shared_ptr<BFunction> function) {
     BGenerateCode::get().write(ss);
 }
 
-void BBashHelper::assignVariable(std::shared_ptr<BVariableAssign> variableAssign) {
+void BBashHelper::writeExpression(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression) {
     std::stringstream ss;
-
-    std::shared_ptr<BVariableAccess> variableAccess = variableAssign->getVariableAccess();
-    std::shared_ptr<BChain> variableAccessChain = variableAccess->getChain();
-
-    // Store return values in unique keys in a map
-    std::map<std::shared_ptr<IBChainable>, std::string> returnMap;
-
-    // Add bash comments
     ss << std::endl;
-    _indent(variableAssign->getParentScope(), ss);
-    ss << "# Assign variable" << std::endl;
-
-    // Start processing the expression
-    std::string expression = _expressionToCode(variableAssign->getParentScope(), variableAssign->getExpression(), ss);
-
-    // Convert chain to code
-    if(variableAccessChain->size() >= 2) {
-        _chainToCode(variableAssign->getParentScope(), variableAccessChain, 0, variableAccessChain->size()-2,
-                     returnMap, ss);
-    }
-
-    // Add the last assignment statement
-    _indent(variableAssign->getParentScope(), ss);
-    if(variableAccess->last()->getVariable()->isClassMember()) {
-        if(variableAccessChain->size() == 1) {
-            _varChainAccess_member_first(variableAccess->last(), ss);
-        } else {
-            _varChainAccess_member_last(variableAccess->last(),
-                                        returnMap[(*variableAccessChain)[variableAccessChain->size()-2]], ss);
-        }
-    } else {
-        _varChainAccess_nonMember(variableAccess->last(), ss);
-    }
-    ss << "=" << expression << std::endl;
-    BGenerateCode::get().write(ss);
-}
-
-void BBashHelper::functionExec(std::shared_ptr<BFunctionCall> functionCall) {
-    std::stringstream ss;
-
-    // Store return values in unique keys in a map
-    std::map<std::shared_ptr<IBChainable>, std::string> returnMap;
-
-    // Convert chain to code
-    ss << std::endl;
-    _indent(functionCall->getParentScope(), ss);
-    ss << "# Execute a function" << std::endl;
-    _chainToCode(functionCall->getParentScope(), functionCall->getChain(), 0, functionCall->getChain()->size()-1,
-                 returnMap, ss);
+    _indent(scope, ss);
+    ss << "# Evaluate expression" << std::endl;
+    _expressionToCode(scope, expression, ss);
     BGenerateCode::get().write(ss);
 }
 
