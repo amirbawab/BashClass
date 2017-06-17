@@ -3,6 +3,7 @@
 #include <iostream>
 #include <bashclass/BException.h>
 #include <bashclass/BReport.h>
+#include <bashclass/BVariableAccess.h>
 
 const std::string BArithOperation::BOOL_LOGICAL_OR = "logical_or";
 const std::string BArithOperation::BOOL_LOGICAL_AND = "logical_and";
@@ -121,8 +122,35 @@ std::string BArithOperation::getTypeValueAsString() {
         // =
         if(m_operatorToken->getName() == DYNAMIC_ASSIGN) {
 
-            // TODO Test
-            return leftType;
+            // Left hand side must be a variable access
+            auto variableAccessCast = std::dynamic_pointer_cast<BVariableAccess>(m_leftOperand);
+            if(variableAccessCast) {
+
+                if(!variableAccessCast->last()->getVariable()) {
+                    throw BException("Cannot evaluate assignment type of an undefined variable access");
+                }
+
+                // Check if type is compatible
+                if(leftType == BType::TYPE_VALUE_ANY
+                   || (BType::isUserDefinedType(variableAccessCast->last()->getVariable()->getType()->getName())
+                       &&  rightType == BType::NULL_VALUE)
+                   || leftType == rightType) {
+                    return leftType;
+                }
+
+                BReport::getInstance().error()
+                        << "Variable " << variableAccessCast->last()->getVariable()->getName()->getValue()
+                        << " expects an expression of type "
+                        << leftType << " but given " << rightType << std::endl;
+                BReport::getInstance().printError();
+                return BType::UNDEFINED;
+            }
+
+            BReport::getInstance().error()
+                    << "Operator " << m_operatorToken->getValue()
+                    << " requires left operand to be a variable" << std::endl;
+            BReport::getInstance().printError();
+            return BType::UNDEFINED;
         }
 
         throw BException("Undefined operator in an expression with two operands");
