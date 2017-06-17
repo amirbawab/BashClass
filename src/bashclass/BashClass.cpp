@@ -456,13 +456,13 @@ void BashClass::initHandlers() {
      *      CHAIN ELEMENTS
      **************************/
 
-    m_startInnerCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_startChain = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_chainBuilderStack.push_back(std::make_shared<BChain>());
         }
     };
 
-    m_endInnerCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_endChain = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_chainBuilderStack.pop_back();
         }
@@ -570,10 +570,6 @@ void BashClass::initHandlers() {
      *          EXPRESSION
      **************************************/
 
-    m_startExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        // Do nothing ...
-    };
-
     m_createExpr1 = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
@@ -621,10 +617,6 @@ void BashClass::initHandlers() {
         }
     };
 
-    m_endExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        // Do nothing ...
-    };
-
     m_tokenUse = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto token = std::make_shared<BTokenUse>();
@@ -666,7 +658,7 @@ void BashClass::initHandlers() {
             auto expression = m_expressionOperandStack.back();
             m_scopeStack.back()->registerExpression(m_referenceKey, expression);
 
-            // Remove consumed epxression
+            // Remove consumed expression
             m_expressionOperandStack.pop_back();
         } else if(phase == BashClass::PHASE_GENERATE) {
             auto expression = m_scopeStack.back()->getExpressionByReferenceKey(m_referenceKey);

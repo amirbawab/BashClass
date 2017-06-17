@@ -59,8 +59,9 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#tokenUse#", bashClass.m_tokenUse);
     easyCC.registerSemanticAction("#thisAccess#", bashClass.m_thisAccess);
 
-    easyCC.registerSemanticAction("#startInnerCall#", bashClass.m_startInnerCall);
-    easyCC.registerSemanticAction("#endInnerCall#", bashClass.m_endInnerCall);
+    easyCC.registerSemanticAction("#startChain#", bashClass.m_startChain);
+    easyCC.registerSemanticAction("#endChain#", bashClass.m_endChain);
+
     easyCC.registerSemanticAction("#varChainAccess#", bashClass.m_varChainAccess);
     easyCC.registerSemanticAction("#functionChainCall#", bashClass.m_functionChainCall);
     easyCC.registerSemanticAction("#constructorChainCall#", bashClass.m_constructorChainCall);
@@ -69,11 +70,8 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#bashCode#", bashClass.m_bashCode);
 
     easyCC.registerSemanticAction("#putOp#", bashClass.m_putOp);
-
-    easyCC.registerSemanticAction("#startExpr#", bashClass.m_startExpr);
     easyCC.registerSemanticAction("#createExpr1#", bashClass.m_createExpr1);
     easyCC.registerSemanticAction("#createExpr2#", bashClass.m_createExpr2);
-    easyCC.registerSemanticAction("#endExpr#", bashClass.m_endExpr);
 
     easyCC.registerSemanticAction("#startReturn#", bashClass.m_startReturn);
     easyCC.registerSemanticAction("#returnExpr#", bashClass.m_returnExpr);

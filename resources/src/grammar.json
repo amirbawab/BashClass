@@ -58,7 +58,7 @@
     "SEMICOLON" : ["'semicolon'"],
     "DOT" : ["'dot'"],
 
-    "EXPR_DEC" : ["#startExpr# EXPR_AA #endExpr#"],
+    "EXPR_DEC" : ["EXPR_AA"],
     "EXPR_AA" : ["EXPR_A EXPR_AB"],
     "EXPR_AB" : ["EPSILON","OP_GROUP_AA #putOp# EXPR_A EXPR_AB #createExpr2#"],
     "EXPR_A" : ["EXPR_C EXPR_B"],
@@ -93,13 +93,13 @@
         "'truefalse' #tokenUse#",
         "'string' #tokenUse#",
         "'null' #tokenUse#",
-        "#startInnerCall# NEW CLASS_NAME #constructorChainCall# IDENTIFIER_FUNCTION_CALL #functionCall# #endInnerCall#",
+        "#startChain# NEW CLASS_NAME #constructorChainCall# IDENTIFIER_FUNCTION_CALL #functionCall# #endChain#",
         "BASH_SUB #tokenUse#",
         "ARITH_VAR_OR_FUNC_CALL"
     ],
     "NEW": ["'new'"],
 
-    "ARITH_VAR_OR_FUNC_CALL" : ["#startInnerCall# ARITH_VAR_OR_FUNC_CALL_A #endInnerCall#"],
+    "ARITH_VAR_OR_FUNC_CALL" : ["#startChain# ARITH_VAR_OR_FUNC_CALL_A #endChain#"],
     "ARITH_VAR_OR_FUNC_CALL_A" : ["THIS ARITH_VAR_OR_FUNC_CALL_E", "ARITH_VAR_OR_FUNC_CALL_B"],
     "ARITH_VAR_OR_FUNC_CALL_B" : ["IDENTIFIER ARITH_VAR_OR_FUNC_CALL_C"],
     "ARITH_VAR_OR_FUNC_CALL_C" : ["#varAccess# EPSILON","#varChainAccess# DOT ARITH_VAR_OR_FUNC_CALL_B","#functionChainCall# IDENTIFIER_FUNCTION_CALL ARITH_VAR_OR_FUNC_CALL_D"],
