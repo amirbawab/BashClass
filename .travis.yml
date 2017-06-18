@@ -12,7 +12,7 @@ addons:
 
 before_script:
   - sudo unlink /usr/bin/g++
-  - sudo ln -s /usr/bin/g++-5 /usr/bin/gcc
+  - sudo ln -s /usr/bin/g++-5 /usr/bin/g++
   - g++ --version
   - WORKSPACE=$PWD
   - sudo apt remove cmake
