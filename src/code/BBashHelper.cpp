@@ -354,7 +354,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             std::string newKey = _generateExpressionKey(uniqueId++);
 
             // +
-            if(arithOperator == BArithOperation::DYNAMIC_PLUS) {
+            if(arithOperator == BArithOperation::OP_PLUS) {
 
                 // String concatenation
                 if(arithOperationType == BType::TYPE_VALUE_STRING) {
@@ -376,11 +376,11 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             }
 
             // |, ^, &, <<, >>, -, *, /, %, **
-            if(arithOperator == BArithOperation::INT_BIT_OR || arithOperator == BArithOperation::INT_BIT_XOR
-               || arithOperator == BArithOperation::INT_BIT_AND || arithOperator == BArithOperation::INT_LEFT_SHIFT
-               || arithOperator == BArithOperation::INT_RIGHT_SHIFT || arithOperator == BArithOperation::INT_MINUS
-               || arithOperator == BArithOperation::INT_MULTIPLY || arithOperator == BArithOperation::INT_DIVIDE
-               || arithOperator == BArithOperation::INT_MOD || arithOperator == BArithOperation::INT_EXPONENTIAL) {
+            if(arithOperator == BArithOperation::OP_BIT_OR || arithOperator == BArithOperation::OP_BIT_XOR
+               || arithOperator == BArithOperation::OP_BIT_AND || arithOperator == BArithOperation::OP_LEFT_SHIFT
+               || arithOperator == BArithOperation::OP_RIGHT_SHIFT || arithOperator == BArithOperation::OP_MINUS
+               || arithOperator == BArithOperation::OP_MULTIPLY || arithOperator == BArithOperation::OP_DIVIDE
+               || arithOperator == BArithOperation::OP_MOD || arithOperator == BArithOperation::OP_EXPONENTIAL) {
 
                 // Integer
                 if(arithOperationType == BType::TYPE_VALUE_INT) {
@@ -396,8 +396,8 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             }
 
             // !=, ==, <, >
-            if(arithOperator == BArithOperation::BOOL_IS_NOT_EQUAL || arithOperator == BArithOperation::BOOL_IS_EQUAL
-               || arithOperator == BArithOperation::BOOL_LESS_THAN || arithOperator == BArithOperation::BOOL_GREATER_THAN) {
+            if(arithOperator == BArithOperation::OP_IS_NOT_EQUAL || arithOperator == BArithOperation::OP_IS_EQUAL
+               || arithOperator == BArithOperation::OP_LESS_THAN || arithOperator == BArithOperation::OP_GREATER_THAN) {
 
                 // Boolean comparison
                 if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
@@ -423,8 +423,8 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             }
 
             // ||, &&, <=, >=
-            if(arithOperator == BArithOperation::BOOL_LOGICAL_OR || arithOperator == BArithOperation::BOOL_LOGICAL_AND
-               || arithOperator == BArithOperation::BOOL_LESS_OR_EQUAL || arithOperator == BArithOperation::BOOL_GREATER_OR_EQUAL) {
+            if(arithOperator == BArithOperation::OP_LOGICAL_OR || arithOperator == BArithOperation::OP_LOGICAL_AND
+               || arithOperator == BArithOperation::OP_LESS_OR_EQUAL || arithOperator == BArithOperation::OP_GREATER_OR_EQUAL) {
 
                 // Boolean comparison
                 if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
@@ -437,7 +437,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             }
 
             // =
-            if(arithOperator == BArithOperation::DYNAMIC_ASSIGN) {
+            if(arithOperator == BArithOperation::OP_ASSIGN) {
 
                // All types have the same code generated
                 ss << "local " << newKey << "="
@@ -460,7 +460,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             std::string newKey = _generateExpressionKey(uniqueId++);
 
             // !
-            if(arithOperator == BArithOperation::BOOL_NOT) {
+            if(arithOperator == BArithOperation::OP_NOT) {
 
                 // Boolean toggle
                 if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
@@ -471,7 +471,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             }
 
             // +, -
-            if(arithOperator == BArithOperation::DYNAMIC_PLUS || arithOperator == BArithOperation::INT_MINUS) {
+            if(arithOperator == BArithOperation::OP_PLUS || arithOperator == BArithOperation::OP_MINUS) {
 
                 // Integer sign
                 if(arithOperationType == BType::TYPE_VALUE_INT) {

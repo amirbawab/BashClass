@@ -5,29 +5,28 @@
 #include <bashclass/BReport.h>
 #include <bashclass/BVariableAccess.h>
 
-const std::string BArithOperation::BOOL_LOGICAL_OR = "logical_or";
-const std::string BArithOperation::BOOL_LOGICAL_AND = "logical_and";
-const std::string BArithOperation::BOOL_IS_EQUAL = "is_equal";
-const std::string BArithOperation::BOOL_IS_NOT_EQUAL = "is_not_equal";
-const std::string BArithOperation::BOOL_LESS_THAN = "less_than";
-const std::string BArithOperation::BOOL_GREATER_THAN = "greater_than";
-const std::string BArithOperation::BOOL_LESS_OR_EQUAL = "less_equal_than";
-const std::string BArithOperation::BOOL_GREATER_OR_EQUAL = "greater_equal_than";
-const std::string BArithOperation::BOOL_NOT = "not";
+const std::string BArithOperation::OP_LOGICAL_OR = "logical_or";
+const std::string BArithOperation::OP_LOGICAL_AND = "logical_and";
+const std::string BArithOperation::OP_IS_EQUAL = "is_equal";
+const std::string BArithOperation::OP_IS_NOT_EQUAL = "is_not_equal";
+const std::string BArithOperation::OP_LESS_THAN = "less_than";
+const std::string BArithOperation::OP_GREATER_THAN = "greater_than";
+const std::string BArithOperation::OP_LESS_OR_EQUAL = "less_equal_than";
+const std::string BArithOperation::OP_GREATER_OR_EQUAL = "greater_equal_than";
+const std::string BArithOperation::OP_NOT = "not";
+const std::string BArithOperation::OP_BIT_OR = "bit_or";
+const std::string BArithOperation::OP_BIT_XOR = "bit_xor";
+const std::string BArithOperation::OP_BIT_AND = "bit_and";
+const std::string BArithOperation::OP_LEFT_SHIFT = "left_shift";
+const std::string BArithOperation::OP_RIGHT_SHIFT = "right_shift";
+const std::string BArithOperation::OP_MINUS = "minus";
+const std::string BArithOperation::OP_MULTIPLY = "multiply";
+const std::string BArithOperation::OP_DIVIDE = "divide";
+const std::string BArithOperation::OP_MOD = "mod";
+const std::string BArithOperation::OP_EXPONENTIAL = "exponential";
+const std::string BArithOperation::OP_PLUS = "plus";
+const std::string BArithOperation::OP_ASSIGN = "assign";
 
-const std::string BArithOperation::INT_BIT_OR = "bit_or";
-const std::string BArithOperation::INT_BIT_XOR = "bit_xor";
-const std::string BArithOperation::INT_BIT_AND = "bit_and";
-const std::string BArithOperation::INT_LEFT_SHIFT = "left_shift";
-const std::string BArithOperation::INT_RIGHT_SHIFT = "right_shift";
-const std::string BArithOperation::INT_MINUS = "minus";
-const std::string BArithOperation::INT_MULTIPLY = "multiply";
-const std::string BArithOperation::INT_DIVIDE = "divide";
-const std::string BArithOperation::INT_MOD = "mod";
-const std::string BArithOperation::INT_EXPONENTIAL = "exponential";
-
-const std::string BArithOperation::DYNAMIC_PLUS = "plus";
-const std::string BArithOperation::DYNAMIC_ASSIGN = "assign";
 
 std::string BArithOperation::_evaluateRightOperand() {
     std::string singleOperandType = m_rightOperand->getTypeValueAsString();
@@ -38,7 +37,7 @@ std::string BArithOperation::_evaluateRightOperand() {
     }
 
     // !
-    if(m_operatorToken->getName() == BOOL_NOT) {
+    if(m_operatorToken->getName() == OP_NOT) {
         if(singleOperandType == BType::TYPE_VALUE_BOOLEAN) {
             return BType::TYPE_VALUE_BOOLEAN;
         }
@@ -51,7 +50,7 @@ std::string BArithOperation::_evaluateRightOperand() {
     }
 
     // +, -
-    if(m_operatorToken->getName() == DYNAMIC_PLUS || m_operatorToken->getName() == INT_MINUS) {
+    if(m_operatorToken->getName() == OP_PLUS || m_operatorToken->getName() == OP_MINUS) {
         if(singleOperandType == BType::TYPE_VALUE_INT) {
             return BType::TYPE_VALUE_INT;
         }
@@ -76,7 +75,7 @@ std::string BArithOperation::_evaluateTwoOperands() {
     }
 
     // ==, !=
-    if(m_operatorToken->getName() == BOOL_IS_EQUAL || m_operatorToken->getName() == BOOL_IS_NOT_EQUAL) {
+    if(m_operatorToken->getName() == OP_IS_EQUAL || m_operatorToken->getName() == OP_IS_NOT_EQUAL) {
         if(leftType == rightType
            || (BType::isUserDefinedType(leftType) && rightType == BType::NULL_VALUE)
            || (BType::isUserDefinedType(rightType) && leftType == BType::NULL_VALUE)) {
@@ -91,7 +90,7 @@ std::string BArithOperation::_evaluateTwoOperands() {
     }
 
     // ||, &&
-    if(m_operatorToken->getName() == BOOL_LOGICAL_OR || m_operatorToken->getName() == BOOL_LOGICAL_AND) {
+    if(m_operatorToken->getName() == OP_LOGICAL_OR || m_operatorToken->getName() == OP_LOGICAL_AND) {
         if(leftType == rightType && leftType == BType::TYPE_VALUE_BOOLEAN) {
             return BType::TYPE_VALUE_BOOLEAN;
         }
@@ -104,8 +103,8 @@ std::string BArithOperation::_evaluateTwoOperands() {
     }
 
     // <, >, <=, >=
-    if(m_operatorToken->getName() == BOOL_LESS_THAN || m_operatorToken->getName() == BOOL_GREATER_THAN
-       || m_operatorToken->getName() == BOOL_LESS_OR_EQUAL || m_operatorToken->getName() == BOOL_GREATER_OR_EQUAL) {
+    if(m_operatorToken->getName() == OP_LESS_THAN || m_operatorToken->getName() == OP_GREATER_THAN
+       || m_operatorToken->getName() == OP_LESS_OR_EQUAL || m_operatorToken->getName() == OP_GREATER_OR_EQUAL) {
         if(leftType == rightType && leftType == BType::TYPE_VALUE_INT) {
             return BType::TYPE_VALUE_BOOLEAN;
         }
@@ -118,11 +117,11 @@ std::string BArithOperation::_evaluateTwoOperands() {
     }
 
     // |, ^, &, <<, >>, -, *, /, %, **
-    if(m_operatorToken->getName() == INT_BIT_OR || m_operatorToken->getName() == INT_BIT_XOR
-       || m_operatorToken->getName() == INT_BIT_AND || m_operatorToken->getName() == INT_LEFT_SHIFT
-       || m_operatorToken->getName() == INT_RIGHT_SHIFT || m_operatorToken->getName() == INT_MINUS
-       || m_operatorToken->getName() == INT_MULTIPLY || m_operatorToken->getName() == INT_DIVIDE
-       || m_operatorToken->getName() == INT_MOD || m_operatorToken->getName() == INT_EXPONENTIAL) {
+    if(m_operatorToken->getName() == OP_BIT_OR || m_operatorToken->getName() == OP_BIT_XOR
+       || m_operatorToken->getName() == OP_BIT_AND || m_operatorToken->getName() == OP_LEFT_SHIFT
+       || m_operatorToken->getName() == OP_RIGHT_SHIFT || m_operatorToken->getName() == OP_MINUS
+       || m_operatorToken->getName() == OP_MULTIPLY || m_operatorToken->getName() == OP_DIVIDE
+       || m_operatorToken->getName() == OP_MOD || m_operatorToken->getName() == OP_EXPONENTIAL) {
         if(leftType == rightType && leftType == BType::TYPE_VALUE_INT) {
             return BType::TYPE_VALUE_INT;
         }
@@ -135,7 +134,7 @@ std::string BArithOperation::_evaluateTwoOperands() {
     }
 
     // +
-    if(m_operatorToken->getName() == DYNAMIC_PLUS) {
+    if(m_operatorToken->getName() == OP_PLUS) {
 
         // If left or right is a string, then it is a string
         if(leftType == BType::TYPE_VALUE_STRING || rightType == BType::TYPE_VALUE_STRING) {
@@ -154,7 +153,7 @@ std::string BArithOperation::_evaluateTwoOperands() {
     }
 
     // =
-    if(m_operatorToken->getName() == DYNAMIC_ASSIGN) {
+    if(m_operatorToken->getName() == OP_ASSIGN) {
 
         // Left hand side must be a variable access
         auto variableAccessCast = std::dynamic_pointer_cast<BVariableAccess>(m_leftOperand);
