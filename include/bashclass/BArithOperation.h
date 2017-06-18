@@ -34,32 +34,28 @@ private:
 
 public:
 
-    // Boolean expression
-    static const std::string BOOL_LOGICAL_OR;
-    static const std::string BOOL_LOGICAL_AND;
-    static const std::string BOOL_IS_EQUAL;
-    static const std::string BOOL_IS_NOT_EQUAL;
-    static const std::string BOOL_LESS_THAN;
-    static const std::string BOOL_GREATER_THAN;
-    static const std::string BOOL_LESS_OR_EQUAL;
-    static const std::string BOOL_GREATER_OR_EQUAL;
-    static const std::string BOOL_NOT;
-
-    // Integer expression
-    static const std::string INT_BIT_OR;
-    static const std::string INT_BIT_XOR;
-    static const std::string INT_BIT_AND;
-    static const std::string INT_LEFT_SHIFT;
-    static const std::string INT_RIGHT_SHIFT;
-    static const std::string INT_MINUS;
-    static const std::string INT_MULTIPLY;
-    static const std::string INT_DIVIDE;
-    static const std::string INT_MOD;
-    static const std::string INT_EXPONENTIAL;
-
-    // Dynamic expression
-    static const std::string DYNAMIC_ASSIGN;
-    static const std::string DYNAMIC_PLUS;
+    // Operators names
+    static const std::string OP_LOGICAL_OR;
+    static const std::string OP_LOGICAL_AND;
+    static const std::string OP_IS_EQUAL;
+    static const std::string OP_IS_NOT_EQUAL;
+    static const std::string OP_LESS_THAN;
+    static const std::string OP_GREATER_THAN;
+    static const std::string OP_LESS_OR_EQUAL;
+    static const std::string OP_GREATER_OR_EQUAL;
+    static const std::string OP_NOT;
+    static const std::string OP_BIT_OR;
+    static const std::string OP_BIT_XOR;
+    static const std::string OP_BIT_AND;
+    static const std::string OP_LEFT_SHIFT;
+    static const std::string OP_RIGHT_SHIFT;
+    static const std::string OP_MINUS;
+    static const std::string OP_MULTIPLY;
+    static const std::string OP_DIVIDE;
+    static const std::string OP_MOD;
+    static const std::string OP_EXPONENTIAL;
+    static const std::string OP_ASSIGN;
+    static const std::string OP_PLUS;
 
     /**
      * Set left operator
