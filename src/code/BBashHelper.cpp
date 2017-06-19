@@ -199,6 +199,8 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             // Write the return part
             if(functionChainCall->getFunction()->requiresReturn()
                || functionChainCall->getFunction()->isConstructor()) {
+
+
                 ss << " " << TMP_FUNCTION_RETURN << std::endl;
                 _indent(scope, ss);
                 ss << returnMap[functionChainCall] << "=${" << TMP_FUNCTION_RETURN << "}";
@@ -646,7 +648,7 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
     if(function->requiresReturn() || function->isConstructor()) {
         ss << std::endl;
         _indent(function, ss);
-        ss << "# Return statement" << std::endl;
+        ss << "# Configure return statement" << std::endl;
         _indent(function, ss);
         ss << "declare -n " << FUNCTION_RETURN << "=${" << paramPos++ << "}" << std::endl;
     }
@@ -662,6 +664,9 @@ void BBashHelper::closeFunction(std::shared_ptr<BFunction> function) {
     std::stringstream ss;
 
     if(function->isConstructor()) {
+        ss << std::endl;
+        _indent(function, ss);
+        ss << "# Return statement" << std::endl;
         _indent(function, ss);
         ss << FUNCTION_RETURN << "=${" << FUNCTION_THIS << "}" << std::endl;
     }
