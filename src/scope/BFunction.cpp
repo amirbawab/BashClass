@@ -5,6 +5,7 @@
 #include <bashclass/BException.h>
 #include <bashclass/BReport.h>
 #include <stack>
+#include <bashclass/BGlobal.h>
 
 BFunction::BFunction() {
     m_isConstructor = false;
@@ -55,4 +56,19 @@ std::shared_ptr<BClass> BFunction::findClosestClass() {
 
 bool BFunction::isConstructor() {
     return m_isConstructor;
+}
+
+void BFunction::linkType() {
+    if(!BType::isBuiltInType(m_type->getName())) {
+        // Find class scope of that type
+        auto cls = BGlobal::getInstance()->findAllClasses(m_type->getValue().c_str());
+        if(cls.empty()) {
+            BReport::getInstance().error()
+                    << "Undefined type " << m_type->getValue() <<
+                    " for function " << m_name->getValue() << std::endl;
+            BReport::getInstance().printError();
+        } else {
+            m_typeScope = cls.front();
+        }
+    }
 }

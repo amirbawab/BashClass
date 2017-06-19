@@ -34,7 +34,7 @@ public:
     std::stringstream getLabel();
 
     /**
-     * Link types of all variables and functions
+     * Link types of class variables and all functions
      */
     void linkTypes();
 

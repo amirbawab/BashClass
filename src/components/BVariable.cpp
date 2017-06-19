@@ -2,6 +2,8 @@
 #include <bashclass/BTypes.h>
 #include <bashclass/BClass.h>
 #include <bashclass/BException.h>
+#include <bashclass/BGlobal.h>
+#include <bashclass/BReport.h>
 
 BVariable::BVariable() {
     m_isParam = false;
@@ -22,6 +24,21 @@ bool BVariable::isClassMember() {
 
 bool BVariable::hasKnownType() const {
     return BType::isBuiltInType(m_type->getName()) || m_typeScope;
+}
+
+void BVariable::linkType() {
+    if(!BType::isBuiltInType(m_type->getName())) {
+        // Find class scope of that type
+        auto cls = BGlobal::getInstance()->findAllClasses(m_type->getValue().c_str());
+        if(cls.empty()) {
+            BReport::getInstance().error()
+                    << "Undefined type " << m_type->getValue() <<
+                    " for variable " << m_name->getValue() << std::endl;
+            BReport::getInstance().printError();
+        } else {
+            m_typeScope = cls.front();
+        }
+    }
 }
 
 std::string BVariable::getDefaultValue() {

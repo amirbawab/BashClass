@@ -267,6 +267,9 @@ void BashClass::initHandlers() {
             // Register variable
             m_scopeStack.back()->registerVariable(m_referenceKey, m_focusVariable);
 
+            // Link variable
+            m_focusVariable->linkType();
+
             // Clear focus
             m_focusVariable = nullptr;
         }

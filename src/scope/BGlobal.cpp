@@ -15,49 +15,19 @@ std::stringstream BGlobal::getLabel() {
 
 void BGlobal::linkTypes() {
 
-    std::stack<std::shared_ptr<BScope>> scopeStack;
-    scopeStack.push(shared_from_this());
-    while(!scopeStack.empty()) {
+    for(auto cls : findAllClasses()) {
 
-        auto top = scopeStack.top();
-        scopeStack.pop();
-
-        // Link all variables in that scope
-        for(auto variable : top->findAllVariables()) {
-            if(!BType::isBuiltInType(variable->getType()->getName())) {
-                // Find class scope of that type
-                auto cls = findAllClasses(variable->getType()->getValue().c_str());
-                if(cls.empty()) {
-                    BReport::getInstance().error()
-                            << "Undefined type " << variable->getType()->getValue() <<
-                            " for variable " << variable->getName()->getValue() << std::endl;
-                    BReport::getInstance().printError();
-                } else {
-                    variable->setTypeScope(cls.front());
-                }
-            }
+        for(auto variable : cls->findAllVariables()) {
+            variable->linkType();
         }
 
-        // Link all functions in that scope
-        for(auto function : top->findAllFunctions()) {
-            if(!BType::isBuiltInType(function->getType()->getName())) {
-                // Find class scope of that type
-                auto cls = findAllClasses(function->getType()->getValue().c_str());
-                if(cls.empty()) {
-                    BReport::getInstance().error()
-                            << "Undefined type " << function->getType()->getValue() <<
-                            " for function " << function->getName()->getValue() << std::endl;
-                    BReport::getInstance().printError();
-                } else {
-                    function->setTypeScope(cls.front());
-                }
-            }
+        for(auto function : cls->findAllFunctions()) {
+            function->linkType();
         }
+    }
 
-        // Push all children scopes into the stack
-        for(auto scope : top->getAllScopes()) {
-            scopeStack.push(scope);
-        }
+    for(auto function : findAllFunctions()) {
+        function->linkType();
     }
 }
 

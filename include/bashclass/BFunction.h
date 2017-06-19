@@ -88,6 +88,11 @@ public:
     bool requiresReturn();
 
     /**
+     * Link type
+     */
+    void linkType();
+
+    /**
      * A void function should not a return statement
      */
     void verifyReturns();

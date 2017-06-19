@@ -109,6 +109,11 @@ public:
     bool hasKnownType() const;
 
     /**
+     * Link type
+     */
+    void linkType();
+
+    /**
      * Get the default value
      * @return default value
      */
