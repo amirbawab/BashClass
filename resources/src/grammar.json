@@ -91,7 +91,7 @@
         "'truefalse' #tokenUse#",
         "'string' #tokenUse#",
         "'null' #tokenUse#",
-        "#startChain# NEW CLASS_NAME #constructorChainCall# IDENTIFIER_FUNCTION_CALL #functionCall# #endChain#",
+        "#startChain# NEW CLASS_NAME #constructorChainCall# IDENTIFIER_FUNCTION_CALL ARITH_VAR_OR_FUNC_CALL_D #endChain#",
         "BASH_SUB #tokenUse#",
         "ARITH_VAR_OR_FUNC_CALL"
     ],
