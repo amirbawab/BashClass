@@ -174,7 +174,7 @@ void BScope::registerFunction(unsigned int referenceKey, std::shared_ptr<BFuncti
         auto parentClass = std::static_pointer_cast<BClass>(functionScope->getParentScope());
 
         if(!parentClass->getName()) {
-            throw BException("Cannot verify if the constructor name is defined correctly");
+            throw BException("Cannot verify if the constructor name is not defined");
         }
 
         if(functionScope->getName()->getValue() != parentClass->getName()->getValue()) {
