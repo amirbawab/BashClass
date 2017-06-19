@@ -6,7 +6,8 @@
     "CLASS" : ["'class'"],
     "CLASS_NAME" : ["'identifier'"],
     "CLASS_BODY" : ["EPSILON","CLASS_VARIABLE_DEC CLASS_BODY","FUNCTION_DEC CLASS_BODY","CONSTRUCTOR_DEC CLASS_BODY"],
-    "CLASS_VARIABLE_DEC" : ["#newKey# VARIABLE #startClassVar# VARIABLE_TYPE #classVarType# VARIABLE_NAME #classVarName# SEMICOLON #endClassVar#"],
+    "CLASS_VARIABLE_DEC" : ["#newKey# VARIABLE #startClassVar# VARIABLE_TYPE #classVarType# VARIABLE_NAME #classVarName# CLASS_VARIABLE_INIT SEMICOLON #endClassVar#"],
+    "CLASS_VARIABLE_INIT" : ["EPSILON","#varAsOperand# #newKey# OP_GROUP_AA #putOp# EXPR_A EXPR_AB #createExpr2# #classVarInit#"],
     
     "CONSTRUCTOR_DEC" : ["#newKey# CONSTRUCTOR #startFunction# #functionConstructor# FUNCTION_NAME #functionType# #functionName# OPEN_PAR FUNCTION_PARAM_DEC CLOSE_PAR OPEN_CUR FUNCTION_BODY CLOSE_CUR #endFunction#"],
     "CONSTRUCTOR": ["'constructor'"],

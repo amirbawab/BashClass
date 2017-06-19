@@ -615,11 +615,25 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
             ss << _generateCounter(classScope) << "=" << _arithOpForm1("${"+_generateCounter(classScope)+"}", "+", "1")
                << std::endl;
 
-            // Initialize members
+            // Declare variables
+            ss << std::endl;
+            _indent(function, ss);
+            ss << "# Declaring variables" << std::endl;
             for(auto variable : classScope->findAllVariables()) {
                 _indent(function, ss);
                 ss << classScope->getLabel().str() << "[${" << FUNCTION_THIS << "},\""
                    << variable->getLabel().str() << "\"]=" << variable->getDefaultValue() << std::endl;
+            }
+
+            // Initialize variables
+            // By default a map key is sorted by key, implying
+            // that they will be initialized in the same order
+            // they were registered in
+            ss << std::endl;
+            _indent(function, ss);
+            ss << "# Initialize variables" << std::endl;
+            for(auto expression : classScope->getExpressions()) {
+                _expressionToCode(function, expression, ss);
             }
 
         } else {
@@ -630,6 +644,9 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
 
     // Generate return reference if function requires a return statement
     if(function->requiresReturn() || function->isConstructor()) {
+        ss << std::endl;
+        _indent(function, ss);
+        ss << "# Return statement" << std::endl;
         _indent(function, ss);
         ss << "declare -n " << FUNCTION_RETURN << "=${" << paramPos++ << "}" << std::endl;
     }

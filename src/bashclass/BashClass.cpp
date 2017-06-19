@@ -717,6 +717,17 @@ void BashClass::initHandlers() {
         }
     };
 
+    m_classVarInit = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+
+            // Register expression
+            m_scopeStack.back()->registerExpression(m_referenceKey, m_expressionOperandStack.back());
+
+            // Remove consumed expression
+            m_expressionOperandStack.pop_back();
+        }
+    };
+
     m_varAsOperand = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
