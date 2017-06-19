@@ -23,7 +23,8 @@
     "BASH_INLINE" : ["'bash_inline'"],
     "BASH_BLOCK" : ["'bash_block'"],
 
-    "VARIABLE_DEC" : ["#newKey# VARIABLE #startVar# VARIABLE_TYPE #varType# VARIABLE_NAME #varName# SEMICOLON #endVar#"],
+    "VARIABLE_DEC" : ["#newKey# VARIABLE #startVar# VARIABLE_TYPE #varType# VARIABLE_NAME #varName# VARIABLE_INIT SEMICOLON #endVar#"],
+    "VARIABLE_INIT" : ["EPSILON","#varAsOperand# #newKey# OP_GROUP_AA #putOp# EXPR_A EXPR_AB #createExpr2# #varInit#"],
     "VARIABLE" : ["'var'"],
     "VARIABLE_TYPE" : ["'identifier'","'int_type'","'boolean_type'","'char_type'","'string_type'","'any_type'"],
     "VARIABLE_NAME" : ["'identifier'"],

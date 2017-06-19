@@ -34,6 +34,8 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#startVar#", bashClass.m_startVar);
     easyCC.registerSemanticAction("#varType#", bashClass.m_varType);
     easyCC.registerSemanticAction("#varName#", bashClass.m_varName);
+    easyCC.registerSemanticAction("#varAsOperand#", bashClass.m_varAsOperand);
+    easyCC.registerSemanticAction("#varInit#", bashClass.m_varInit);
     easyCC.registerSemanticAction("#endVar#", bashClass.m_endVar);
 
     easyCC.registerSemanticAction("#startParam#", bashClass.m_startParam);
