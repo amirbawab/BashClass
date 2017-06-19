@@ -207,36 +207,22 @@ void BashClass::initHandlers() {
     };
 
     /**************************************
-     *          VARIABLE DECLARATION
+     *     CLASS VARIABLE DECLARATION
      **************************************/
-    m_startVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_startClassVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusVariable = std::make_shared<BVariable>();
-        } else if(phase == BashClass::PHASE_EVAL) {
-
-            // Get the variable in order to be used by another handler
-            m_focusVariable = m_scopeStack.back()->getVariableByReferenceKey(m_referenceKey);
-        } else if(phase == BashClass::PHASE_GENERATE) {
-
-            // Generate code for the current variable
-            auto variable = m_scopeStack.back()->getVariableByReferenceKey(m_referenceKey);
-            if(m_scopeStack.back() == BGlobal::getInstance()) {
-                BBashHelper::createGlobalVar(variable);
-            } else if(!variable->isClassMember()) {
-                BBashHelper::createLocalVar(variable);
-            }
-
-            // Don't generate code for class members
         }
+        // Don't generate code for class members
     };
 
-    m_varType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_classVarType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusVariable->setType(lexicalVector[index]);
         }
     };
 
-    m_varName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_classVarName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
 
             // Set variable name
@@ -244,44 +230,50 @@ void BashClass::initHandlers() {
 
             // Register variable
             m_scopeStack.back()->registerVariable(m_referenceKey, m_focusVariable);
+
+            // Clear focus
+            m_focusVariable = nullptr;
         }
     };
 
-    m_varInit = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_endClassVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        // Do nothing ...
+    };
+
+    /**************************************
+     *          VARIABLE DECLARATION
+     **************************************/
+    m_startVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-
-            // Register expression
-            m_scopeStack.back()->registerExpression(m_referenceKey, m_expressionOperandStack.back());
-
-            // Remove consumed expression
-            m_expressionOperandStack.pop_back();
+            m_focusVariable = std::make_shared<BVariable>();
         } else if(phase == BashClass::PHASE_GENERATE) {
 
-            // Generate code for expression
-            auto expression = m_scopeStack.back()->getExpressionByReferenceKey(m_referenceKey);
-            BBashHelper::writeExpression(m_scopeStack.back(), expression);
+            // Generate code for the current variable
+            BBashHelper::createVar(m_scopeStack.back()->getVariableByReferenceKey(m_referenceKey));
         }
     };
 
-    m_varAsOperand = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_varType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
+            m_focusVariable->setType(lexicalVector[index]);
+        }
+    };
 
-            // Create variable access, the operand
-            std::shared_ptr<BVariableAccess> variableAccess = std::make_shared<BVariableAccess>();
-            std::shared_ptr<BChain> variableAccessChain = std::make_shared<BChain>();
-            variableAccessChain->addVariable(m_scopeStack.back(), lexicalVector[index]);
-            variableAccess->setChain(variableAccessChain);
+    m_varName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            // Set variable name
+            m_focusVariable->setName(lexicalVector[index]);
 
-            // Push operand
-            m_expressionOperandStack.push_back(variableAccess);
+            // Register variable
+            m_scopeStack.back()->registerVariable(m_referenceKey, m_focusVariable);
+
+            // Clear focus
+            m_focusVariable = nullptr;
         }
     };
 
     m_endVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
-            // Clear focus
-            m_focusVariable = nullptr;
-        }
+        // Do nothing ...
     };
 
     /**************************************
@@ -703,6 +695,36 @@ void BashClass::initHandlers() {
         } else if(phase == BashClass::PHASE_GENERATE) {
             auto expression = m_scopeStack.back()->getExpressionByReferenceKey(m_referenceKey);
             BBashHelper::writeExpression(m_scopeStack.back(), expression);
+        }
+    };
+
+    m_varInit = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+
+            // Register expression
+            m_scopeStack.back()->registerExpression(m_referenceKey, m_expressionOperandStack.back());
+
+            // Remove consumed expression
+            m_expressionOperandStack.pop_back();
+        } else if(phase == BashClass::PHASE_GENERATE) {
+
+            // Generate code for expression
+            auto expression = m_scopeStack.back()->getExpressionByReferenceKey(m_referenceKey);
+            BBashHelper::writeExpression(m_scopeStack.back(), expression);
+        }
+    };
+
+    m_varAsOperand = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+
+            // Create variable access, the operand
+            std::shared_ptr<BVariableAccess> variableAccess = std::make_shared<BVariableAccess>();
+            std::shared_ptr<BChain> variableAccessChain = std::make_shared<BChain>();
+            variableAccessChain->addVariable(m_scopeStack.back(), lexicalVector[index]);
+            variableAccess->setChain(variableAccessChain);
+
+            // Push operand
+            m_expressionOperandStack.push_back(variableAccess);
         }
     };
 }

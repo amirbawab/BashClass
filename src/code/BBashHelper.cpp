@@ -143,7 +143,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             // Generate new key for this variable
             std::string newKey = _generateResultKey(uniqueId++);
             returnMap[variableChainAccess] = newKey;
-            ss << "local -n " << newKey << "=";
+            ss << "declare -n " << newKey << "=";
 
             if(i == 0) {
                 if(variableChainAccess->getVariable()->isClassMember()) {
@@ -173,7 +173,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
                 std::string newKey = _generateResultKey(uniqueId++);
                 returnMap[functionChainCall] = newKey;
                 _indent(scope, ss);
-                ss << "local " << newKey << std::endl;
+                ss << "declare " << newKey << std::endl;
             }
 
             // Write the function call
@@ -210,7 +210,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             _indent(scope, ss);
             std::string newKey = _generateResultKey(uniqueId++);
             returnMap[thisChainAccess] = newKey;
-            ss  << "local " << newKey << "=${" << FUNCTION_THIS << "}" << std::endl;
+            ss  << "declare " << newKey << "=${" << FUNCTION_THIS << "}" << std::endl;
         } else {
             throw BException("Cannot generate code for an unrecognized element call");
         }
@@ -358,14 +358,14 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
 
                 // String concatenation
                 if(arithOperationType == BType::TYPE_VALUE_STRING) {
-                    ss << "local " << newKey << "=\"" << leftOp.formattedValue() << rightOp.formattedValue()
+                    ss << "declare " << newKey << "=\"" << leftOp.formattedValue() << rightOp.formattedValue()
                        << "\"" << std::endl;
                     return ExprReturn(newKey, ExprReturn::VARIABLE);
                 }
 
                 // Integer addition
                 if(arithOperationType == BType::TYPE_VALUE_INT) {
-                    ss << "local " << newKey << "="
+                    ss << "declare " << newKey << "="
                        << _arithOpForm1(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
                                         rightOp.formattedValue())
                        << std::endl;
@@ -384,7 +384,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
 
                 // Integer
                 if(arithOperationType == BType::TYPE_VALUE_INT) {
-                    ss << "local " << newKey << "="
+                    ss << "declare " << newKey << "="
                        << _arithOpForm1(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
                                         rightOp.formattedValue())
                        << std::endl;
@@ -404,7 +404,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
 
                     // String comparison
                     if(leftOperandType == BType::TYPE_VALUE_STRING || rightOperandType == BType::TYPE_VALUE_STRING) {
-                        ss << "local " << newKey << "="
+                        ss << "declare " << newKey << "="
                            << _arithOpForm2(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
                                             rightOp.formattedValue())
                            << std::endl;
@@ -412,7 +412,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
                     }
 
                     // All other types comparison
-                    ss << "local " << newKey << "="
+                    ss << "declare " << newKey << "="
                        << _arithOpForm1(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
                                         rightOp.formattedValue())
                        << std::endl;
@@ -428,7 +428,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
 
                 // Boolean comparison
                 if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
-                    ss << "local " << newKey << "="
+                    ss << "declare " << newKey << "="
                        << _arithOpForm1(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
                                         rightOp.formattedValue())
                        << std::endl;
@@ -440,7 +440,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             if(arithOperator == BArithOperation::OP_ASSIGN) {
 
                // All types have the same code generated
-                ss << "local " << newKey << "="
+                ss << "declare " << newKey << "="
                    << _arithOpForm1(leftOp.value, arithOperation->getOperator()->getValue(), rightOp.formattedValue())
                    << std::endl;
                 return ExprReturn(newKey, ExprReturn::VARIABLE);
@@ -464,7 +464,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
 
                 // Boolean toggle
                 if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
-                    ss << "local " << newKey << "=" << _arithOpForm1(rightStr.formattedValue(), "^", "1") << std::endl;
+                    ss << "declare " << newKey << "=" << _arithOpForm1(rightStr.formattedValue(), "^", "1") << std::endl;
                     return ExprReturn(newKey, ExprReturn::VARIABLE);
                 }
                 throw BException("Cannot generator code for the ! operator with an unexpected return type");
@@ -475,7 +475,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
 
                 // Integer sign
                 if(arithOperationType == BType::TYPE_VALUE_INT) {
-                    ss << "local " << newKey << "="
+                    ss << "declare " << newKey << "="
                        << _arithOpForm1(rightStr.formattedValue(), "*", "(" + arithOperation->getOperator()->getValue() + "1)")
                        << std::endl;
                     return ExprReturn(newKey, ExprReturn::VARIABLE);
@@ -549,30 +549,17 @@ void BBashHelper::declareClass(std::shared_ptr<BClass> classScope) {
 }
 
 /**
- * Create global variable
+ * Create variable
  * @param variable
  */
-void BBashHelper::createGlobalVar(std::shared_ptr<BVariable> variable) {
-    std::stringstream ss;
-    ss << std::endl;
-    ss << "# Create global variable" << std::endl;
-
-    ss << variable->getLabel().str() << "=" << variable->getDefaultValue() << std::endl;
-    BGenerateCode::get().write(ss);
-}
-
-/**
- * Create local variable
- * @param variable
- */
-void BBashHelper::createLocalVar(std::shared_ptr<BVariable> variable) {
+void BBashHelper::createVar(std::shared_ptr<BVariable> variable) {
     std::stringstream ss;
     ss << std::endl;
     _indent(variable->getParentScope(),ss);
-    ss << "# Create local variable" << std::endl;
+    ss << "# Create variable" << std::endl;
 
     _indent(variable->getParentScope(), ss);
-    ss << "local " << variable->getLabel().str() << "=" << variable->getDefaultValue() << std::endl;
+    ss << "declare " << variable->getLabel().str() << "=" << variable->getDefaultValue() << std::endl;
     BGenerateCode::get().write(ss);
 }
 
@@ -613,7 +600,7 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
     int paramPos = 1;
     for(auto param : function->findAllParameters()) {
         _indent(param->getParentScope(), ss);
-        ss << "local " << param->getLabel().str() << "=\"${" << paramPos++ << "}\"" << std::endl;
+        ss << "declare " << param->getLabel().str() << "=\"${" << paramPos++ << "}\"" << std::endl;
     }
 
     // Generate 'this' if function is a class member
@@ -623,7 +610,7 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
             // Assign `this` and increment counter
             auto classScope = std::static_pointer_cast<BClass>(function->getParentScope());
             _indent(function, ss);
-            ss << "local " << FUNCTION_THIS << "=${" << _generateCounter(classScope) << "}" << std::endl;
+            ss << "declare " << FUNCTION_THIS << "=${" << _generateCounter(classScope) << "}" << std::endl;
             _indent(function, ss);
             ss << _generateCounter(classScope) << "=" << _arithOpForm1("${"+_generateCounter(classScope)+"}", "+", "1")
                << std::endl;
@@ -637,7 +624,7 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
 
         } else {
             _indent(function, ss);
-            ss << "local " << FUNCTION_THIS << "=${" << paramPos++ << "}" << std::endl;
+            ss << "declare " << FUNCTION_THIS << "=${" << paramPos++ << "}" << std::endl;
         }
     }
 
@@ -727,7 +714,7 @@ void BBashHelper::createIf(std::shared_ptr<BIf> ifStatement) {
 
     // Reset if statement lock
     _indent(ifStatement->getParentScope(), ss);
-    ss << "local " << _generateIfLock(ifStatement) << "=0" << std::endl;
+    ss << "declare " << _generateIfLock(ifStatement) << "=0" << std::endl;
 
     // Write if statement
     _indent(ifStatement->getParentScope(), ss);

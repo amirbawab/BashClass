@@ -33,18 +33,11 @@ public:
     static void declareClass(std::shared_ptr<BClass> classScope);
 
     /**
-     * Generate a global variable in bash
+     * Generate a variable in bash
      * @param variable
      * @param defaultValue
      */
-    static void createGlobalVar(std::shared_ptr<BVariable> variable);
-
-    /**
-     * Genera a local variable in bash
-     * @param variable
-     * @param defaultValue
-     */
-    static void createLocalVar(std::shared_ptr<BVariable> variable);
+    static void createVar(std::shared_ptr<BVariable> variable);
 
     /**
      * Generate a function in bash

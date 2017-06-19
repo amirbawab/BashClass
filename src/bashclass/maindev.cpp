@@ -34,9 +34,12 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#startVar#", bashClass.m_startVar);
     easyCC.registerSemanticAction("#varType#", bashClass.m_varType);
     easyCC.registerSemanticAction("#varName#", bashClass.m_varName);
-    easyCC.registerSemanticAction("#varAsOperand#", bashClass.m_varAsOperand);
-    easyCC.registerSemanticAction("#varInit#", bashClass.m_varInit);
     easyCC.registerSemanticAction("#endVar#", bashClass.m_endVar);
+
+    easyCC.registerSemanticAction("#startClassVar#", bashClass.m_startClassVar);
+    easyCC.registerSemanticAction("#classVarType#", bashClass.m_classVarType);
+    easyCC.registerSemanticAction("#classVarName#", bashClass.m_classVarName);
+    easyCC.registerSemanticAction("#endClassVar#", bashClass.m_endClassVar);
 
     easyCC.registerSemanticAction("#startParam#", bashClass.m_startParam);
     easyCC.registerSemanticAction("#paramType#", bashClass.m_paramType);
@@ -74,6 +77,8 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#putOp#", bashClass.m_putOp);
     easyCC.registerSemanticAction("#createExpr1#", bashClass.m_createExpr1);
     easyCC.registerSemanticAction("#createExpr2#", bashClass.m_createExpr2);
+    easyCC.registerSemanticAction("#varAsOperand#", bashClass.m_varAsOperand);
+    easyCC.registerSemanticAction("#varInit#", bashClass.m_varInit);
 
     easyCC.registerSemanticAction("#startReturn#", bashClass.m_startReturn);
     easyCC.registerSemanticAction("#returnExpr#", bashClass.m_returnExpr);
