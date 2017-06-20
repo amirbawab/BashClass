@@ -233,11 +233,18 @@ void BashClass::initHandlers() {
 
             // Clear focus
             m_focusVariable = nullptr;
+        } else if(phase == BashClass::PHASE_EVAL) {
+
+            // Used by another handler
+            m_focusVariable = m_scopeStack.back()->getVariableByReferenceKey(m_referenceKey);
         }
     };
 
     m_endClassVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        // Do nothing ...
+        if(phase == BashClass::PHASE_EVAL) {
+            // Clear focus
+            m_focusVariable = nullptr;
+        }
     };
 
     /**************************************
@@ -269,14 +276,14 @@ void BashClass::initHandlers() {
 
             // Link variable
             m_focusVariable->linkType();
-
-            // Clear focus
-            m_focusVariable = nullptr;
         }
     };
 
     m_endVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        // Do nothing ...
+        if(phase == BashClass::PHASE_EVAL) {
+            // Clear focus
+            m_focusVariable = nullptr;
+        }
     };
 
     /**************************************
@@ -303,14 +310,17 @@ void BashClass::initHandlers() {
 
             // Register parameter
             m_scopeStack.back()->registerVariable(m_referenceKey, m_focusVariable);
-
-            // Clear focus
-            m_focusVariable = nullptr;
+        } else if(phase == BashClass::PHASE_EVAL) {
+            // Used by another handler
+            m_focusVariable = m_scopeStack.back()->getVariableByReferenceKey(m_referenceKey);
         }
     };
 
     m_endParam = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        // Do nothing ...
+        if(phase == BashClass::PHASE_EVAL) {
+            // Clear focus
+            m_focusVariable = nullptr;
+        }
     };
 
     /**************************************
@@ -704,24 +714,8 @@ void BashClass::initHandlers() {
     m_varInit = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
-            // Register expression
-            m_scopeStack.back()->registerExpression(m_referenceKey, m_expressionOperandStack.back());
-
-            // Remove consumed expression
-            m_expressionOperandStack.pop_back();
-        } else if(phase == BashClass::PHASE_GENERATE) {
-
-            // Generate code for expression
-            auto expression = m_scopeStack.back()->getExpressionByReferenceKey(m_referenceKey);
-            BBashHelper::writeExpression(m_scopeStack.back(), expression);
-        }
-    };
-
-    m_classVarInit = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-
-            // Register expression
-            m_scopeStack.back()->registerExpression(m_referenceKey, m_expressionOperandStack.back());
+            // Register expression in variable
+            m_focusVariable->setExpression(m_expressionOperandStack.back());
 
             // Remove consumed expression
             m_expressionOperandStack.pop_back();

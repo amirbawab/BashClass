@@ -166,12 +166,6 @@ public:
     void registerExpression(unsigned int referenceKey, std::shared_ptr<IBExpression> expression);
 
     /**
-     * Get all the expressions registered in this scope
-     * @return vector of expression registered in this scope
-     */
-    std::vector<std::shared_ptr<IBExpression>> getExpressions();
-
-    /**
      * Get an expression
      * @param referenceKey
      * @return function call

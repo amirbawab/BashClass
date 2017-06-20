@@ -162,6 +162,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             // Start processing the arguments
             std::vector<std::string> argumentsValues;
             auto arguments = functionChainCall->getArguments();
+            auto params = functionChainCall->getFunction()->findAllParameters();
             for(size_t argIndex=0; argIndex < arguments.size(); argIndex++){
                 auto expression = _expressionToCode(scope, arguments[argIndex], ss);
                 argumentsValues.push_back(expression.formattedValue());
@@ -181,7 +182,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             ss << functionChainCall->getFunction()->getLabel().str();
 
             // Write arguments
-            for(size_t argIndex=0; argIndex < arguments.size(); argIndex++) {
+            for(size_t argIndex=0; argIndex < argumentsValues.size(); argIndex++) {
                 ss << " \"" << argumentsValues[argIndex] << "\"";
             }
 
@@ -199,7 +200,6 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             // Write the return part
             if(functionChainCall->getFunction()->requiresReturn()
                || functionChainCall->getFunction()->isConstructor()) {
-
 
                 ss << " " << TMP_FUNCTION_RETURN << std::endl;
                 _indent(scope, ss);
@@ -559,9 +559,16 @@ void BBashHelper::createVar(std::shared_ptr<BVariable> variable) {
     ss << std::endl;
     _indent(variable->getParentScope(),ss);
     ss << "# Create variable" << std::endl;
-
     _indent(variable->getParentScope(), ss);
     ss << "declare " << variable->getLabel().str() << "=" << variable->getDefaultValue() << std::endl;
+
+    // Check if variable was initialized
+    if(variable->getExpression()) {
+        ss << std::endl;
+        _indent(variable->getParentScope(), ss);
+        ss << "# Initialize variable" << std::endl;
+        _expressionToCode(variable->getParentScope(), variable->getExpression(), ss);
+    }
     BGenerateCode::get().write(ss);
 }
 
@@ -596,13 +603,33 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
     std::stringstream ss;
     ss << std::endl;
     ss << "# Create function" << std::endl;
-
     ss << "function " << function->getLabel().str() << "() {" << std::endl;
-    // Create parameters
     int paramPos = 1;
     for(auto param : function->findAllParameters()) {
-        _indent(param->getParentScope(), ss);
-        ss << "declare " << param->getLabel().str() << "=\"${" << paramPos++ << "}\"" << std::endl;
+
+        // Check if a default value was set for that parameter
+        ss << std::endl;
+        if(param->getExpression()) {
+
+            _indent(param->getParentScope(), ss);
+            ss << "# Create argument with a default value" << std::endl;
+            _indent(param->getParentScope(), ss);
+            ss << "if (( " << paramPos-1 << " < $# )); then" << std::endl;
+            _indent(param->getParentScope(), ss);
+            ss << "declare " << param->getLabel().str() << "=\"${" << paramPos++ << "}\"" << std::endl;
+            _indent(param->getParentScope(), ss);
+            ss << "else" << std::endl;
+            _indent(param->getParentScope(), ss);
+            ss << "declare " << param->getLabel().str() << "=" << param->getDefaultValue() << std::endl;
+            auto expression = _expressionToCode(param->getParentScope(), param->getExpression(), ss);
+            _indent(param->getParentScope(), ss);
+            ss << "fi" << std::endl;
+        } else {
+            _indent(param->getParentScope(), ss);
+            ss << "# Create argument" << std::endl;
+            _indent(param->getParentScope(), ss);
+            ss << "declare " << param->getLabel().str() << "=\"${" << paramPos++ << "}\"" << std::endl;
+        }
     }
 
     // Generate 'this' if function is a class member
@@ -620,22 +647,21 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
             // Declare variables
             ss << std::endl;
             _indent(function, ss);
-            ss << "# Declaring variables" << std::endl;
+            ss << "# Declaring and initialize variables" << std::endl;
             for(auto variable : classScope->findAllVariables()) {
+                _indent(function, ss);
+                ss << "# >> Declare" << std::endl;
                 _indent(function, ss);
                 ss << classScope->getLabel().str() << "[${" << FUNCTION_THIS << "},\""
                    << variable->getLabel().str() << "\"]=" << variable->getDefaultValue() << std::endl;
-            }
 
-            // Initialize variables
-            // By default a map key is sorted by key, implying
-            // that they will be initialized in the same order
-            // they were registered in
-            ss << std::endl;
-            _indent(function, ss);
-            ss << "# Initialize variables" << std::endl;
-            for(auto expression : classScope->getExpressions()) {
-                _expressionToCode(function, expression, ss);
+                // Check if initial expression was set
+                if(variable->getExpression()) {
+                    ss << std::endl;
+                    _indent(function, ss);
+                    ss << "# >> Initialize" << std::endl;
+                    _expressionToCode(function, variable->getExpression(), ss);
+                }
             }
 
         } else {

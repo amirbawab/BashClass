@@ -15,11 +15,21 @@ std::string BFunctionChainCall::getTypeValueAsString() {
 void BFunctionChainCall::verifyArguments() {
 
     // Check if the number of arguments is less than the number of parameters
-    if(m_function && m_arguments.size() < m_function->findAllParameters().size()) {
-        BReport::getInstance().error()
-                << "Function call " << m_lexicalToken->getValue()
-                << " is missing arguments" << std::endl;
-        BReport::getInstance().printError();
+    if(m_function) {
+        auto params = m_function->findAllParameters();
+        if(m_arguments.size() < params.size()) {
+
+            // Check if the remaining params have a default value
+            for(size_t paramIndex=m_arguments.size(); paramIndex < params.size(); paramIndex++) {
+                if(!params[paramIndex]->getExpression()) {
+                    BReport::getInstance().error()
+                            << "Function call " << m_lexicalToken->getValue()
+                            << " is missing arguments" << std::endl;
+                    BReport::getInstance().printError();
+                    return;
+                }
+            }
+        }
     }
 
     // No need to check if for the number of arguments exceeding the number of parameters because

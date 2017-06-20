@@ -283,11 +283,3 @@ bool BScope::hasReturn() {
     }
     return false;
 }
-
-std::vector<std::shared_ptr<IBExpression>> BScope::getExpressions() {
-    std::vector<std::shared_ptr<IBExpression>> expressions;
-    for(auto expression : m_expressions) {
-        expressions.push_back(expression.second);
-    }
-    return expressions;
-}

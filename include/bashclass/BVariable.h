@@ -23,6 +23,9 @@ private:
     // Parent scope of this variable
     std::shared_ptr<BScope> m_parentScope;
 
+    // Initialize expression set when declaring the variable
+    std::shared_ptr<IBExpression> m_expression;
+
     // A parameter variable has this flag set to true
     bool m_isParam;
 
@@ -112,6 +115,18 @@ public:
      * Link type
      */
     void linkType();
+
+    /**
+     * Set expression
+     * @param expression
+     */
+    void setExpression(std::shared_ptr<IBExpression> expression) { m_expression = expression;}
+
+    /**
+     * Get expression
+     * @return expression
+     */
+    std::shared_ptr<IBExpression> getExpression() {return m_expression;}
 
     /**
      * Get the default value

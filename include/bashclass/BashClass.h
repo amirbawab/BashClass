@@ -63,7 +63,6 @@ public:
     SemanticActionHandler m_classVarName;
     SemanticActionHandler m_varAsOperand;
     SemanticActionHandler m_varInit;
-    SemanticActionHandler m_classVarInit;
     SemanticActionHandler m_endVar;
     SemanticActionHandler m_endClassVar;
 
