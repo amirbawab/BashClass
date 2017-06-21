@@ -12,6 +12,12 @@ BashClass uses EasyCC-C++ library which provides the lexical and syntax analysis
 The lexical and syntax analysis configuration files, located under the resources directory, 
 serve as an input to EasyCC-C++ to parse the user files and validate it against a grammar determining the language syntax.
 
+### Test the application
+Compile the program to build a `bashc` executable, then run the following:
+```
+./bashc -s resources/src/lexical_graph.json -c resources/src/lexical_config.json -e resources/src/lexical_errors.json -g resources/src/grammar.json -E resources/src/syntax_errors.json resources/src/input/tmp.bc -v
+```
+
 ### Features
 * Classes
 * Global functions
@@ -28,11 +34,11 @@ serve as an input to EasyCC-C++ to parse the user files and validate it against 
 * Variable of type `any` can hold a value of any type, but can't access its members (if any)
 * Run bash code (inline and block)
 * Run subshell (e.g. echo $(echo 1) ). They can be assigned to variables of type `string`.
+* Allow default parameters values
 * No arrays (In process)
 * No casting
 * No function overloading
 * No inheritance
-* Can't declare and initialize on the same line
 
 ### Additional links
 * UML for some classes (check tabs): https://drive.google.com/file/d/0B8fWEFscW3Z4c2pvSHNaSmRiVEE/view?usp=sharing
