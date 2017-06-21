@@ -1,4 +1,5 @@
 #include <bashclass/BElementType.h>
+#include <bashclass/BException.h>
 
 const std::string BElementType::TYPE_NAME_INT = "int_type";
 const std::string BElementType::TYPE_NAME_CHAR = "char_type";
@@ -41,4 +42,18 @@ bool BElementType::isUserDefinedType(std::string type) {
 
 bool BElementType::isUndefined(std::string type) {
     return type == UNDEFINED;
+}
+
+std::string BElementType::getTypeValue() {
+    if(!m_lexicalToken) {
+        throw BException("Cannot get type value of lexical token that was not set");
+    }
+    return m_lexicalToken->getValue();
+}
+
+std::string BElementType::getTypeName() {
+    if(!m_lexicalToken) {
+        throw BException("Cannot get type name of lexical token that was not set");
+    }
+    return m_lexicalToken->getName();
 }
