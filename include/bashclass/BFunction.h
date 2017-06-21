@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <bashclass/BClass.h>
+#include <bashclass/BElementType.h>
 
 class BFunction : public BScope {
 private:
@@ -12,11 +13,7 @@ private:
     std::shared_ptr<ecc::LexicalToken> m_name;
 
     // Function type
-    std::shared_ptr<ecc::LexicalToken> m_type;
-
-    // Link to the actual function if exists.
-    // Check hasKnownType() function for more details
-    std::shared_ptr<BClass> m_typeScope;
+    std::shared_ptr<BElementType> m_type;
 
     // Mark function as a constructor
     bool m_isConstructor;
@@ -41,28 +38,10 @@ public:
     void setName(std::shared_ptr<ecc::LexicalToken> name) { m_name = name;}
 
     /**
-     * Get function type token
+     * Get function type
      * @return type
      */
-    std::shared_ptr<ecc::LexicalToken> getType() const {return m_type; }
-
-    /**
-     * Set function type token
-     * @param type
-     */
-    void setType(std::shared_ptr<ecc::LexicalToken> type) { m_type = type;}
-
-    /**
-     * Get variable type scope
-     * @return type
-     */
-    std::shared_ptr<BClass> getTypeScope() const {return m_typeScope;}
-
-    /**
-     * Set variable type scope
-     * @param type
-     */
-    void setTypeScope(std::shared_ptr<BClass> scope) {m_typeScope = scope;}
+    std::shared_ptr<BElementType> getType() const {return m_type; }
 
     /**
      * Check if this function is a class member
@@ -75,22 +54,10 @@ public:
     std::stringstream getLabel();
 
     /**
-     * A type is known if:
-     * - The type is built-in (e.g. int, char, ...)
-     * - The typeScope links to the actual function
-     */
-    bool hasKnowType() const;
-
-    /**
      * Check if function requires a return expression
      * @return true if function requires a return expression
      */
     bool requiresReturn();
-
-    /**
-     * Link type
-     */
-    void linkType();
 
     /**
      * A void function should not a return statement

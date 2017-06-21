@@ -41,3 +41,7 @@ const std::string IBType::NULL_VALUE = "null";
 bool IBType::isBuiltInType() {
     return isInt() || isString() || isAny() || isVoid() || isBoolean() || isChar();
 }
+
+bool IBType::hasKnownType() {
+    return isBuiltInType() || (isIdentifier() && m_typeScope);
+}

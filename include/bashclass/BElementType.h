@@ -22,5 +22,10 @@ public:
      * @return type value
      */
     std::string getTypeValue();
+
+    /**
+     * Link type
+     */
+    void linkType();
 };
 #endif

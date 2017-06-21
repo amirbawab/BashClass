@@ -112,6 +112,12 @@ public:
     bool isBoolean() {return getTypeName() == IBType::TYPE_NAME_BOOLEAN;}
 
     /**
+     * Identifier check
+     * @return boolean
+     */
+    bool isIdentifier() { return getTypeName() == IBType::TYPE_NAME_IDENTIFIER; }
+
+    /**
      * Null check
      * @return boolean
      */
@@ -127,6 +133,11 @@ public:
      * Check if the type is built-in
      */
     bool isBuiltInType();
+
+    /**
+     * Check if type is known
+     */
+    bool hasKnownType();
 };
 
 #endif

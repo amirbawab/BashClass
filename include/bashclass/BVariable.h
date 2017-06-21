@@ -6,6 +6,7 @@
 #include <memory>
 #include <easycc/LexicalToken.h>
 #include <bashclass/BClass.h>
+#include <bashclass/BElementType.h>
 
 class BVariable {
 private:
@@ -14,11 +15,7 @@ private:
     std::shared_ptr<ecc::LexicalToken> m_name;
 
     // Type of this variable
-    std::shared_ptr<ecc::LexicalToken> m_type;
-
-    // Link to the type of this variable.
-    // Check hasKnownType() function for more details
-    std::shared_ptr<BClass> m_typeScope;
+    std::shared_ptr<BElementType> m_type;
 
     // Parent scope of this variable
     std::shared_ptr<BScope> m_parentScope;
@@ -49,28 +46,10 @@ public:
     void setName(std::shared_ptr<ecc::LexicalToken> name) {m_name = name;}
 
     /**
-     * Get variable type token
+     * Get variable type
      * @return type
      */
-    std::shared_ptr<ecc::LexicalToken> getType() const {return m_type;}
-
-    /**
-     * Set variable type token
-     * @param type
-     */
-    void setType(std::shared_ptr<ecc::LexicalToken> type) {m_type = type;}
-
-    /**
-     * Get variable type scope
-     * @return type
-     */
-    std::shared_ptr<BClass> getTypeScope() const {return m_typeScope;}
-
-    /**
-     * Set variable type scope
-     * @param type
-     */
-    void setTypeScope(std::shared_ptr<BClass> scope) {m_typeScope = scope;}
+    std::shared_ptr<BElementType> getType() const {return m_type;}
 
     /**
      * Get parent scope
@@ -105,16 +84,6 @@ public:
      * Check if variable is a class member
      */
     bool isClassMember();
-
-    /**
-     * Check if variable has a known type
-     */
-    bool hasKnownType() const;
-
-    /**
-     * Link type
-     */
-    void linkType();
 
     /**
      * Set expression
