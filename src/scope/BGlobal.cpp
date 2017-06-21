@@ -1,5 +1,5 @@
 #include <bashclass/BGlobal.h>
-#include <bashclass/BTypes.h>
+#include <bashclass/BElementType.h>
 #include <iostream>
 #include <stack>
 #include <set>
@@ -44,7 +44,7 @@ void BGlobal::verifyMain() {
         }
 
         // Main function must return an integer
-        if(mainFunction->getType()->getName() != BType::TYPE_NAME_INT) {
+        if(mainFunction->getType()->getName() != BElementType::TYPE_NAME_INT) {
             BReport::getInstance().error()
                     << "Main function must return an integer" << std::endl;
             BReport::getInstance().printError();

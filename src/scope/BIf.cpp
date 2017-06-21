@@ -1,5 +1,5 @@
 #include <bashclass/BIf.h>
-#include <bashclass/BTypes.h>
+#include <bashclass/BElementType.h>
 #include <iostream>
 #include <bashclass/BReport.h>
 #include <bashclass/BException.h>
@@ -19,11 +19,11 @@ void BIf::setExpression(std::shared_ptr<IBExpression> expression) {
 
     // Verify the type of the expression is boolean
     std::string expressionType = expression->getTypeValueAsString();
-    if(BType::isUndefined(expressionType)) {
+    if(BElementType::isUndefined(expressionType)) {
         BReport::getInstance().error()
                 << "If statement condition cannot be of undefined type" << std::endl;
         BReport::getInstance().printError();
-    } else if(expressionType != BType::TYPE_VALUE_BOOLEAN) {
+    } else if(expressionType != BElementType::TYPE_VALUE_BOOLEAN) {
         BReport::getInstance().error()
                 << "An if condition must evaluate to a boolean instead of " << expressionType << std::endl;
         BReport::getInstance().printError();

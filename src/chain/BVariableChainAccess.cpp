@@ -1,12 +1,12 @@
 #include <bashclass/BVariableChainAccess.h>
-#include <bashclass/BTypes.h>
+#include <bashclass/BElementType.h>
 #include <iostream>
 #include <bashclass/BReport.h>
 #include <bashclass/BException.h>
 
 std::string BVariableChainAccess::getTypeValueAsString() {
     if(!m_variable || !m_variable->hasKnownType()) {
-        return BType::UNDEFINED;
+        return BElementType::UNDEFINED;
     }
     return m_variable->getType()->getValue();
 }

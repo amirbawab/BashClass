@@ -2,7 +2,7 @@
 #include <bashclass/BException.h>
 #include <bashclass/BFunction.h>
 #include <bashclass/BReport.h>
-#include <bashclass/BTypes.h>
+#include <bashclass/BElementType.h>
 #include <iostream>
 
 void BReturn::verifyReturn() {
@@ -35,14 +35,14 @@ void BReturn::verifyReturn() {
                         << "Cannot return expression in function " << function->getName()->getValue()
                         << " of undefined type" << std::endl;
                 BReport::getInstance().printError();
-            } else if(BType::isUndefined(expressionType)) {
+            } else if(BElementType::isUndefined(expressionType)) {
                 BReport::getInstance().error()
                         << "Function " << function->getName()->getValue()
                         << " has return statement but of undefined type" << std::endl;
                 BReport::getInstance().printError();
-            } else if(functionType != BType::TYPE_VALUE_ANY
-                      && (BType::isBuiltInType(function->getType()->getName())
-                          || expressionType != BType::NULL_VALUE)
+            } else if(functionType != BElementType::TYPE_VALUE_ANY
+                      && (BElementType::isBuiltInType(function->getType()->getName())
+                          || expressionType != BElementType::NULL_VALUE)
                       && functionType != expressionType) {
                 BReport::getInstance().error()
                         << "Function " << function->getName()->getValue() << " is of type " << functionType

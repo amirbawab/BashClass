@@ -1,6 +1,6 @@
 #include <bashclass/BBashHelper.h>
 #include <bashclass/BGenerateCode.h>
-#include <bashclass/BTypes.h>
+#include <bashclass/BElementType.h>
 #include <bashclass/BException.h>
 #include <bashclass/BGlobal.h>
 #include <bashclass/BVariableChainAccess.h>
@@ -300,13 +300,13 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
     if(tokenUse) {
 
         // If the token is null
-        if(tokenUse->getLexicalToken()->getName() == BType::NULL_VALUE) {
+        if(tokenUse->getLexicalToken()->getName() == BElementType::NULL_VALUE) {
             // TODO Store in const
             return ExprReturn("0", ExprReturn::DATA);
         }
 
         // If the token is a true/false
-        if(tokenUse->getLexicalToken()->getName() == BType::DATA_TYPE_NAME_BOOLEAN) {
+        if(tokenUse->getLexicalToken()->getName() == BElementType::DATA_TYPE_NAME_BOOLEAN) {
             if(tokenUse->getLexicalToken()->getValue() == "true") {
                 return ExprReturn("1", ExprReturn::DATA);
             }
@@ -318,13 +318,13 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
         }
 
         // If the token is a bash subshell
-        if(tokenUse->getLexicalToken()->getName() == BType::DATA_TYPE_NAME_BASH_SUB) {
+        if(tokenUse->getLexicalToken()->getName() == BElementType::DATA_TYPE_NAME_BASH_SUB) {
             return ExprReturn("$( " + tokenUse->getLexicalToken()->getValue().
                     substr(2, tokenUse->getLexicalToken()->getValue().length()-4) + " )", ExprReturn::DATA);
         }
 
         // If the token is a string
-        if(tokenUse->getLexicalToken()->getName() == BType::DATA_TYPE_NAME_STRING) {
+        if(tokenUse->getLexicalToken()->getName() == BElementType::DATA_TYPE_NAME_STRING) {
             return ExprReturn(tokenUse->getLexicalToken()->getValue()
                     .substr(1,tokenUse->getLexicalToken()->getValue().length()-2), ExprReturn::DATA);
         }
@@ -359,14 +359,14 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             if(arithOperator == BArithOperation::OP_PLUS) {
 
                 // String concatenation
-                if(arithOperationType == BType::TYPE_VALUE_STRING) {
+                if(arithOperationType == BElementType::TYPE_VALUE_STRING) {
                     ss << "declare " << newKey << "=\"" << leftOp.formattedValue() << rightOp.formattedValue()
                        << "\"" << std::endl;
                     return ExprReturn(newKey, ExprReturn::VARIABLE);
                 }
 
                 // Integer addition
-                if(arithOperationType == BType::TYPE_VALUE_INT) {
+                if(arithOperationType == BElementType::TYPE_VALUE_INT) {
                     ss << "declare " << newKey << "="
                        << _arithOpForm1(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
                                         rightOp.formattedValue())
@@ -385,7 +385,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
                || arithOperator == BArithOperation::OP_MOD || arithOperator == BArithOperation::OP_EXPONENTIAL) {
 
                 // Integer
-                if(arithOperationType == BType::TYPE_VALUE_INT) {
+                if(arithOperationType == BElementType::TYPE_VALUE_INT) {
                     ss << "declare " << newKey << "="
                        << _arithOpForm1(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
                                         rightOp.formattedValue())
@@ -402,10 +402,10 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
                || arithOperator == BArithOperation::OP_LESS_THAN || arithOperator == BArithOperation::OP_GREATER_THAN) {
 
                 // Boolean comparison
-                if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
+                if(arithOperationType == BElementType::TYPE_VALUE_BOOLEAN) {
 
                     // String comparison
-                    if(leftOperandType == BType::TYPE_VALUE_STRING || rightOperandType == BType::TYPE_VALUE_STRING) {
+                    if(leftOperandType == BElementType::TYPE_VALUE_STRING || rightOperandType == BElementType::TYPE_VALUE_STRING) {
                         ss << "declare " << newKey << "="
                            << _arithOpForm2(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
                                             rightOp.formattedValue())
@@ -429,7 +429,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
                || arithOperator == BArithOperation::OP_LESS_OR_EQUAL || arithOperator == BArithOperation::OP_GREATER_OR_EQUAL) {
 
                 // Boolean comparison
-                if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
+                if(arithOperationType == BElementType::TYPE_VALUE_BOOLEAN) {
                     ss << "declare " << newKey << "="
                        << _arithOpForm1(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
                                         rightOp.formattedValue())
@@ -465,7 +465,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             if(arithOperator == BArithOperation::OP_NOT) {
 
                 // Boolean toggle
-                if(arithOperationType == BType::TYPE_VALUE_BOOLEAN) {
+                if(arithOperationType == BElementType::TYPE_VALUE_BOOLEAN) {
                     ss << "declare " << newKey << "=" << _arithOpForm1(rightStr.formattedValue(), "^", "1") << std::endl;
                     return ExprReturn(newKey, ExprReturn::VARIABLE);
                 }
@@ -476,7 +476,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             if(arithOperator == BArithOperation::OP_PLUS || arithOperator == BArithOperation::OP_MINUS) {
 
                 // Integer sign
-                if(arithOperationType == BType::TYPE_VALUE_INT) {
+                if(arithOperationType == BElementType::TYPE_VALUE_INT) {
                     ss << "declare " << newKey << "="
                        << _arithOpForm1(rightStr.formattedValue(), "*", "(" + arithOperation->getOperator()->getValue() + "1)")
                        << std::endl;
@@ -584,9 +584,9 @@ void BBashHelper::bash(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lexic
     ss << "# Run BASH code" << std::endl;
 
     _indent(scope, ss);
-    if(token->getName() == BType::DATA_TYPE_NAME_BASH_INLINE) {
+    if(token->getName() == BElementType::DATA_TYPE_NAME_BASH_INLINE) {
         ss << token->getValue().substr(2,token->getValue().length()-2);
-    } else if(token->getName() == BType::DATA_TYPE_NAME_BASH_BLOCK) {
+    } else if(token->getName() == BElementType::DATA_TYPE_NAME_BASH_BLOCK) {
         ss << token->getValue().substr(2, token->getValue().length()-4);
     } else {
         throw BException("Bash code can only be generated by bash lexical tokens");

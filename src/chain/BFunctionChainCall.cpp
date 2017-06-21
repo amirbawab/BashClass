@@ -1,5 +1,5 @@
 #include <bashclass/BFunctionChainCall.h>
-#include <bashclass/BTypes.h>
+#include <bashclass/BElementType.h>
 #include <iostream>
 #include <bashclass/BReport.h>
 #include <bashclass/BVariable.h>
@@ -7,7 +7,7 @@
 
 std::string BFunctionChainCall::getTypeValueAsString() {
     if(!m_function || !m_function->hasKnowType()) {
-        return BType::UNDEFINED;
+        return BElementType::UNDEFINED;
     }
     return m_function->getType()->getValue();
 }
@@ -67,15 +67,15 @@ void BFunctionChainCall::addArgument(std::shared_ptr<IBExpression> argument) {
                         << parameters[paramIndex]->getName()->getValue() << " in function "
                         << m_function->getName()->getValue() << std::endl;
                 BReport::getInstance().printError();
-            } else if(BType::isUndefined(argumentType)) {
+            } else if(BElementType::isUndefined(argumentType)) {
                 BReport::getInstance().error()
                         << "Parameter " << parameters[paramIndex]->getName()->getValue()
                         << " in function " << m_function->getName()->getValue()
                         << " is given an undefined argument" << std::endl;
                 BReport::getInstance().printError();
-            } else if(parameterType != BType::TYPE_VALUE_ANY
-                      && (BType::isBuiltInType(parameters[paramIndex]->getType()->getName())
-                          || argumentType != BType::NULL_VALUE)
+            } else if(parameterType != BElementType::TYPE_VALUE_ANY
+                      && (BElementType::isBuiltInType(parameters[paramIndex]->getType()->getName())
+                          || argumentType != BElementType::NULL_VALUE)
                       && parameterType != argumentType) {
                 BReport::getInstance().error()
                         << "Function " << m_function->getName()->getValue()

@@ -1,5 +1,5 @@
 #include <bashclass/BVariable.h>
-#include <bashclass/BTypes.h>
+#include <bashclass/BElementType.h>
 #include <bashclass/BClass.h>
 #include <bashclass/BException.h>
 #include <bashclass/BGlobal.h>
@@ -23,11 +23,11 @@ bool BVariable::isClassMember() {
 }
 
 bool BVariable::hasKnownType() const {
-    return BType::isBuiltInType(m_type->getName()) || m_typeScope;
+    return BElementType::isBuiltInType(m_type->getName()) || m_typeScope;
 }
 
 void BVariable::linkType() {
-    if(!BType::isBuiltInType(m_type->getName())) {
+    if(!BElementType::isBuiltInType(m_type->getName())) {
         // Find class scope of that type
         auto cls = BGlobal::getInstance()->findAllClasses(m_type->getValue().c_str());
         if(cls.empty()) {
@@ -46,11 +46,11 @@ std::string BVariable::getDefaultValue() {
         throw BException("Cannot get initial value without setting the variable type");
     }
 
-    if(m_type->getName() == BType::TYPE_NAME_STRING) {
+    if(m_type->getName() == BElementType::TYPE_NAME_STRING) {
         return "\"\"";
     }
 
-    if(m_type->getName() == BType::TYPE_NAME_CHAR) {
+    if(m_type->getName() == BElementType::TYPE_NAME_CHAR) {
         return "\"$(echo -n -e \"\\u0000\")\"";
     }
 

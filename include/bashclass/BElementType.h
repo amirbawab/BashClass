@@ -1,9 +1,9 @@
-#ifndef BASHCLASS_BTYPES_H
-#define BASHCLASS_BTYPES_H
+#ifndef BASHCLASS_BELEMENTTYPE_H
+#define BASHCLASS_BELEMENTTYPE_H
 
 #include <string>
 
-class BType{
+class BElementType {
 public:
 
     // Values defining the built-in types names. For example:

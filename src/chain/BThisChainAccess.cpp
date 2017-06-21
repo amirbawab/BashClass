@@ -1,10 +1,10 @@
 #include <bashclass/BThisChainAccess.h>
-#include <bashclass/BTypes.h>
+#include <bashclass/BElementType.h>
 #include <bashclass/BException.h>
 
 std::string BThisChainAccess::getTypeValueAsString() {
     if(!m_reference) {
-        return BType::UNDEFINED;
+        return BElementType::UNDEFINED;
     }
     return m_reference->getName()->getValue();
 }

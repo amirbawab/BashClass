@@ -1,6 +1,6 @@
 #include <bashclass/BFunction.h>
 #include <bashclass/BClass.h>
-#include <bashclass/BTypes.h>
+#include <bashclass/BElementType.h>
 #include <iostream>
 #include <bashclass/BException.h>
 #include <bashclass/BReport.h>
@@ -25,11 +25,11 @@ bool BFunction::isClassMember() {
 }
 
 bool BFunction::hasKnowType() const {
-    return BType::isBuiltInType(m_type->getName()) || m_typeScope;
+    return BElementType::isBuiltInType(m_type->getName()) || m_typeScope;
 }
 
 bool BFunction::requiresReturn() {
-    return m_type->getName() != BType::TYPE_NAME_VOID && !isConstructor();
+    return m_type->getName() != BElementType::TYPE_NAME_VOID && !isConstructor();
 }
 
 void BFunction::verifyReturns() {
@@ -59,7 +59,7 @@ bool BFunction::isConstructor() {
 }
 
 void BFunction::linkType() {
-    if(!BType::isBuiltInType(m_type->getName())) {
+    if(!BElementType::isBuiltInType(m_type->getName())) {
         // Find class scope of that type
         auto cls = BGlobal::getInstance()->findAllClasses(m_type->getValue().c_str());
         if(cls.empty()) {
