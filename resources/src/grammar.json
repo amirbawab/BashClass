@@ -24,11 +24,12 @@
     "BASH_INLINE" : ["'bash_inline'"],
     "BASH_BLOCK" : ["'bash_block'"],
 
-    "VARIABLE_DEC" : ["#newKey# VARIABLE #startVar# VARIABLE_TYPE #varType# VARIABLE_NAME #varName# VARIABLE_INIT SEMICOLON #endVar#"],
+    "VARIABLE_DEC" : ["#newKey# VARIABLE #startVar# VARIABLE_TYPE #varType# ARRAY_TYPE_OPT VARIABLE_NAME #varName# VARIABLE_INIT SEMICOLON #endVar#"],
     "VARIABLE_INIT" : ["EPSILON","#varAsOperand# OP_GROUP_AA #putOp# EXPR_A EXPR_AB #createExpr2# #varInit#"],
     "VARIABLE" : ["'var'"],
     "VARIABLE_TYPE" : ["'identifier'","'int_type'","'boolean_type'","'char_type'","'string_type'","'any_type'"],
     "VARIABLE_NAME" : ["'identifier'"],
+    "ARRAY_TYPE_OPT": ["EPSILON","OPEN_SQ CLOSE_SQ #arrayType# ARRAY_TYPE_OPT"],
 
     "RETURN_DEC" : ["RETURN #startReturn# RETURN_OPT_EXPR SEMICOLON #endReturn#"],
     "RETURN_OPT_EXPR": ["EXPR_DEC #returnExpr#","EPSILON #returnVoid#"],
@@ -51,6 +52,9 @@
 
     "OPEN_CUR" : ["'open_curly'"],
     "CLOSE_CUR" : ["'close_curly'"],
+
+    "OPEN_SQ" : ["'open_square'"],
+    "CLOSE_SQ" : ["'close_square'"],
 
     "COMMA" : ["'comma'"],
     "SEMICOLON" : ["'semicolon'"],

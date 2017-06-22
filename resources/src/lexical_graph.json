@@ -359,6 +359,18 @@
             "id": 67,
             "token": "error_character",
             "backtrack": true
+        },
+        {
+            "type": "FINAL",
+            "id": 68,
+            "token": "open_square",
+            "backtrack": false
+        },
+        {
+            "type": "FINAL",
+            "id": 69,
+            "token": "close_square",
+            "backtrack": false
         }
     ],
     "transitions": [
@@ -1006,6 +1018,20 @@
             "chars": [
                 "EOF",
                 "NEW_LINE"
+            ]
+        },
+        {
+            "from": 0,
+            "to": 68,
+            "chars": [
+                "["
+            ]
+        },
+        {
+            "from": 0,
+            "to": 69,
+            "chars": [
+                "]"
             ]
         }
     ]
