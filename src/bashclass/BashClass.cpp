@@ -734,4 +734,20 @@ void BashClass::initHandlers() {
             m_expressionOperandStack.push_back(variableAccess);
         }
     };
+
+    /**************************************
+     *              Arrays
+     **************************************/
+    m_arrayType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            // TODO
+        }
+    };
+
+    m_indexAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            // FIXME
+            m_expressionOperandStack.pop_back();
+        }
+    };
 }

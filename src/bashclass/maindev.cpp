@@ -93,6 +93,9 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#startArgument#", bashClass.m_startArgument);
     easyCC.registerSemanticAction("#endArgument#", bashClass.m_endArgument);
 
+    easyCC.registerSemanticAction("#arrayType#", bashClass.m_arrayType);
+    easyCC.registerSemanticAction("#indexAccess#", bashClass.m_indexAccess);
+
     // Start compiling
     std::vector<int> phases = {BashClass::PHASE_CREATE, BashClass::PHASE_EVAL, BashClass::PHASE_GENERATE};
     for(int phase : phases) {
