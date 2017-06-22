@@ -37,24 +37,6 @@ public:
     void setFunction(std::shared_ptr<BFunction> function) {m_function = function;}
 
     /**
-     * Add argument
-     * @param argument
-     */
-    void addArgument(std::shared_ptr<IBExpression> argument);
-
-    /**
-     * Get arguments
-     * @return arguments
-     */
-    std::vector<std::shared_ptr<IBExpression>> getArguments() const { return m_arguments;};
-
-    /**
-     * Get function type
-     * @return function type
-     */
-    std::string getTypeValueAsString();
-
-    /**
      * Set lexical token
      * @param lexicalToken
      */
@@ -67,21 +49,33 @@ public:
     std::shared_ptr<ecc::LexicalToken> getLexicalToken() {return m_lexicalToken;}
 
     /**
+     * Add argument
+     * @param argument
+     */
+    void addArgument(std::shared_ptr<IBExpression> argument);
+
+    /**
+     * Get arguments
+     * @return arguments
+     */
+    std::vector<std::shared_ptr<IBExpression>> getArguments() const { return m_arguments;};
+
+    /**
      * Argument number should match the number of parameters
      */
     void verifyArguments();
 
     /**
-     * Check if the actual function exists
-     * @return true if the actual function exists
+     * Check if reference found
+     * @return true if found
      */
-    bool isKnown();
+    bool isFound();
 
     /**
-     * Get type of the actual function
-     * @return type of the actual function
+     * Get type
+     * @return type
      */
-    std::shared_ptr<BClass> getTypeScope();
+    std::shared_ptr<IBType> getType();
 };
 
 #endif

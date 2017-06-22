@@ -4,28 +4,22 @@
 #include <memory>
 #include <string>
 #include <bashclass/BClass.h>
+#include <bashclass/IBType.h>
 
 class IBChainable {
 public:
 
     /**
-     * Get the type of the chainable element
-     * @return type value as a string
-     */
-    virtual std::string getTypeValueAsString()=0;
-
-    /**
      * Check if the element is known
      * @return true if the element is recognized
      */
-    virtual bool isKnown()=0;
+    virtual bool isFound()=0;
 
     /**
-     * Get a pointer to the class defining the type
-     * of the element
-     * @return pointer to a class instance
+     * Get the type of the chainable element
+     * @return type
      */
-    virtual std::shared_ptr<BClass> getTypeScope()=0;
+    virtual std::shared_ptr<IBType> getType()=0;
 };
 
 #endif

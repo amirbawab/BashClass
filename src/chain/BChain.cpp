@@ -6,10 +6,6 @@
 #include <bashclass/BReport.h>
 #include <bashclass/BGlobal.h>
 
-std::string BChain::getTypeValueAsString() {
-    return last()->getTypeValueAsString();
-}
-
 void BChain::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
 
     // Prepare variable call
@@ -34,7 +30,7 @@ void BChain::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lex
         auto lastElement = last();
 
         // Check if previous element is recognized
-        if(!lastElement->isKnown()) {
+        if(!lastElement->isFound()) {
             BReport::getInstance().error()
                     << "Cannot access variable member " << token->getValue()
                     << " of undefined at line " << token->getLine() << " and column "
@@ -43,29 +39,45 @@ void BChain::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lex
         } else {
 
             // Get the type of the previous element
-            auto typeScope = lastElement->getTypeScope();
+            std::shared_ptr<IBType> lastType = lastElement->getType();
 
-            // Check if the type is defined
-            if(typeScope) {
-                auto variables = typeScope->findAllVariables(token->getValue().c_str());
-                if(!variables.empty()) {
-                    variableCall->setVariable(variables.front());
+            // Check the type of the previous element
+            if(lastType->isIdentifier()) {
+
+                // If type was found
+                if(lastType->getTypeScope()) {
+
+                    // Search for the new variable in that new scope
+                    auto variables = lastType->getTypeScope()->findAllVariables(token->getValue().c_str());
+                    if(!variables.empty()) {
+                        variableCall->setVariable(variables.front());
+                    } else {
+                        BReport::getInstance().error()
+                                << "Class " << lastType->getTypeScope()->getName()->getValue()
+                                << " does not have a variable member "
+                                << token->getValue() << " at line "
+                                << token->getLine() << " and column "
+                                << token->getColumn() << std::endl;
+                        BReport::getInstance().printError();
+                    }
                 } else {
                     BReport::getInstance().error()
-                            << "Class " << typeScope->getName()->getValue()
-                            << " does not have a variable member "
+                            << "Cannot find variable member "
                             << token->getValue() << " at line "
                             << token->getLine() << " and column "
-                            << token->getColumn() << std::endl;
+                            << token->getColumn() << " because the previous element has an undefined type"
+                            << std::endl;
                     BReport::getInstance().printError();
                 }
-            } else {
+            } else if(lastType->isBuiltInType()) {
                 BReport::getInstance().error()
                         << "Variable member " << token->getValue()
                         << " at line " << token->getLine()
                         << " and column " << token->getColumn()
                         << " does not exist. Previous element type does not have any known members." << std::endl;
                 BReport::getInstance().printError();
+            } else {
+                throw BException("Cannot verify new variable type because previous element is of an unrecognized type");
             }
         }
     }
@@ -112,7 +124,7 @@ void BChain::addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lex
         auto lastElement = last();
 
         // Check if the previous element is recognized
-        if(!lastElement->isKnown()) {
+        if(!lastElement->isFound()) {
             BReport::getInstance().error()
                     << "Cannot access function member " << token->getValue()
                     << " of undefined at line " << token->getLine() << " and column "
@@ -121,21 +133,35 @@ void BChain::addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lex
         } else {
 
             // Get the type of the previous element
-            auto typeScope = lastElement->getTypeScope();
+            auto lastType = lastElement->getType();
 
-            // Check if the type is defined
-            if(typeScope) {
-                auto functions = typeScope->findAllFunctions(token->getValue().c_str());
-                if(!functions.empty()) {
-                    functionCall->setFunction(functions.front());
+            // Check the type of the previous element
+            if(lastType->isIdentifier()) {
+
+                // Check if type was found
+                if(lastType->getTypeScope()) {
+                    auto functions = lastType->getTypeScope()->findAllFunctions(token->getValue().c_str());
+                    if(!functions.empty()) {
+                        functionCall->setFunction(functions.front());
+                    } else {
+                        BReport::getInstance().error()
+                                << "Class " << lastType->getTypeScope()->getName()->getValue()
+                                << " does not have a function member "
+                                << token->getValue() << " at line "
+                                << token->getLine() << " and column "
+                                << token->getColumn() << std::endl;
+                        BReport::getInstance().printError();
+                    }
                 } else {
                     BReport::getInstance().error()
-                            << "Class " << typeScope->getName()->getValue() << " does not have a function member "
+                            << "Cannot find function member "
                             << token->getValue() << " at line "
                             << token->getLine() << " and column "
-                            << token->getColumn() << std::endl;
+                            << token->getColumn() << " because the previous element has an undefined type"
+                            << std::endl;
                     BReport::getInstance().printError();
                 }
+
             } else {
                 BReport::getInstance().error()
                         << "Function member " << token->getValue()

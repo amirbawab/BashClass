@@ -13,12 +13,6 @@ private:
 public:
 
     /**
-     * Get the type value of the this reference
-     * @return type value as a string
-     */
-    std::string getTypeValueAsString();
-
-    /**
      * Set this chain access
      * @param chain
      */
@@ -29,6 +23,12 @@ public:
      * @return thisChainAccess
      */
     std::shared_ptr<BThisChainAccess> getThisChainAccess();
+
+    /**
+     * Get type
+     * @return type
+     */
+    std::shared_ptr<IBType> getType();
 };
 
 #endif

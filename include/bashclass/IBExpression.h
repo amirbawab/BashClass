@@ -1,16 +1,16 @@
 #ifndef BASHCLASS_IBEXPRESSION_H
 #define BASHCLASS_IBEXPRESSION_H
 
-#include <string>
+#include <bashclass/IBType.h>
 
 class IBExpression {
 public:
 
     /**
      * Get the type of the expression element
-     * @return type value as a string
+     * @return type value
      */
-    virtual std::string getTypeValueAsString()=0;
+    virtual std::shared_ptr<IBType> getType()=0;
 };
 
 #endif

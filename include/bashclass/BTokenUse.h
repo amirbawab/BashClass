@@ -4,12 +4,16 @@
 #include <bashclass/IBExpression.h>
 #include <bashclass/BClass.h>
 #include <easycc/LexicalToken.h>
+#include <bashclass/BExpressionType.h>
 
 class BTokenUse : public IBExpression {
 private:
 
     // Lexical token corresponding to this instance
     std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
+
+    // Hold the type of the token
+    std::shared_ptr<IBType> m_type;
 public:
 
     /**
@@ -22,17 +26,13 @@ public:
      * Set lexical token
      * @param lexicalToken
      */
-    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) { m_lexicalToken = lexicalToken;}
+    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken);
 
     /**
-     * Get the type of token
-     * @return  BType::TYPE_VALUE_INT
-     *          BType::TYPE_VALUE_STRING
-     *          BType::TYPE_VALUE_CHAR
-     *          BType::TYPE_VALUE_BOOLEAN
-     *          BType::UNDEFINED
+     * Get token type
+     * @return type
      */
-    std::string getTypeValueAsString();
+    std::shared_ptr<IBType> getType() { return m_type;}
 };
 
 

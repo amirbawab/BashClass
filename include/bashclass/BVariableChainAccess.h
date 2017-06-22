@@ -29,19 +29,7 @@ public:
      * Set variable
      * @param variable
      */
-    void setVariable(std::shared_ptr<BVariable> variable) {m_variable = variable;}
-
-    /**
-     * Get type of the variable
-     * @return
-     */
-    std::string getTypeValueAsString();
-
-    /**
-     * Set lexical token
-     * @param lexicalToken
-     */
-    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) { m_lexicalToken = lexicalToken;}
+    void setVariable(std::shared_ptr<BVariable> variable) { m_variable = variable;}
 
     /**
      * Get lexical token
@@ -50,16 +38,22 @@ public:
     std::shared_ptr<ecc::LexicalToken> getLexicalToken() {return m_lexicalToken;}
 
     /**
-     * Check if the actual variable exists
-     * @return true if the actual variable exists
+     * Set lexical token
+     * @param lexicalToken
      */
-    bool isKnown();
+    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) { m_lexicalToken = lexicalToken;}
 
     /**
-     * Get type of the actual variable
-     * @return type of the actual variable
+     * Check if reference is found
+     * @return true if found
      */
-    std::shared_ptr<BClass> getTypeScope();
+    bool isFound();
+
+    /**
+     * Get variable type
+     * @return type
+     */
+    std::shared_ptr<IBType> getType();
 };
 
 

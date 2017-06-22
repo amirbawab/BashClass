@@ -3,10 +3,14 @@
 
 #include <string>
 #include <memory>
-#include <bashclass/BClass.h>
 
+class BClass;
 class IBType {
-private:
+protected:
+
+    // Hold type scope
+    std::shared_ptr<BClass> m_typeScope;
+public:
 
     // Values defining the built-in types names. For example:
     // var [int] a;
@@ -50,12 +54,6 @@ private:
     static const std::string DATA_TYPE_NAME_BASH_SUB;
     static const std::string DATA_TYPE_NAME_BASH_INLINE;
     static const std::string DATA_TYPE_NAME_BASH_BLOCK;
-
-protected:
-
-    // Hold type scope
-    std::shared_ptr<BClass> m_typeScope;
-public:
 
     /**
      * Get type name
@@ -138,6 +136,14 @@ public:
      * Check if type is known
      */
     bool hasKnownType();
+
+    /**
+     * Check if type is compatible with the provided one
+     * e.g. a = b;
+     * Then the check is as follow: a.isCompatible(b)
+     * @return true if it is compatible
+     */
+    bool isCompatible(std::shared_ptr<IBType> type);
 };
 
 #endif

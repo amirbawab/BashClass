@@ -13,13 +13,6 @@ private:
 public:
 
     /**
-     * Get the type value as a string of the last element
-     * in the chain which is a variable chain access
-     * @return type as string
-     */
-    std::string getTypeValueAsString();
-
-    /**
      * Get the last element in the chain which is of type variable chain access
      * @return variable chain access
      */
@@ -36,6 +29,12 @@ public:
      * @param chain
      */
     void setChain(std::shared_ptr<BChain> chain) { m_chain = chain;}
+
+    /**
+     * Get type
+     * @return type
+     */
+    std::shared_ptr<IBType> getType();
 };
 
 #endif

@@ -1,19 +1,30 @@
 #include <bashclass/BTokenUse.h>
-#include <bashclass/BElementType.h>
 #include <bashclass/BException.h>
+#include <bashclass/BTypeFactory.h>
 
-std::string BTokenUse::getTypeValueAsString() {
-    if(m_lexicalToken->getName() == BElementType::DATA_TYPE_NAME_INT) {
-        return BElementType::TYPE_VALUE_INT;
-    } else if(m_lexicalToken->getName() == BElementType::DATA_TYPE_NAME_STRING
-              || m_lexicalToken->getName() == BElementType::DATA_TYPE_NAME_BASH_SUB) {
-        return BElementType::TYPE_VALUE_STRING;
-    } else if(m_lexicalToken->getName() == BElementType::DATA_TYPE_NAME_CHAR) {
-        return BElementType::TYPE_VALUE_CHAR;
-    } else if(m_lexicalToken->getName() == BElementType::DATA_TYPE_NAME_BOOLEAN) {
-        return BElementType::TYPE_VALUE_BOOLEAN;
-    } else if(m_lexicalToken->getName() == BElementType::NULL_VALUE) {
-        return BElementType::NULL_VALUE;
+void BTokenUse::setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+
+    // Set lexical token
+    m_lexicalToken = lexicalToken;
+
+    // Configure expression type based no the lexical token data
+    if(m_lexicalToken->getName() == IBType::DATA_TYPE_NAME_INT) {
+        m_type = BTypeFactory::createIntExpressionType();
+
+    } else if(m_lexicalToken->getName() == IBType::DATA_TYPE_NAME_STRING
+              || m_lexicalToken->getName() == IBType::DATA_TYPE_NAME_BASH_SUB) {
+        m_type = BTypeFactory::createStringExpressionType();
+
+    } else if(m_lexicalToken->getName() == IBType::DATA_TYPE_NAME_CHAR) {
+        m_type = BTypeFactory::createCharExpressionType();
+
+    } else if(m_lexicalToken->getName() == IBType::DATA_TYPE_NAME_BOOLEAN) {
+        m_type = BTypeFactory::createBooleanExpressionType();
+
+    } else if(m_lexicalToken->getName() == IBType::NULL_VALUE) {
+        m_type = BTypeFactory::createNullExpressionType();
+
+    } else {
+        throw BException("Token type value cannot be undefined");
     }
-    throw BException("Token type value cannot be undefined");
 }

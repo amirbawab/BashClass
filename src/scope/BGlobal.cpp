@@ -1,5 +1,4 @@
 #include <bashclass/BGlobal.h>
-#include <bashclass/BElementType.h>
 #include <iostream>
 #include <stack>
 #include <set>
@@ -18,16 +17,16 @@ void BGlobal::linkTypes() {
     for(auto cls : findAllClasses()) {
 
         for(auto variable : cls->findAllVariables()) {
-            variable->linkType();
+            variable->getType()->linkType();
         }
 
         for(auto function : cls->findAllFunctions()) {
-            function->linkType();
+            function->getType()->linkType();
         }
     }
 
     for(auto function : findAllFunctions()) {
-        function->linkType();
+        function->getType()->linkType();
     }
 }
 
@@ -44,7 +43,7 @@ void BGlobal::verifyMain() {
         }
 
         // Main function must return an integer
-        if(mainFunction->getType()->getName() != BElementType::TYPE_NAME_INT) {
+        if(!mainFunction->getType()->isInt()) {
             BReport::getInstance().error()
                     << "Main function must return an integer" << std::endl;
             BReport::getInstance().printError();

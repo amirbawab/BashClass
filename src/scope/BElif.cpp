@@ -16,12 +16,12 @@ void BElif::setExpression(std::shared_ptr<IBExpression> expression) {
     m_expression = expression;
 
     // Verify the type of the expression is boolean
-    std::string expressionType = expression->getTypeValueAsString();
-    if(BElementType::isUndefined(expressionType)) {
+    std::shared_ptr<IBType> expressionType = expression->getType();
+    if(expressionType->isUndefined()) {
         BReport::getInstance().error()
                 << "Elif statement condition cannot be of undefined type" << std::endl;
         BReport::getInstance().printError();
-    } else if(expressionType != BElementType::TYPE_VALUE_BOOLEAN) {
+    } else if(!expressionType->isBoolean()) {
         BReport::getInstance().error()
                 << "An elif condition must evaluate to a boolean instead of " << expressionType << std::endl;
         BReport::getInstance().printError();

@@ -17,27 +17,9 @@ private:
 public:
 
     /**
-     * Get type of this
-     * @return string type
-     */
-    std::string getTypeValueAsString();
-
-    /**
-     * Set lexical token for this reference
-     * @param lexicalToken
-     */
-    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) { m_lexicalToken = lexicalToken;}
-
-    /**
-     * Get lexical token of this reference
-     * @return lexicalToken
-     */
-    std::shared_ptr<ecc::LexicalToken> getLexicalToken() {return m_lexicalToken;}
-
-    /**
-     * Get reference class
-     * @return reference
-     */
+    * Get reference class
+    * @return reference
+    */
     std::shared_ptr<BClass> getReference() {return m_reference;}
 
     /**
@@ -47,16 +29,28 @@ public:
     void setReference(std::shared_ptr<BClass> reference) {m_reference = reference;}
 
     /**
-     * Check if the this reference is known
-     * @return true if known
+     * Get lexical token of this reference
+     * @return lexicalToken
      */
-    bool isKnown();
+    std::shared_ptr<ecc::LexicalToken> getLexicalToken() {return m_lexicalToken;}
 
     /**
-     * Get type scope
-     * @return type scope
+     * Set lexical token for this reference
+     * @param lexicalToken
      */
-    std::shared_ptr<BClass> getTypeScope();
+    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) { m_lexicalToken = lexicalToken;}
+
+    /**
+     * Check if reference is found
+     * @return true if found
+     */
+    bool isFound();
+
+    /**
+     * Get this reference type
+     * @return type
+     */
+    std::shared_ptr<IBType> getType();
 };
 
 #endif

@@ -12,6 +12,18 @@ private:
 public:
 
     /**
+     * Get lexical ltoken
+     * @return lexical token
+     */
+    std::shared_ptr<ecc::LexicalToken> getLexicalToken() {return m_lexicalToken;}
+
+    /**
+     * Set lexical token
+     * @param lexicalToken
+     */
+    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) { m_lexicalToken = lexicalToken; }
+
+    /**
      * Get type name
      * @return type name
      */

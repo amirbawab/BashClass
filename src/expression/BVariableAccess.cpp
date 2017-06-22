@@ -8,6 +8,7 @@ std::shared_ptr<BVariableChainAccess> BVariableAccess::last() {
     return std::static_pointer_cast<BVariableChainAccess>(m_chain->last());
 }
 
-std::string BVariableAccess::getTypeValueAsString() {
-    return last()->getTypeValueAsString();
+
+std::shared_ptr<IBType> BVariableAccess::getType() {
+    return last()->getType();
 }

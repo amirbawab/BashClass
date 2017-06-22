@@ -5,13 +5,6 @@
 #include <bashclass/BVariable.h>
 #include <bashclass/BException.h>
 
-std::string BFunctionChainCall::getTypeValueAsString() {
-    if(!m_function || !m_function->hasKnowType()) {
-        return BElementType::UNDEFINED;
-    }
-    return m_function->getType()->getValue();
-}
-
 void BFunctionChainCall::verifyArguments() {
 
     // Check if the number of arguments is less than the number of parameters
@@ -59,24 +52,21 @@ void BFunctionChainCall::addArgument(std::shared_ptr<IBExpression> argument) {
             BReport::getInstance().printError();
         } else {
 
-            std::string argumentType = argument->getTypeValueAsString();
-            std::string parameterType = parameters[paramIndex]->getType()->getValue();
-            if(!parameters[paramIndex]->hasKnownType()) {
+            std::shared_ptr<IBType> argumentType = argument->getType();
+            std::shared_ptr<IBType> parameterType = parameters[paramIndex]->getType();
+            if(!parameters[paramIndex]->getType()->hasKnownType()) {
                 BReport::getInstance().error()
                         << "Cannot pass argument value to an undefined type for parameter "
                         << parameters[paramIndex]->getName()->getValue() << " in function "
                         << m_function->getName()->getValue() << std::endl;
                 BReport::getInstance().printError();
-            } else if(BElementType::isUndefined(argumentType)) {
+            } else if(argumentType->isUndefined()) {
                 BReport::getInstance().error()
                         << "Parameter " << parameters[paramIndex]->getName()->getValue()
                         << " in function " << m_function->getName()->getValue()
                         << " is given an undefined argument" << std::endl;
                 BReport::getInstance().printError();
-            } else if(parameterType != BElementType::TYPE_VALUE_ANY
-                      && (BElementType::isBuiltInType(parameters[paramIndex]->getType()->getName())
-                          || argumentType != BElementType::NULL_VALUE)
-                      && parameterType != argumentType) {
+            } else if(!parameterType->isCompatible(argumentType)) {
                 BReport::getInstance().error()
                         << "Function " << m_function->getName()->getValue()
                         << " expects argument " << paramIndex + 1 << " to be of type " << parameterType
@@ -93,13 +83,13 @@ void BFunctionChainCall::addArgument(std::shared_ptr<IBExpression> argument) {
     }
 }
 
-bool BFunctionChainCall::isKnown() {
+bool BFunctionChainCall::isFound() {
     return m_function != nullptr;
 }
 
-std::shared_ptr<BClass> BFunctionChainCall::getTypeScope() {
+std::shared_ptr<IBType> BFunctionChainCall::getType() {
     if(!m_function) {
-        throw BException("Cannot get type scope of a function call with an unknown reference");
+        throw BException("Cannot get type of a function that was not set");
     }
-    return m_function->getTypeScope();
+    return m_function->getType();
 }

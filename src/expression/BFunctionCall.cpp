@@ -8,6 +8,6 @@ std::shared_ptr<BFunctionChainCall> BFunctionCall::last() {
     return std::static_pointer_cast<BFunctionChainCall>(m_chain->last());
 }
 
-std::string BFunctionCall::getTypeValueAsString() {
-    return last()->getTypeValueAsString();
+std::shared_ptr<IBType> BFunctionCall::getType() {
+    return last()->getType();
 }

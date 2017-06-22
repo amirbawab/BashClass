@@ -46,12 +46,6 @@ public:
     std::shared_ptr<IBChainable> last();
 
     /**
-     * Get chain type
-     * @return chain type
-     */
-    std::string getTypeValueAsString();
-
-    /**
      * Add variable to the chain
      * @param scope
      * @param token

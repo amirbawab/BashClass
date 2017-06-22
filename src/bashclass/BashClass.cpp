@@ -160,7 +160,7 @@ void BashClass::initHandlers() {
 
     m_functionType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            m_focusFunction->setType(lexicalVector[index]);
+            m_focusFunction->getType()->setLexicalToken(lexicalVector[index]);
         }
     };
 
@@ -218,7 +218,7 @@ void BashClass::initHandlers() {
 
     m_classVarType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            m_focusVariable->setType(lexicalVector[index]);
+            m_focusVariable->getType()->setLexicalToken(lexicalVector[index]);
         }
     };
 
@@ -262,7 +262,7 @@ void BashClass::initHandlers() {
 
     m_varType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            m_focusVariable->setType(lexicalVector[index]);
+            m_focusVariable->getType()->setLexicalToken(lexicalVector[index]);
         }
     };
 
@@ -275,7 +275,7 @@ void BashClass::initHandlers() {
             m_scopeStack.back()->registerVariable(m_referenceKey, m_focusVariable);
 
             // Link variable
-            m_focusVariable->linkType();
+            m_focusVariable->getType()->linkType();
         }
     };
 
@@ -298,7 +298,7 @@ void BashClass::initHandlers() {
 
     m_paramType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
-            m_focusVariable->setType(lexicalVector[index]);
+            m_focusVariable->getType()->setLexicalToken(lexicalVector[index]);
         }
     };
 

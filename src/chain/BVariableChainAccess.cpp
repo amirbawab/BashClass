@@ -1,23 +1,13 @@
 #include <bashclass/BVariableChainAccess.h>
-#include <bashclass/BElementType.h>
-#include <iostream>
-#include <bashclass/BReport.h>
 #include <bashclass/BException.h>
 
-std::string BVariableChainAccess::getTypeValueAsString() {
-    if(!m_variable || !m_variable->hasKnownType()) {
-        return BElementType::UNDEFINED;
-    }
-    return m_variable->getType()->getValue();
-}
-
-bool BVariableChainAccess::isKnown() {
+bool BVariableChainAccess::isFound() {
     return m_variable != nullptr;
 }
 
-std::shared_ptr<BClass> BVariableChainAccess::getTypeScope() {
+std::shared_ptr<IBType> BVariableChainAccess::getType() {
     if(!m_variable) {
-        throw BException("Cannot get type scope of a function call with an unknown reference");
+        throw BException("Cannot get type of a variable that was not set");
     }
-    return m_variable->getTypeScope();
+    return m_variable->getType();
 }

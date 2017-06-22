@@ -45,3 +45,7 @@ bool IBType::isBuiltInType() {
 bool IBType::hasKnownType() {
     return isBuiltInType() || (isIdentifier() && m_typeScope);
 }
+
+bool IBType::isCompatible(std::shared_ptr<IBType> type) {
+    return isAny() || (isIdentifier() && type->isNull()) || getTypeValue() == type->getTypeValue();
+}

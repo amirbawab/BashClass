@@ -18,19 +18,19 @@ private:
     std::shared_ptr<ecc::LexicalToken> m_operatorToken;
 
     // Type of this arithmetic operation
-    std::string m_typeValue;
+    std::shared_ptr<IBType> m_type;
 
     /**
      * Evaluate arith operation with two operands
      * @return arith operation type
      */
-    std::string _evaluateTwoOperands();
+    std::shared_ptr<IBType> _evaluateTwoOperands();
 
     /**
      * Evaluate arith operation with right operand only
      * @return arith operation type
      */
-    std::string _evaluateRightOperand();
+    std::shared_ptr<IBType> _evaluateRightOperand();
 
 public:
 
@@ -94,10 +94,10 @@ public:
     std::shared_ptr<ecc::LexicalToken> getOperator() {return m_operatorToken;}
 
     /**
-     * Get expression type
-     * @return expression type
+     * Get type
+     * @return type
      */
-    std::string getTypeValueAsString() { return m_typeValue;};
+    std::shared_ptr<IBType> getType() { return m_type; }
 
     /**
      * Evaluate arithmetic operation

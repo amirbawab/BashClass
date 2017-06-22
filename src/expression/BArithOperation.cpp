@@ -1,9 +1,9 @@
 #include <bashclass/BArithOperation.h>
-#include <bashclass/BElementType.h>
 #include <iostream>
 #include <bashclass/BException.h>
 #include <bashclass/BReport.h>
 #include <bashclass/BVariableAccess.h>
+#include <bashclass/BTypeFactory.h>
 
 const std::string BArithOperation::OP_LOGICAL_OR = "logical_or";
 const std::string BArithOperation::OP_LOGICAL_AND = "logical_and";
@@ -28,92 +28,92 @@ const std::string BArithOperation::OP_PLUS = "plus";
 const std::string BArithOperation::OP_ASSIGN = "assign";
 
 
-std::string BArithOperation::_evaluateRightOperand() {
-    std::string singleOperandType = m_rightOperand->getTypeValueAsString();
+std::shared_ptr<IBType> BArithOperation::_evaluateRightOperand() {
+    std::shared_ptr<IBType> singleOperandType = m_rightOperand->getType();
 
     // UNDEFINED
-    if(BElementType::isUndefined(singleOperandType)) {
-        return BElementType::UNDEFINED;
+    if(singleOperandType->isUndefined()) {
+        return singleOperandType;
     }
 
     // !
     if(m_operatorToken->getName() == OP_NOT) {
-        if(singleOperandType == BElementType::TYPE_VALUE_BOOLEAN) {
-            return BElementType::TYPE_VALUE_BOOLEAN;
+        if(singleOperandType->isBoolean()) {
+            return singleOperandType;
         }
 
         BReport::getInstance().error()
                 << "Operator " << m_operatorToken->getValue()
                 << " expects operand to be a boolean" << std::endl;
         BReport::getInstance().printError();
-        return BElementType::UNDEFINED;
+        return BTypeFactory::createUndefinedExpressionType();
     }
 
     // +, -
     if(m_operatorToken->getName() == OP_PLUS || m_operatorToken->getName() == OP_MINUS) {
-        if(singleOperandType == BElementType::TYPE_VALUE_INT) {
-            return BElementType::TYPE_VALUE_INT;
+        if(singleOperandType->isInt()) {
+            return singleOperandType;
         }
 
         BReport::getInstance().error()
                 << "Operator " << m_operatorToken->getValue()
                 << " expects operand to be an integer" << std::endl;
         BReport::getInstance().printError();
-        return BElementType::UNDEFINED;
+        return BTypeFactory::createUndefinedExpressionType();
     }
 
     throw BException("Undefined operator in an expression with one operand");
 }
 
-std::string BArithOperation::_evaluateTwoOperands() {
-    std::string leftType = m_leftOperand->getTypeValueAsString();
-    std::string rightType = m_rightOperand->getTypeValueAsString();
+std::shared_ptr<IBType> BArithOperation::_evaluateTwoOperands() {
+    std::shared_ptr<IBType> leftType = m_leftOperand->getType();
+    std::shared_ptr<IBType> rightType = m_rightOperand->getType();
 
     // UNDEFINED
-    if(BElementType::isUndefined(leftType) || BElementType::isUndefined(rightType)) {
-        return BElementType::UNDEFINED;
+    if(leftType->isUndefined() || rightType->isUndefined()) {
+        return leftType;
     }
 
     // ==, !=
     if(m_operatorToken->getName() == OP_IS_EQUAL || m_operatorToken->getName() == OP_IS_NOT_EQUAL) {
-        if(leftType == rightType
-           || (BElementType::isUserDefinedType(leftType) && rightType == BElementType::NULL_VALUE)
-           || (BElementType::isUserDefinedType(rightType) && leftType == BElementType::NULL_VALUE)) {
-            return BElementType::TYPE_VALUE_BOOLEAN;
+        if(leftType->getTypeValue() == rightType->getTypeValue()
+           || (leftType->isIdentifier() && rightType->isNull())
+           || (rightType->isIdentifier() && leftType->isNull())) {
+            return BTypeFactory::createBooleanExpressionType();
         }
 
         BReport::getInstance().error()
                 << "Boolean expression with " << m_operatorToken->getValue()
                 << " operator requires both operand to be of the same type." << std::endl;
         BReport::getInstance().printError();
-        return BElementType::UNDEFINED;
+        return BTypeFactory::createUndefinedExpressionType();
     }
 
     // ||, &&
     if(m_operatorToken->getName() == OP_LOGICAL_OR || m_operatorToken->getName() == OP_LOGICAL_AND) {
-        if(leftType == rightType && leftType == BElementType::TYPE_VALUE_BOOLEAN) {
-            return BElementType::TYPE_VALUE_BOOLEAN;
+        if(leftType->isBoolean() && rightType->isBoolean()) {
+            return leftType;
         }
 
         BReport::getInstance().error()
                 << "Boolean expression with " << m_operatorToken->getValue()
                 << " operator requires both operands to be of boolean type" << std::endl;
         BReport::getInstance().printError();
-        return BElementType::UNDEFINED;
+        return BTypeFactory::createUndefinedExpressionType();
     }
 
     // <, >, <=, >=
     if(m_operatorToken->getName() == OP_LESS_THAN || m_operatorToken->getName() == OP_GREATER_THAN
        || m_operatorToken->getName() == OP_LESS_OR_EQUAL || m_operatorToken->getName() == OP_GREATER_OR_EQUAL) {
-        if(leftType == rightType && leftType == BElementType::TYPE_VALUE_INT) {
-            return BElementType::TYPE_VALUE_BOOLEAN;
+        if(leftType->isInt() && rightType->isInt()) {
+            return BTypeFactory::createBooleanExpressionType();
         }
 
         BReport::getInstance().error()
                 << "Boolean expression with " << m_operatorToken->getValue()
                 << " operator requires both operands to be of integer type" << std::endl;
         BReport::getInstance().printError();
-        return BElementType::UNDEFINED;
+        return BTypeFactory::createUndefinedExpressionType();
     }
 
     // |, ^, &, <<, >>, -, *, /, %, **
@@ -122,34 +122,34 @@ std::string BArithOperation::_evaluateTwoOperands() {
        || m_operatorToken->getName() == OP_RIGHT_SHIFT || m_operatorToken->getName() == OP_MINUS
        || m_operatorToken->getName() == OP_MULTIPLY || m_operatorToken->getName() == OP_DIVIDE
        || m_operatorToken->getName() == OP_MOD || m_operatorToken->getName() == OP_EXPONENTIAL) {
-        if(leftType == rightType && leftType == BElementType::TYPE_VALUE_INT) {
-            return BElementType::TYPE_VALUE_INT;
+        if(leftType->isInt() && rightType->isInt()) {
+            return leftType;
         }
 
         BReport::getInstance().error()
                 << "Integer expression with " << m_operatorToken->getValue()
                 << " operator requires both operands to be of integer type" << std::endl;
         BReport::getInstance().printError();
-        return BElementType::UNDEFINED;
+        return BTypeFactory::createUndefinedExpressionType();
     }
 
     // +
     if(m_operatorToken->getName() == OP_PLUS) {
 
         // If left or right is a string, then it is a string
-        if(leftType == BElementType::TYPE_VALUE_STRING || rightType == BElementType::TYPE_VALUE_STRING) {
-            return BElementType::TYPE_VALUE_STRING;
+        if(leftType->isString() || rightType->isString()) {
+            return BTypeFactory::createStringExpressionType();
         }
 
-        if(leftType == rightType && leftType == BElementType::TYPE_VALUE_INT) {
-            return BElementType::TYPE_VALUE_INT;
+        if(leftType->isInt() && rightType->isInt()) {
+            return leftType;
         }
 
         BReport::getInstance().error()
                 << "Operator " << m_operatorToken->getValue()
                 << " requires both operands to be of integer or one operand to be a string" << std::endl;
         BReport::getInstance().printError();
-        return BElementType::UNDEFINED;
+        return BTypeFactory::createUndefinedExpressionType();
     }
 
     // =
@@ -164,10 +164,7 @@ std::string BArithOperation::_evaluateTwoOperands() {
             }
 
             // Check if type is compatible
-            if(leftType == BElementType::TYPE_VALUE_ANY
-               || (BElementType::isUserDefinedType(variableAccessCast->last()->getVariable()->getType()->getName())
-                   &&  rightType == BElementType::NULL_VALUE)
-               || leftType == rightType) {
+            if(leftType->isCompatible(rightType)) {
                 return leftType;
             }
 
@@ -176,25 +173,25 @@ std::string BArithOperation::_evaluateTwoOperands() {
                     << " expects an expression of type "
                     << leftType << " but given " << rightType << std::endl;
             BReport::getInstance().printError();
-            return BElementType::UNDEFINED;
+            return BTypeFactory::createUndefinedExpressionType();
         }
 
         BReport::getInstance().error()
                 << "Operator " << m_operatorToken->getValue()
                 << " requires left operand to be a variable" << std::endl;
         BReport::getInstance().printError();
-        return BElementType::UNDEFINED;
+        return BTypeFactory::createUndefinedExpressionType();
     }
     throw BException("Undefined operator in an expression with two operands");
 }
 
 void BArithOperation::evaluate() {
 
-    // Check if expression is composed of a one operand or two operands
+    // Check if expression is composed of one operand or two operands
     if(m_leftOperand && m_rightOperand) {
-        m_typeValue = _evaluateTwoOperands();
+        m_type = _evaluateTwoOperands();
     } else if(m_rightOperand) {
-        m_typeValue = _evaluateRightOperand();
+        m_type = _evaluateRightOperand();
     } else {
         throw BException("Arithmetic operation is not composed correctly");
     }

@@ -1,9 +1,6 @@
 #include <bashclass/BReturn.h>
 #include <bashclass/BException.h>
-#include <bashclass/BFunction.h>
 #include <bashclass/BReport.h>
-#include <bashclass/BElementType.h>
-#include <iostream>
 
 void BReturn::verifyReturn() {
 
@@ -28,22 +25,21 @@ void BReturn::verifyReturn() {
                     << std::endl;
             BReport::getInstance().printError();
         } else {
-            std::string functionType = function->getType()->getValue();
-            std::string expressionType = m_expression->getTypeValueAsString();
-            if(!function->hasKnowType()) {
+
+            std::shared_ptr<IBType> functionType = function->getType();
+            std::shared_ptr<IBType> expressionType = m_expression->getType();
+
+            if(!function->getType()->hasKnownType()) {
                 BReport::getInstance().error()
                         << "Cannot return expression in function " << function->getName()->getValue()
                         << " of undefined type" << std::endl;
                 BReport::getInstance().printError();
-            } else if(BElementType::isUndefined(expressionType)) {
+            } else if(expressionType->isUndefined()) {
                 BReport::getInstance().error()
                         << "Function " << function->getName()->getValue()
                         << " has return statement but of undefined type" << std::endl;
                 BReport::getInstance().printError();
-            } else if(functionType != BElementType::TYPE_VALUE_ANY
-                      && (BElementType::isBuiltInType(function->getType()->getName())
-                          || expressionType != BElementType::NULL_VALUE)
-                      && functionType != expressionType) {
+            } else if(!functionType->isCompatible(expressionType)) {
                 BReport::getInstance().error()
                         << "Function " << function->getName()->getValue() << " is of type " << functionType
                         << " but return expression is of type " << expressionType << std::endl;

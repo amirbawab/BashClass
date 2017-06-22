@@ -1,6 +1,5 @@
 #include <bashclass/BBashHelper.h>
 #include <bashclass/BGenerateCode.h>
-#include <bashclass/BElementType.h>
 #include <bashclass/BException.h>
 #include <bashclass/BGlobal.h>
 #include <bashclass/BVariableChainAccess.h>
@@ -152,8 +151,9 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
                     _varChainAccess_nonMember(variableChainAccess, ss);
                 }
             } else {
-                _varChainAccess_member_middle(variableChainAccess, (*chain)[i-1]->getTypeScope()->getLabel().str(),
-                                       returnMap[(*chain)[i-1]], ss);
+                _varChainAccess_member_middle(variableChainAccess,
+                                              (*chain)[i-1]->getType()->getTypeScope()->getLabel().str(),
+                                              returnMap[(*chain)[i-1]], ss);
             }
             ss << std::endl;
 
@@ -300,7 +300,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
     if(tokenUse) {
 
         // If the token is null
-        if(tokenUse->getLexicalToken()->getName() == BElementType::NULL_VALUE) {
+        if(tokenUse->getType()->isNull()) {
             // TODO Store in const
             return ExprReturn("0", ExprReturn::DATA);
         }
@@ -339,9 +339,9 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
     if(arithOperation) {
 
         // Get the type of the arithmetic operation
-        std::string arithOperationType = arithOperation->getTypeValueAsString();
-        std::string leftOperandType = arithOperation->getLeftOperand()->getTypeValueAsString();
-        std::string rightOperandType = arithOperation->getRightOperand()->getTypeValueAsString();
+        std::shared_ptr<IBType> arithOperationType = arithOperation->getType();
+        std::shared_ptr<IBType> leftOperandType = arithOperation->getLeftOperand()->getType();
+        std::shared_ptr<IBType> rightOperandType = arithOperation->getRightOperand()->getType();
         std::string arithOperator = arithOperation->getOperator()->getName();
 
         // If both operand are defined
@@ -359,14 +359,14 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             if(arithOperator == BArithOperation::OP_PLUS) {
 
                 // String concatenation
-                if(arithOperationType == BElementType::TYPE_VALUE_STRING) {
+                if(arithOperationType->isString()) {
                     ss << "declare " << newKey << "=\"" << leftOp.formattedValue() << rightOp.formattedValue()
                        << "\"" << std::endl;
                     return ExprReturn(newKey, ExprReturn::VARIABLE);
                 }
 
                 // Integer addition
-                if(arithOperationType == BElementType::TYPE_VALUE_INT) {
+                if(arithOperationType->isInt()) {
                     ss << "declare " << newKey << "="
                        << _arithOpForm1(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
                                         rightOp.formattedValue())
@@ -385,7 +385,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
                || arithOperator == BArithOperation::OP_MOD || arithOperator == BArithOperation::OP_EXPONENTIAL) {
 
                 // Integer
-                if(arithOperationType == BElementType::TYPE_VALUE_INT) {
+                if(arithOperationType->isInt()) {
                     ss << "declare " << newKey << "="
                        << _arithOpForm1(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
                                         rightOp.formattedValue())
@@ -402,10 +402,10 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
                || arithOperator == BArithOperation::OP_LESS_THAN || arithOperator == BArithOperation::OP_GREATER_THAN) {
 
                 // Boolean comparison
-                if(arithOperationType == BElementType::TYPE_VALUE_BOOLEAN) {
+                if(arithOperationType->isBoolean()) {
 
                     // String comparison
-                    if(leftOperandType == BElementType::TYPE_VALUE_STRING || rightOperandType == BElementType::TYPE_VALUE_STRING) {
+                    if(leftOperandType->isString() || rightOperandType->isString()) {
                         ss << "declare " << newKey << "="
                            << _arithOpForm2(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
                                             rightOp.formattedValue())
@@ -420,7 +420,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
                        << std::endl;
                     return ExprReturn(newKey, ExprReturn::VARIABLE);
                 }
-                throw BException("Cannot generator code for the " + arithOperationType +
+                throw BException("Cannot generator code for the " + arithOperator +
                                          " operator with an unexpected return type");
             }
 
@@ -429,7 +429,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
                || arithOperator == BArithOperation::OP_LESS_OR_EQUAL || arithOperator == BArithOperation::OP_GREATER_OR_EQUAL) {
 
                 // Boolean comparison
-                if(arithOperationType == BElementType::TYPE_VALUE_BOOLEAN) {
+                if(arithOperationType->isBoolean()) {
                     ss << "declare " << newKey << "="
                        << _arithOpForm1(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
                                         rightOp.formattedValue())
@@ -465,7 +465,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             if(arithOperator == BArithOperation::OP_NOT) {
 
                 // Boolean toggle
-                if(arithOperationType == BElementType::TYPE_VALUE_BOOLEAN) {
+                if(arithOperationType->isBoolean()) {
                     ss << "declare " << newKey << "=" << _arithOpForm1(rightStr.formattedValue(), "^", "1") << std::endl;
                     return ExprReturn(newKey, ExprReturn::VARIABLE);
                 }
@@ -476,7 +476,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             if(arithOperator == BArithOperation::OP_PLUS || arithOperator == BArithOperation::OP_MINUS) {
 
                 // Integer sign
-                if(arithOperationType == BElementType::TYPE_VALUE_INT) {
+                if(arithOperationType->isInt()) {
                     ss << "declare " << newKey << "="
                        << _arithOpForm1(rightStr.formattedValue(), "*", "(" + arithOperation->getOperator()->getValue() + "1)")
                        << std::endl;
