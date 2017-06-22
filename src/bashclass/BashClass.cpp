@@ -684,7 +684,6 @@ void BashClass::initHandlers() {
     m_varAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto variableAccess = std::make_shared<BVariableAccess>();
-            m_chainBuilderStack.back()->addVariable(m_scopeStack.back(), lexicalVector[index]);
             variableAccess->setChain(m_chainBuilderStack.back());
             m_expressionOperandStack.push_back(variableAccess);
         }
