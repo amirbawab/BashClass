@@ -33,6 +33,11 @@ public:
     static void declareClass(std::shared_ptr<BClass> classScope);
 
     /**
+     * Generate array which stores values or references/indices to arrays
+     */
+    static void declareArray();
+
+    /**
      * Generate a variable in bash
      * @param variable
      * @param defaultValue

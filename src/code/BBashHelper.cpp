@@ -15,6 +15,8 @@ std::string FUNCTION_RETURN = "_return_";
 std::string TMP_FUNCTION_RETURN = "_tmp_return_";
 std::string RESULT = "_result_";
 std::string EXPRESSION = "_expression_";
+std::string PROG_ARRAY = "_array_";
+std::string PROG_ARRAY_COUNTER = "_array_uid_";
 
 /**
  * Structure for the return of an expression
@@ -547,6 +549,16 @@ void BBashHelper::declareClass(std::shared_ptr<BClass> classScope) {
     std::stringstream ss;
     ss << "declare -A " << classScope->getLabel().str() << "=()" << std::endl;
     ss << _generateCounter(classScope) << "=1" << std::endl;
+    BGenerateCode::get().write(ss);
+}
+
+/**
+ * Create single array
+ */
+void BBashHelper::declareArray() {
+    std::stringstream ss;
+    ss << "declare -A " << PROG_ARRAY << "=()" << std::endl;
+    ss << PROG_ARRAY_COUNTER << "=1" << std::endl;
     BGenerateCode::get().write(ss);
 }
 
