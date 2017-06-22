@@ -171,7 +171,7 @@ std::shared_ptr<IBType> BArithOperation::_evaluateTwoOperands() {
             BReport::getInstance().error()
                     << "Variable " << variableAccessCast->last()->getVariable()->getName()->getValue()
                     << " expects an expression of type "
-                    << leftType << " but given " << rightType << std::endl;
+                    << leftType->getTypeValue() << " but given " << rightType->getTypeValue() << std::endl;
             BReport::getInstance().printError();
             return BTypeFactory::createUndefinedExpressionType();
         }

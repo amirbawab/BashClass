@@ -8,7 +8,7 @@ bool BThisChainAccess::isFound() {
 
 std::shared_ptr<IBType> BThisChainAccess::getType() {
     if(!m_reference) {
-        throw BException("Cannot get type of an undefined reference");
+        return BTypeFactory::createUndefinedExpressionType();
     }
     return BTypeFactory::createClassExpressionType(m_reference);
 }

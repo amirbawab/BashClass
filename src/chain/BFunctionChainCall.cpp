@@ -4,6 +4,7 @@
 #include <bashclass/BReport.h>
 #include <bashclass/BVariable.h>
 #include <bashclass/BException.h>
+#include <bashclass/BTypeFactory.h>
 
 void BFunctionChainCall::verifyArguments() {
 
@@ -88,8 +89,8 @@ bool BFunctionChainCall::isFound() {
 }
 
 std::shared_ptr<IBType> BFunctionChainCall::getType() {
-    if(!m_function) {
-        throw BException("Cannot get type of a function that was not set");
+    if(!m_function || !m_function->getType()->hasKnownType()) {
+        return BTypeFactory::createUndefinedExpressionType();
     }
     return m_function->getType();
 }
