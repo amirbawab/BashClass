@@ -8,6 +8,7 @@
 #include <bashclass/BVariableAccess.h>
 #include <bashclass/BThisAccess.h>
 #include <bashclass/BTokenUse.h>
+#include <bashclass/BArrayUse.h>
 
 // Constants
 std::string FUNCTION_THIS = "_this_";
@@ -258,6 +259,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
     auto variableAccess = std::dynamic_pointer_cast<BVariableAccess>(expression);
     auto functionCall = std::dynamic_pointer_cast<BFunctionCall>(expression);
     auto tokenUse = std::dynamic_pointer_cast<BTokenUse>(expression);
+    auto arrayUse = std::dynamic_pointer_cast<BArrayUse>(expression);
     auto arithOperation = std::dynamic_pointer_cast<BArithOperation>(expression);
 
     // Assign a unique key for each expression
@@ -333,6 +335,19 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
 
         // Write the lexical token value
         return ExprReturn(tokenUse->getLexicalToken()->getValue(), ExprReturn::DATA);
+    }
+
+    /********************
+     *    ARRAY USE
+     ********************/
+    if(arrayUse) {
+        _indent(scope, ss);
+        std::string newKey = _generateExpressionKey(uniqueId++);
+        ss << "declare " << newKey << "=${" << PROG_ARRAY_COUNTER << "}" << std::endl;
+        _indent(scope, ss);
+        ss << PROG_ARRAY_COUNTER << "=" << _arithOpForm1("${" + PROG_ARRAY_COUNTER + "}", "+", "1")
+           << std::endl;
+        return ExprReturn(newKey, ExprReturn::VARIABLE);
     }
 
     /********************
