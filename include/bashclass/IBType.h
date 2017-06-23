@@ -146,9 +146,10 @@ public:
     bool hasKnownType();
 
     /**
-     * Increment type dimension
+     * Set dimension
+     * @param dimension
      */
-    void incrementDimension();
+    void setDimension(int dimension) { m_dimension = dimension;}
 
     /**
      * Get dimension
@@ -169,6 +170,12 @@ public:
      * @return true if it is compatible
      */
     bool isCompatible(std::shared_ptr<IBType> type);
+
+    /**
+     * To string representation
+     * @return string
+     */
+    std::string toString();
 };
 
 #endif

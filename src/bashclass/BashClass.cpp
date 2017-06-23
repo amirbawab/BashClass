@@ -741,15 +741,15 @@ void BashClass::initHandlers() {
     /**************************************
      *              Arrays
      **************************************/
-    m_arrayVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_EVAL) {
-            m_focusVariable->getType()->incrementDimension();
+    m_arrayClassVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            m_focusVariable->getType()->setDimension(m_focusVariable->getType()->getDimension()+1);
         }
     };
 
-    m_arrayClassVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE) {
-            m_focusVariable->getType()->incrementDimension();
+    m_arrayVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            m_focusVariable->getType()->setDimension(m_focusVariable->getType()->getDimension()+1);
         }
     };
 

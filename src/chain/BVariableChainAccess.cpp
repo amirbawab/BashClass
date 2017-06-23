@@ -59,17 +59,11 @@ void BVariableChainAccess::addIndex(std::shared_ptr<IBExpression> expression) {
     // Check if the expression is of type integer
     if(!expression->getType()->isInt()) {
         BReport::getInstance().error()
-                << "Index expression must evaluate to an integer for variable " << m_lexicalToken->getValue()
+                << "Index expression " << m_indices.size()
+                << " must evaluate to an integer for variable " << m_lexicalToken->getValue()
                 << " at line " << m_lexicalToken->getLine()
                 << " and column " << m_lexicalToken->getColumn()
                 << std::endl;
         BReport::getInstance().printError();
     }
-}
-
-bool BVariableChainAccess::isLastDimension() {
-    if(!isFound() || getType()->isUndefined()) {
-        throw BException("Cannot verify dimensions of an undefined variable or variable type");
-    }
-    return getType()->getDimension() == m_indices.size();
 }

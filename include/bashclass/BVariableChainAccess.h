@@ -65,12 +65,6 @@ public:
     void addIndex(std::shared_ptr<IBExpression> expression);
 
     /**
-     * Check if variable access is at the last array dimension
-     * @return true if it i the last array dimension
-     */
-    bool isLastDimension();
-
-    /**
      * Get indices
      * @return indices
      */

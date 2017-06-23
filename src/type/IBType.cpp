@@ -47,9 +47,27 @@ bool IBType::hasKnownType() {
 }
 
 bool IBType::isCompatible(std::shared_ptr<IBType> type) {
-    return isAny() || (isIdentifier() && type->isNull()) || getTypeValue() == type->getTypeValue();
+
+    if(type->isUndefined() || type->isVoid()) {
+        return false;
+    }
+
+    if(isAny() || (isIdentifier() && type->isNull())) {
+        return true;
+    }
+
+    if(getTypeValue() != type->getTypeValue()) {
+        return false;
+    }
+
+    return getDimension() == type->getDimension();
 }
 
-void IBType::incrementDimension() {
-    ++m_dimension;
+std::string IBType::toString() {
+    std::string result = getTypeValue();
+    int tmpDim = m_dimension;
+    while (tmpDim-- > 0) {
+        result += "[]";
+    }
+    return result;
 }

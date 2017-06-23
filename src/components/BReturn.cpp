@@ -41,8 +41,8 @@ void BReturn::verifyReturn() {
                 BReport::getInstance().printError();
             } else if(!functionType->isCompatible(expressionType)) {
                 BReport::getInstance().error()
-                        << "Function " << function->getName()->getValue() << " is of type " << functionType
-                        << " but return expression is of type " << expressionType << std::endl;
+                        << "Function " << function->getName()->getValue() << " is of type " << functionType->toString()
+                        << " but return expression is of type " << expressionType->toString() << std::endl;
                 BReport::getInstance().printError();
             }
         }

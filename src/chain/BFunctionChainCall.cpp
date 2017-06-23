@@ -70,8 +70,8 @@ void BFunctionChainCall::addArgument(std::shared_ptr<IBExpression> argument) {
             } else if(!parameterType->isCompatible(argumentType)) {
                 BReport::getInstance().error()
                         << "Function " << m_function->getName()->getValue()
-                        << " expects argument " << paramIndex + 1 << " to be of type " << parameterType
-                        << " but given " << argumentType << std::endl;
+                        << " expects argument " << paramIndex + 1 << " to be of type " << parameterType->toString()
+                        << " but given " << argumentType->toString() << std::endl;
                 BReport::getInstance().printError();
             }
         }
