@@ -741,15 +741,22 @@ void BashClass::initHandlers() {
     /**************************************
      *              Arrays
      **************************************/
-    m_arrayType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_arrayVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // TODO
+            m_focusVariable->getType()->incrementDimension();
+        }
+    };
+
+    m_arrayClassVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            m_focusVariable->getType()->incrementDimension();
         }
     };
 
     m_indexAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            // FIXME
+            auto variableChainAccess = std::static_pointer_cast<BVariableChainAccess>(m_chainBuilderStack.back()->last());
+            variableChainAccess->addIndex(m_expressionOperandStack.back());
             m_expressionOperandStack.pop_back();
         }
     };

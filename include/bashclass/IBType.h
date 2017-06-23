@@ -10,7 +10,15 @@ protected:
 
     // Hold type scope
     std::shared_ptr<BClass> m_typeScope;
+
+    // Hold the dimension if the type is an array
+    int m_dimension;
 public:
+
+    /**
+     * Initialize members
+     */
+    IBType() : m_dimension(0){}
 
     // Values defining the built-in types names. For example:
     // var [int] a;
@@ -136,6 +144,23 @@ public:
      * Check if type is known
      */
     bool hasKnownType();
+
+    /**
+     * Increment type dimension
+     */
+    void incrementDimension();
+
+    /**
+     * Get dimension
+     * @return dimension
+     */
+    int getDimension() {return m_dimension;}
+
+    /**
+     * Check if type is an array
+     * @return true if it is an array
+     */
+    bool isArray() {return m_dimension > 0;}
 
     /**
      * Check if type is compatible with the provided one

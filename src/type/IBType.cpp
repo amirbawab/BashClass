@@ -49,3 +49,7 @@ bool IBType::hasKnownType() {
 bool IBType::isCompatible(std::shared_ptr<IBType> type) {
     return isAny() || (isIdentifier() && type->isNull()) || getTypeValue() == type->getTypeValue();
 }
+
+void IBType::incrementDimension() {
+    ++m_dimension;
+}

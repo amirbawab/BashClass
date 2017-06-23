@@ -17,6 +17,9 @@ private:
     // The value of this token and the actual variable
     // should always match
     std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
+
+    // Hold the integer indices
+    std::vector<std::shared_ptr<IBExpression>> m_indices;
 public:
 
     /**
@@ -54,6 +57,24 @@ public:
      * @return type
      */
     std::shared_ptr<IBType> getType();
+
+    /**
+     * Add index
+     * @param expression
+     */
+    void addIndex(std::shared_ptr<IBExpression> expression);
+
+    /**
+     * Check if variable access is at the last array dimension
+     * @return true if it i the last array dimension
+     */
+    bool isLastDimension();
+
+    /**
+     * Get indices
+     * @return indices
+     */
+    std::vector<std::shared_ptr<IBExpression>> getIndices() const { return m_indices;}
 };
 
 

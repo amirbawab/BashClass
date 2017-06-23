@@ -81,7 +81,8 @@ public:
     SemanticActionHandler m_thisChainAccess;
     SemanticActionHandler m_thisAccess;
 
-    SemanticActionHandler m_arrayType;
+    SemanticActionHandler m_arrayVar;
+    SemanticActionHandler m_arrayClassVar;
     SemanticActionHandler m_indexAccess;
 
     SemanticActionHandler m_bashCode;
