@@ -3,6 +3,7 @@
 
 #include <bashclass/BVariable.h>
 #include <bashclass/IBChainable.h>
+#include <bashclass/BExpressionType.h>
 #include <memory>
 
 class BVariableChainAccess : public IBChainable {
@@ -20,6 +21,9 @@ private:
 
     // Hold the integer indices
     std::vector<std::shared_ptr<IBExpression>> m_indices;
+
+    // Hold the type of this variable access
+    std::shared_ptr<BExpressionType> m_type;
 public:
 
     /**
@@ -32,7 +36,7 @@ public:
      * Set variable
      * @param variable
      */
-    void setVariable(std::shared_ptr<BVariable> variable) { m_variable = variable;}
+    void setVariable(std::shared_ptr<BVariable> variable);
 
     /**
      * Get lexical token

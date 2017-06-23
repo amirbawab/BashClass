@@ -3,6 +3,7 @@
 
 #include <bashclass/IBType.h>
 #include <easycc/LexicalToken.h>
+#include <bashclass/BExpressionType.h>
 
 class BElementType : public IBType {
 private:
@@ -39,5 +40,11 @@ public:
      * Link type
      */
     void linkType();
+
+    /**
+     * Create a clone of this element type into expression type
+     * @return expression type
+     */
+    std::shared_ptr<BExpressionType> cloneToExpressionType();
 };
 #endif

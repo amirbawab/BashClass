@@ -52,7 +52,15 @@ bool IBType::isCompatible(std::shared_ptr<IBType> type) {
         return false;
     }
 
-    if(isAny() || (isIdentifier() && type->isNull())) {
+    if(isAny()) {
+        return true;
+    }
+
+    if((isIdentifier() && type->isNull())) {
+        return true;
+    }
+
+    if(isArray() && type->isNull()) {
         return true;
     }
 

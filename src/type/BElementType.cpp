@@ -35,3 +35,12 @@ void BElementType::linkType() {
         }
     }
 }
+
+std::shared_ptr<BExpressionType> BElementType::cloneToExpressionType() {
+    auto newType = std::make_shared<BExpressionType>();
+    newType->setDimension(getDimension());
+    newType->setTypeName(getTypeName());
+    newType->setTypeValue(getTypeValue());
+    newType->setTypeScope(getTypeScope());
+    return newType;
+}

@@ -38,7 +38,7 @@ std::shared_ptr<IBType> BArithOperation::_evaluateRightOperand() {
 
     // !
     if(m_operatorToken->getName() == OP_NOT) {
-        if(singleOperandType->isBoolean()) {
+        if(singleOperandType->isBoolean() && !singleOperandType->isArray()) {
             return singleOperandType;
         }
 
@@ -51,7 +51,7 @@ std::shared_ptr<IBType> BArithOperation::_evaluateRightOperand() {
 
     // +, -
     if(m_operatorToken->getName() == OP_PLUS || m_operatorToken->getName() == OP_MINUS) {
-        if(singleOperandType->isInt()) {
+        if(singleOperandType->isInt() && !singleOperandType->isArray()) {
             return singleOperandType;
         }
 
@@ -76,7 +76,8 @@ std::shared_ptr<IBType> BArithOperation::_evaluateTwoOperands() {
 
     // ==, !=
     if(m_operatorToken->getName() == OP_IS_EQUAL || m_operatorToken->getName() == OP_IS_NOT_EQUAL) {
-        if(leftType->getTypeValue() == rightType->getTypeValue()
+        if((leftType->getTypeValue() == rightType->getTypeValue()
+            && leftType->getDimension() == rightType->getDimension())
            || (leftType->isIdentifier() && rightType->isNull())
            || (rightType->isIdentifier() && leftType->isNull())) {
             return BTypeFactory::createBooleanExpressionType();
@@ -91,7 +92,7 @@ std::shared_ptr<IBType> BArithOperation::_evaluateTwoOperands() {
 
     // ||, &&
     if(m_operatorToken->getName() == OP_LOGICAL_OR || m_operatorToken->getName() == OP_LOGICAL_AND) {
-        if(leftType->isBoolean() && rightType->isBoolean()) {
+        if(leftType->isBoolean() && rightType->isBoolean() && !leftType->isArray() && !rightType->isArray()) {
             return leftType;
         }
 
@@ -105,7 +106,8 @@ std::shared_ptr<IBType> BArithOperation::_evaluateTwoOperands() {
     // <, >, <=, >=
     if(m_operatorToken->getName() == OP_LESS_THAN || m_operatorToken->getName() == OP_GREATER_THAN
        || m_operatorToken->getName() == OP_LESS_OR_EQUAL || m_operatorToken->getName() == OP_GREATER_OR_EQUAL) {
-        if(leftType->isInt() && rightType->isInt()) {
+
+        if(leftType->isInt() && rightType->isInt() && !leftType->isArray() && !rightType->isArray()) {
             return BTypeFactory::createBooleanExpressionType();
         }
 
@@ -122,7 +124,8 @@ std::shared_ptr<IBType> BArithOperation::_evaluateTwoOperands() {
        || m_operatorToken->getName() == OP_RIGHT_SHIFT || m_operatorToken->getName() == OP_MINUS
        || m_operatorToken->getName() == OP_MULTIPLY || m_operatorToken->getName() == OP_DIVIDE
        || m_operatorToken->getName() == OP_MOD || m_operatorToken->getName() == OP_EXPONENTIAL) {
-        if(leftType->isInt() && rightType->isInt()) {
+
+        if(leftType->isInt() && rightType->isInt() && !leftType->isArray() && !rightType->isArray()) {
             return leftType;
         }
 
@@ -137,11 +140,11 @@ std::shared_ptr<IBType> BArithOperation::_evaluateTwoOperands() {
     if(m_operatorToken->getName() == OP_PLUS) {
 
         // If left or right is a string, then it is a string
-        if(leftType->isString() || rightType->isString()) {
+        if((leftType->isString() && !leftType->isArray()) || (rightType->isString() && !rightType->isArray())) {
             return BTypeFactory::createStringExpressionType();
         }
 
-        if(leftType->isInt() && rightType->isInt()) {
+        if(leftType->isInt() && rightType->isInt() && !leftType->isArray() && !rightType->isArray()) {
             return leftType;
         }
 
