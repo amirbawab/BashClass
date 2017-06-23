@@ -72,10 +72,19 @@ std::string _generateResultKey(unsigned int number) {
 /**
  * Generate a unique expression key/variable per expression
  * @param number
- * @return unqieu expression string
+ * @return unique expression string
  */
 std::string _generateExpressionKey(unsigned int number) {
     return EXPRESSION + std::to_string(number);
+}
+
+/**
+ * Generate a unique array key/variable per statement
+ * @param number
+ * @return unique key string
+ */
+std::string _generateArrayKey(unsigned int number) {
+    return PROG_ARRAY + std::to_string(number);
 }
 
 /**
@@ -116,6 +125,31 @@ void _varChainAccess_member_middle(std::shared_ptr<BVariableChainAccess> variabl
  */
 void _varChainAccess_nonMember(std::shared_ptr<BVariableChainAccess> variableChainAccess, std::stringstream &ss) {
     ss << variableChainAccess->getVariable()->getLabel().str();
+}
+
+/**
+ * Generate code for an array access
+ * @param scope
+ * @param variable
+ * @param variableChainAccess
+ * @param ss
+ * @return new key
+ */
+std::string _arrayToCode(std::shared_ptr<BScope> scope, std::string variable,
+                         std::shared_ptr<BVariableChainAccess> variableChainAccess,
+                         std::stringstream &ss) {
+    static unsigned int uniqueId = 0;
+    auto indices = variableChainAccess->getIndices();
+    std::string tmpVariable = variable;
+    for(size_t i=0; i < indices.size(); i++) {
+        auto expression = _expressionToCode(scope, indices[i], ss);
+        _indent(scope, ss);
+        std::string newKey = _generateArrayKey(uniqueId++);
+        ss << "declare -n " << newKey << "="
+           << PROG_ARRAY << "[${" << tmpVariable << "}," << expression.formattedValue() << "]" << std::endl;
+        tmpVariable = newKey;
+    }
+    return tmpVariable;
 }
 
 /**
@@ -281,8 +315,11 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
         std::map<std::shared_ptr<IBChainable>, std::string> returnMap;
         _chainToCode(scope, variableAccess->getChain(), 0, variableAccess->getChain()->size()-1, returnMap, ss);
 
+        // Process array access (if any)
+        std::string newKey = _arrayToCode(scope, returnMap[variableAccess->last()], variableAccess->last(), ss);
+
         // Get the variable key of the last element
-        return ExprReturn(returnMap[variableAccess->last()], ExprReturn::VARIABLE);
+        return ExprReturn(newKey, ExprReturn::VARIABLE);
     }
 
     /********************
