@@ -97,14 +97,17 @@
         "'truefalse' #tokenUse#",
         "'string' #tokenUse#",
         "'null' #tokenUse#",
-        "#startChain# NEW CLASS_NAME #constructorChainCall# IDENTIFIER_FUNCTION_CALL ARITH_VAR_OR_FUNC_CALL_D #endChain#",
-        "#newArray# ARRAY OPEN_PAR VARIABLE_TYPE #arrayUseType# ARRAY_USE ARRAY_USE_OPT CLOSE_PAR",
+        "NEW VARIABLE_TYPE NEW_CONS_OR_ARRAY",
         "BASH_SUB #tokenUse#",
         "ARITH_VAR_OR_FUNC_CALL"
     ],
     "BASH_SUB" : ["'bash_sub'"],
     "NEW": ["'new'"],
-    "ARRAY" : ["'array'"],
+
+    "NEW_CONS_OR_ARRAY" : [
+        "#startChain# #constructorChainCall# IDENTIFIER_FUNCTION_CALL ARITH_VAR_OR_FUNC_CALL_D #endChain#",
+        "#newArray# #arrayUseType# ARRAY_USE ARRAY_USE_OPT"
+    ],
 
     "ARRAY_USE" : ["OPEN_SQ CLOSE_SQ #arrayUseDim#"],
     "ARRAY_USE_OPT" : ["EPSILON","ARRAY_USE ARRAY_USE_OPT"],
