@@ -37,7 +37,8 @@
             "new": "new",
             "constructor": "constructor",
             "null": "null",
-            "undefined": "null"
+            "undefined": "null",
+            "array": "array"
         }
     }
 }

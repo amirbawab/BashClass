@@ -30,7 +30,8 @@
     "VARIABLE" : ["'var'"],
     "VARIABLE_TYPE" : ["'identifier'","'int_type'","'boolean_type'","'char_type'","'string_type'","'any_type'"],
     "VARIABLE_NAME" : ["'identifier'"],
-    "ARRAY_TYPE_OPT": ["EPSILON","OPEN_SQ CLOSE_SQ #arrayVar# ARRAY_TYPE_OPT"],
+    "ARRAY_TYPE": ["OPEN_SQ CLOSE_SQ #arrayVar#"],
+    "ARRAY_TYPE_OPT": ["EPSILON","ARRAY_TYPE ARRAY_TYPE_OPT"],
 
     "RETURN_DEC" : ["RETURN #startReturn# RETURN_OPT_EXPR SEMICOLON #endReturn#"],
     "RETURN_OPT_EXPR": ["EXPR_DEC #returnExpr#","EPSILON #returnVoid#"],
@@ -97,11 +98,16 @@
         "'string' #tokenUse#",
         "'null' #tokenUse#",
         "#startChain# NEW CLASS_NAME #constructorChainCall# IDENTIFIER_FUNCTION_CALL ARITH_VAR_OR_FUNC_CALL_D #endChain#",
+        "#newArray# ARRAY OPEN_PAR VARIABLE_TYPE #arrayUseType# ARRAY_USE ARRAY_USE_OPT CLOSE_PAR",
         "BASH_SUB #tokenUse#",
         "ARITH_VAR_OR_FUNC_CALL"
     ],
     "BASH_SUB" : ["'bash_sub'"],
     "NEW": ["'new'"],
+    "ARRAY" : ["'array'"],
+
+    "ARRAY_USE" : ["OPEN_SQ CLOSE_SQ #arrayUseDim#"],
+    "ARRAY_USE_OPT" : ["EPSILON","ARRAY_USE ARRAY_USE_OPT"],
 
     "ARITH_VAR_OR_FUNC_CALL" : ["#startChain# ARITH_VAR_OR_FUNC_CALL_A #endChain#"],
     "ARITH_VAR_OR_FUNC_CALL_A" : ["THIS ARITH_VAR_OR_FUNC_CALL_E", "ARITH_VAR_OR_FUNC_CALL_B"],

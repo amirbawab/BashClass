@@ -9,6 +9,7 @@
 #include <bashclass/BVariableAccess.h>
 #include <bashclass/BFunctionCall.h>
 #include <bashclass/BGenerateCode.h>
+#include <bashclass/BArrayUse.h>
 
 BashClass::BashClass() {
     initHandlers();
@@ -758,6 +759,26 @@ void BashClass::initHandlers() {
             auto variableChainAccess = std::static_pointer_cast<BVariableChainAccess>(m_chainBuilderStack.back()->last());
             variableChainAccess->addIndex(m_expressionOperandStack.back());
             m_expressionOperandStack.pop_back();
+        }
+    };
+
+    m_newArray = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            m_expressionOperandStack.push_back(std::make_shared<BArrayUse>());
+        }
+    };
+
+    m_arrayUseType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            auto arrayUse = std::static_pointer_cast<BArrayUse>(m_expressionOperandStack.back());
+            arrayUse->setTypeLexicalToken(lexicalVector[index]);
+        }
+    };
+
+    m_arrayUseDim = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            auto arrayUse = std::static_pointer_cast<BArrayUse>(m_expressionOperandStack.back());
+            arrayUse->getType()->setDimension(arrayUse->getType()->getDimension()+1);
         }
     };
 }

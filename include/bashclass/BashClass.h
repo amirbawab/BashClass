@@ -84,6 +84,9 @@ public:
     SemanticActionHandler m_arrayVar;
     SemanticActionHandler m_arrayClassVar;
     SemanticActionHandler m_indexAccess;
+    SemanticActionHandler m_newArray;
+    SemanticActionHandler m_arrayUseDim;
+    SemanticActionHandler m_arrayUseType;
 
     SemanticActionHandler m_bashCode;
 
