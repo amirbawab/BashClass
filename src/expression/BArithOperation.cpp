@@ -78,6 +78,8 @@ std::shared_ptr<IBType> BArithOperation::_evaluateTwoOperands() {
     if(m_operatorToken->getName() == OP_IS_EQUAL || m_operatorToken->getName() == OP_IS_NOT_EQUAL) {
         if((leftType->getTypeValue() == rightType->getTypeValue()
             && leftType->getDimension() == rightType->getDimension())
+           || (leftType->isArray() && rightType->isNull())
+           || (rightType->isArray() && leftType->isNull())
            || (leftType->isIdentifier() && rightType->isNull())
            || (rightType->isIdentifier() && leftType->isNull())) {
             return BTypeFactory::createBooleanExpressionType();
