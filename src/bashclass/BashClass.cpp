@@ -294,29 +294,29 @@ void BashClass::initHandlers() {
      *          PARAMETER DECLARATION
      **************************************/
     m_startParam = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE) {
+        if(phase == BashClass::PHASE_EVAL) {
             m_focusVariable = std::make_shared<BVariable>();
             m_focusVariable->setIsParam(true);
         }
     };
 
     m_paramType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE) {
+        if(phase == BashClass::PHASE_EVAL) {
             m_focusVariable->getType()->setLexicalToken(lexicalVector[index]);
         }
     };
 
     m_paramName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
-        if(phase == BashClass::PHASE_CREATE) {
+        if(phase == BashClass::PHASE_EVAL) {
 
             // Set parameter name
             m_focusVariable->setName(lexicalVector[index]);
 
             // Register parameter
             m_scopeStack.back()->registerVariable(m_referenceKey, m_focusVariable);
-        } else if(phase == BashClass::PHASE_EVAL) {
-            // Used by another handler
-            m_focusVariable = m_scopeStack.back()->getVariableByReferenceKey(m_referenceKey);
+
+            // Link variable
+            m_focusVariable->getType()->linkType();
         }
     };
 
