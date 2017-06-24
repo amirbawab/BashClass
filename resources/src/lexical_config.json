@@ -21,6 +21,7 @@
             "elif" : "elif",
             "else" : "else",
             "while" : "while",
+            "for" : "for",
             "function" : "function",
             "class" : "class",
             "var" : "var",

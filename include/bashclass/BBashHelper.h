@@ -12,6 +12,7 @@
 #include <bashclass/BElif.h>
 #include <bashclass/BElse.h>
 #include <bashclass/BWhile.h>
+#include <bashclass/BFor.h>
 
 class BBashHelper {
 public:
@@ -123,6 +124,18 @@ public:
      * @param whileStatement
      */
     static void closeWhile(std::shared_ptr<BWhile> whileStatement);
+
+    /**
+     * Generate code for for statement
+     * @param forStatement
+     */
+    static void createFor(std::shared_ptr<BFor> forStatement);
+
+    /**
+     * Generate code for closing for statement
+     * @param forStatement
+     */
+    static void closeFor(std::shared_ptr<BFor> forStatement);
 };
 
 #endif

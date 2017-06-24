@@ -40,8 +40,11 @@
     "RETURN_OPT_EXPR": ["EXPR_DEC #returnExpr#","EPSILON #returnVoid#"],
     "RETURN" : ["'return'"],
 
-    "STATEMENT" : ["#newKey# IF #startIf# OPEN_PAR EXPR_DEC #ifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endIf# ELIF_OPT ELSE_OPT",
-                    "#newKey# WHILE #startWhile# OPEN_PAR EXPR_DEC #whileCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endWhile#"],
+    "STATEMENT" : [
+        "#newKey# IF #startIf# OPEN_PAR EXPR_DEC #ifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endIf# ELIF_OPT ELSE_OPT",
+        "#newKey# WHILE #startWhile# OPEN_PAR EXPR_DEC #whileCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endWhile#",
+        "#newKey# FOR #startFor# OPEN_PAR FOR_PRE_COND FOR_COND FOR_POST_COND CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endFor#"
+    ],
     "STATEMENT_BODY" : ["EPSILON","VARIABLE_DEC STATEMENT_BODY", "#newKey# EXPR_DEC #evalExpr# SEMICOLON STATEMENT_BODY","STATEMENT STATEMENT_BODY","RETURN_DEC STATEMENT_BODY", "BASH_DEC STATEMENT_BODY"],
 
     "ELIF_OPT" : ["EPSILON", "#newKey# ELIF #startElif# OPEN_PAR EXPR_DEC #elifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY CLOSE_CUR #endElif# ELIF_OPT"],
@@ -51,6 +54,11 @@
     "ELIF" : ["'elif'"],
     "ELSE" : ["'else'"],
     "WHILE" : ["'while'"],
+    "FOR" : ["'for'"],
+
+    "FOR_PRE_COND" : ["SEMICOLON", "EXPR_DEC #forPreCond# SEMICOLON"],
+    "FOR_COND" : ["SEMICOLON", "EXPR_DEC #forCond# SEMICOLON"],
+    "FOR_POST_COND" : ["EPSILON", "EXPR_DEC #forPostCond#"],
 
     "OPEN_PAR" : ["'open_parenthesis'"],
     "CLOSE_PAR" : ["'close_parenthesis'"],

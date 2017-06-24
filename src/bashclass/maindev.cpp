@@ -50,6 +50,12 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#whileCond#", bashClass.m_whileCond);
     easyCC.registerSemanticAction("#endWhile#", bashClass.m_endWhile);
 
+    easyCC.registerSemanticAction("#startFor#", bashClass.m_startFor);
+    easyCC.registerSemanticAction("#forPreCond#", bashClass.m_forPreCond);
+    easyCC.registerSemanticAction("#forCond#", bashClass.m_forCond);
+    easyCC.registerSemanticAction("#forPostCond#", bashClass.m_forPostCond);
+    easyCC.registerSemanticAction("#endFor#", bashClass.m_endFor);
+
     easyCC.registerSemanticAction("#startIf#", bashClass.m_startIf);
     easyCC.registerSemanticAction("#ifCond#", bashClass.m_ifCond);
     easyCC.registerSemanticAction("#endIf#", bashClass.m_endIf);

@@ -97,6 +97,12 @@ public:
     SemanticActionHandler m_whileCond;
     SemanticActionHandler m_endWhile;
 
+    SemanticActionHandler m_startFor;
+    SemanticActionHandler m_forPreCond;
+    SemanticActionHandler m_forCond;
+    SemanticActionHandler m_forPostCond;
+    SemanticActionHandler m_endFor;
+
     SemanticActionHandler m_startIf;
     SemanticActionHandler m_ifCond;
     SemanticActionHandler m_endIf;

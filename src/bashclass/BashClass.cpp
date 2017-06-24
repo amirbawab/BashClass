@@ -1,15 +1,13 @@
 #include <bashclass/BashClass.h>
-#include <bashclass/BIf.h>
 #include <bashclass/BWhile.h>
 #include <iostream>
 #include <bashclass/BException.h>
 #include <bashclass/BBashHelper.h>
-#include <bashclass/BReturn.h>
 #include <bashclass/BThisAccess.h>
 #include <bashclass/BVariableAccess.h>
-#include <bashclass/BFunctionCall.h>
 #include <bashclass/BGenerateCode.h>
 #include <bashclass/BArrayUse.h>
+#include <bashclass/BFor.h>
 
 BashClass::BashClass() {
     initHandlers();
@@ -326,6 +324,68 @@ void BashClass::initHandlers() {
             m_focusVariable = nullptr;
         }
     };
+
+    /**************************************
+     *           FOR STATEMENT
+     **************************************/
+    m_startFor = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            auto newFor = std::make_shared<BFor>();
+            m_scopeStack.back()->registerScope(m_referenceKey, newFor);
+            m_scopeStack.push_back(newFor);
+        } else if(phase == BashClass::PHASE_EVAL) {
+            m_scopeStack.push_back(m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey));
+        } else if(phase == BashClass::PHASE_GENERATE) {
+            auto createdFor = std::static_pointer_cast<BFor>(
+                    m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey));
+            m_scopeStack.push_back(createdFor);
+            BBashHelper::createFor(createdFor);
+        }
+    };
+
+    m_forPreCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+
+            // Set pre condition
+            auto createdFor = std::static_pointer_cast<BFor>(m_scopeStack.back());
+            createdFor->setPreCondition(m_expressionOperandStack.back());
+
+            // Remove consumed expression
+            m_expressionOperandStack.pop_back();
+        }
+    };
+
+    m_forCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            // Set condition
+            auto createdFor = std::static_pointer_cast<BFor>(m_scopeStack.back());
+            createdFor->setCondition(m_expressionOperandStack.back());
+
+            // Remove consumed expression
+            m_expressionOperandStack.pop_back();
+        }
+    };
+
+    m_forPostCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            // Set post condition
+            auto createdFor = std::static_pointer_cast<BFor>(m_scopeStack.back());
+            createdFor->setPostCondition(m_expressionOperandStack.back());
+
+            // Remove consumed expression
+            m_expressionOperandStack.pop_back();
+        }
+    };
+
+    m_endFor = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
+            m_scopeStack.pop_back();
+        } else if(phase == BashClass::PHASE_GENERATE) {
+            BBashHelper::closeFor(std::static_pointer_cast<BFor>(m_scopeStack.back()));
+            m_scopeStack.pop_back();
+        }
+    };
+
 
     /**************************************
      *          WHILE STATEMENT

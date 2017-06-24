@@ -962,3 +962,56 @@ void BBashHelper::closeWhile(std::shared_ptr<BWhile> whileStatement) {
     ss << "done" << std::endl;
     BGenerateCode::get().write(ss);
 }
+
+/**
+ * Create for statement
+ * @param forStatement
+ */
+void BBashHelper::createFor(std::shared_ptr<BFor> forStatement) {
+    std::stringstream ss;
+
+    // Add bash comment
+    ss << std::endl;
+    _indent(forStatement->getParentScope(), ss);
+    ss << "# For statement" << std::endl;
+
+    // Check if there is a precondition
+    if(forStatement->getPreCondition()) {
+        _expressionToCode(forStatement->getParentScope(), forStatement->getPreCondition(), ss);
+    }
+
+    // for while statement
+    _indent(forStatement->getParentScope(), ss);
+    ss << "while true; do" << std::endl;
+
+    // Check if condition was set
+    if(forStatement->getCondition()) {
+
+        // Start processing the expression
+        ExprReturn expression = _expressionToCode(forStatement->getParentScope(), forStatement->getCondition(), ss);
+
+        // Create if statement
+        _indent(forStatement->getParentScope(), ss);
+        ss << "! (( " << expression.formattedValue() << " )) && break" << std::endl;
+    }
+
+    BGenerateCode::get().write(ss);
+}
+
+/**
+ * Close for statement
+ * @param forStatement
+ */
+void BBashHelper::closeFor(std::shared_ptr<BFor> forStatement) {
+    std::stringstream ss;
+
+    // Check if there is a post condition
+    if(forStatement->getPostCondition()) {
+        _expressionToCode(forStatement->getParentScope(), forStatement->getPostCondition(), ss);
+    }
+
+    // Close for loop
+    _indent(forStatement->getParentScope(), ss);
+    ss << "done" << std::endl;
+    BGenerateCode::get().write(ss);
+}
