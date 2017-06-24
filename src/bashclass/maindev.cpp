@@ -94,6 +94,7 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#endArgument#", bashClass.m_endArgument);
 
     easyCC.registerSemanticAction("#arrayVar#", bashClass.m_arrayVar);
+    easyCC.registerSemanticAction("#arrayFunc#", bashClass.m_arrayFunc);
     easyCC.registerSemanticAction("#arrayClassVar#", bashClass.m_arrayClassVar);
     easyCC.registerSemanticAction("#indexAccess#", bashClass.m_indexAccess);
     easyCC.registerSemanticAction("#newArray#", bashClass.m_newArray);

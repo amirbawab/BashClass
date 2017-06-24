@@ -754,6 +754,12 @@ void BashClass::initHandlers() {
         }
     };
 
+    m_arrayFunc = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_CREATE) {
+            m_focusFunction->getType()->setDimension(m_focusFunction->getType()->getDimension()+1);
+        }
+    };
+
     m_indexAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto variableChainAccess = std::static_pointer_cast<BVariableChainAccess>(m_chainBuilderStack.back()->last());

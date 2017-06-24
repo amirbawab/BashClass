@@ -82,6 +82,7 @@ public:
     SemanticActionHandler m_thisAccess;
 
     SemanticActionHandler m_arrayVar;
+    SemanticActionHandler m_arrayFunc;
     SemanticActionHandler m_arrayClassVar;
     SemanticActionHandler m_indexAccess;
     SemanticActionHandler m_newArray;
