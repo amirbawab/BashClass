@@ -18,10 +18,8 @@ private:
     // Arguments passed to this function chain call
     std::vector<std::shared_ptr<IBExpression>> m_arguments;
 
-    // Lexical token for the function chain call.
-    // The value of this token and the actual function
-    // should always match
-    std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
+    // Hold the type of this function access
+    std::shared_ptr<BExpressionType> m_type;
 public:
 
     /**
@@ -34,19 +32,7 @@ public:
      * Set function
      * @param function
      */
-    void setFunction(std::shared_ptr<BFunction> function) {m_function = function;}
-
-    /**
-     * Set lexical token
-     * @param lexicalToken
-     */
-    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {m_lexicalToken = lexicalToken;}
-
-    /**
-     * Get lexical token
-     * @return lexical token
-     */
-    std::shared_ptr<ecc::LexicalToken> getLexicalToken() {return m_lexicalToken;}
+    void setFunction(std::shared_ptr<BFunction> function);
 
     /**
      * Add argument

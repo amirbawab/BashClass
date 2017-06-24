@@ -762,8 +762,8 @@ void BashClass::initHandlers() {
 
     m_indexAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
-            auto variableChainAccess = std::static_pointer_cast<BVariableChainAccess>(m_chainBuilderStack.back()->last());
-            variableChainAccess->addIndex(m_expressionOperandStack.back());
+            auto chainAccess = m_chainBuilderStack.back()->last();
+            chainAccess->addIndex(m_expressionOperandStack.back());
             m_expressionOperandStack.pop_back();
         }
     };

@@ -136,10 +136,10 @@ void _varChainAccess_nonMember(std::shared_ptr<BVariableChainAccess> variableCha
  * @return new key
  */
 std::string _arrayToCode(std::shared_ptr<BScope> scope, std::string variable,
-                         std::shared_ptr<BVariableChainAccess> variableChainAccess,
+                         std::shared_ptr<IBChainable> chainAccess,
                          std::stringstream &ss) {
     static unsigned int uniqueId = 0;
-    auto indices = variableChainAccess->getIndices();
+    auto indices = chainAccess->getIndices();
     std::string tmpVariable = variable;
     for(size_t i=0; i < indices.size(); i++) {
         auto expression = _expressionToCode(scope, indices[i], ss);
@@ -331,8 +331,11 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
         std::map<std::shared_ptr<IBChainable>, std::string> returnMap;
         _chainToCode(scope, functionCall->getChain(), 0, functionCall->getChain()->size()-1, returnMap, ss);
 
+        // Process array access (if any)
+        std::string newKey = _arrayToCode(scope, returnMap[functionCall->last()], functionCall->last(), ss);
+
         // Get the variable key of the last element
-        return ExprReturn(returnMap[functionCall->last()], ExprReturn::VARIABLE);
+        return ExprReturn(newKey, ExprReturn::VARIABLE);
     }
 
     /********************

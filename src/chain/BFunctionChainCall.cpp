@@ -89,8 +89,14 @@ bool BFunctionChainCall::isFound() {
 }
 
 std::shared_ptr<IBType> BFunctionChainCall::getType() {
-    if(!m_function || !m_function->getType()->hasKnownType()) {
+    if(!m_function || !m_function->getType()->hasKnownType() || m_type->getDimension() < 0) {
         return BTypeFactory::createUndefinedExpressionType();
     }
-    return m_function->getType();
+    return m_type;
 }
+
+void BFunctionChainCall::setFunction(std::shared_ptr<BFunction> function) {
+    m_function = function;
+    m_type = function->getType()->cloneToExpressionType();
+}
+

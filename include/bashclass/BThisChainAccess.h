@@ -11,9 +11,6 @@ private:
 
     // The class that this reference points to
     std::shared_ptr<BClass> m_reference;
-
-    // Hold the lexical token for this reference
-    std::shared_ptr<ecc::LexicalToken> m_lexicalToken;
 public:
 
     /**
@@ -27,18 +24,6 @@ public:
      * @param reference
      */
     void setReference(std::shared_ptr<BClass> reference) {m_reference = reference;}
-
-    /**
-     * Get lexical token of this reference
-     * @return lexicalToken
-     */
-    std::shared_ptr<ecc::LexicalToken> getLexicalToken() {return m_lexicalToken;}
-
-    /**
-     * Set lexical token for this reference
-     * @param lexicalToken
-     */
-    void setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) { m_lexicalToken = lexicalToken;}
 
     /**
      * Check if reference is found
