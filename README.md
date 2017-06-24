@@ -28,14 +28,14 @@ Compile the program to build a `bashc` executable, then run the following:
 * Comments (inline and block)
 * Recursion
 * Return primitive types, strings and objects
-* Easy while and if statements
+* Easy while, for and if statements
 * Create new instance of objects (e.g. myObj = new Object())
 * Constructor is required to create instances
 * Variable of type `any` can hold a value of any type, but can't access its members (if any)
 * Run bash code (inline and block)
 * Run subshell (e.g. echo $(echo 1) ). They can be assigned to variables of type `string`.
 * Allow default parameters values
-* No arrays (In process)
+* Arrays (1D, 2D, ... ND)
 * No casting
 * No function overloading
 * No inheritance
