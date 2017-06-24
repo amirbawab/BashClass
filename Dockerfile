@@ -11,9 +11,9 @@ RUN curl -L "https://downloads.sourceforge.net/project/boost/boost/1.63.0/boost_
 RUN cd /tmp; tar -xf boost.tar.gz
 WORKDIR "/tmp/boost_1_63_0/"
 RUN ./bootstrap.sh --prefix=/usr/local; ./b2 install
-RUN cd $HOME; git  clone https://github.com/amirbawab/BashClass
+RUN cd $HOME; git   clone https://github.com/amirbawab/BashClass
 WORKDIR $HOME/BashClass
 RUN git checkout docker
 RUN git submodule update --init --recursive
-RUN cmake .
-RUN make
+RUN cmake .; make
+CMD /bin/bash
