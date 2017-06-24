@@ -13,9 +13,9 @@
     "CONSTRUCTOR_DEC" : ["#newKey# CONSTRUCTOR #startFunction# #functionConstructor# FUNCTION_NAME #functionType# #functionName# OPEN_PAR FUNCTION_PARAM_DEC CLOSE_PAR OPEN_CUR FUNCTION_BODY CLOSE_CUR #endFunction#"],
     "CONSTRUCTOR": ["'constructor'"],
 
-    "FUNCTION_DEC" : ["#newKey# FUNCTION #startFunction# FUNCTION_TYPE #functionType# FUNC_ARRAY_TYPE_OPT FUNCTION_NAME #functionName# OPEN_PAR FUNCTION_PARAM_DEC CLOSE_PAR OPEN_CUR FUNCTION_BODY CLOSE_CUR #endFunction#"],
+    "FUNCTION_DEC" : ["#newKey# FUNCTION #startFunction# FUNCTION_EXTENDED_TYPE FUNCTION_NAME #functionName# OPEN_PAR FUNCTION_PARAM_DEC CLOSE_PAR OPEN_CUR FUNCTION_BODY CLOSE_CUR #endFunction#"],
     "FUNCTION": ["'function'"],
-    "FUNCTION_TYPE" : ["'identifier'","'int_type'","'boolean_type'","'char_type'","'string_type'","'void_type'","'any_type'"],
+    "FUNCTION_EXTENDED_TYPE" : ["'void_type' #functionType#","VARIABLE_TYPE #functionType# FUNC_ARRAY_TYPE_OPT"],
     "FUNCTION_NAME" : ["'identifier'"],
     "FUNCTION_BODY" : ["EPSILON","VARIABLE_DEC FUNCTION_BODY","#newKey# EXPR_DEC #evalExpr# SEMICOLON FUNCTION_BODY","STATEMENT FUNCTION_BODY","RETURN_DEC FUNCTION_BODY","BASH_DEC FUNCTION_BODY"],
     "FUNCTION_PARAM_DEC" : ["EPSILON","FUNCTION_PARAM_A"],
