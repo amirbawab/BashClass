@@ -44,3 +44,8 @@ std::shared_ptr<BExpressionType> BElementType::cloneToExpressionType() {
     newType->setTypeScope(getTypeScope());
     return newType;
 }
+
+void BElementType::cast(std::shared_ptr<BElementType> type) {
+    IBType::cast(type);
+    m_lexicalToken  = type->getLexicalToken();
+}

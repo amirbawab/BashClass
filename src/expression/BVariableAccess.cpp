@@ -12,3 +12,7 @@ std::shared_ptr<BVariableChainAccess> BVariableAccess::last() {
 std::shared_ptr<IBType> BVariableAccess::getType() {
     return last()->getType();
 }
+
+void BVariableAccess::castType(std::shared_ptr<BElementType> type) {
+    last()->getType()->cast(type);
+}

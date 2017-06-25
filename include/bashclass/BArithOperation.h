@@ -103,6 +103,12 @@ public:
      * Evaluate arithmetic operation
      */
     void evaluate();
+
+    /**
+     * Cast type
+     * @param type
+     */
+    void castType(std::shared_ptr<BElementType> type);
 };
 
 #endif

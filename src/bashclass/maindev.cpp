@@ -99,6 +99,10 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#startArgument#", bashClass.m_startArgument);
     easyCC.registerSemanticAction("#endArgument#", bashClass.m_endArgument);
 
+    easyCC.registerSemanticAction("#castType#", bashClass.m_castType);
+    easyCC.registerSemanticAction("#castArray#", bashClass.m_castArray);
+    easyCC.registerSemanticAction("#castExpr#", bashClass.m_castExpr);
+
     easyCC.registerSemanticAction("#arrayVar#", bashClass.m_arrayVar);
     easyCC.registerSemanticAction("#arrayFunc#", bashClass.m_arrayFunc);
     easyCC.registerSemanticAction("#arrayClassVar#", bashClass.m_arrayClassVar);

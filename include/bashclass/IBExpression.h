@@ -11,6 +11,12 @@ public:
      * @return type value
      */
     virtual std::shared_ptr<IBType> getType()=0;
+
+    /**
+     * Cast type
+     * @param type
+     */
+    virtual void castType(std::shared_ptr<BElementType> type)=0;
 };
 
 #endif

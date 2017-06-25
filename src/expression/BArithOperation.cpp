@@ -201,3 +201,7 @@ void BArithOperation::evaluate() {
         throw BException("Arithmetic operation is not composed correctly");
     }
 }
+
+void BArithOperation::castType(std::shared_ptr<BElementType> type) {
+    m_type->cast(type);
+}

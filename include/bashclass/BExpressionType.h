@@ -43,6 +43,12 @@ public:
      * @param cls
      */
     void setTypeScope(std::shared_ptr<BClass> cls) { m_typeScope = cls;}
+
+    /**
+     * Cast type
+     * @param type
+     */
+    void cast(std::shared_ptr<BElementType> type);
 };
 
 #endif

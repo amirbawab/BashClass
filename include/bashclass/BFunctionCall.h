@@ -35,6 +35,12 @@ public:
      * @return type
      */
     std::shared_ptr<IBType> getType();
+
+    /**
+     * Cast type
+     * @param type
+     */
+    void castType(std::shared_ptr<BElementType> type);
 };
 
 #endif

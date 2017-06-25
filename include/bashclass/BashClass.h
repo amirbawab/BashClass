@@ -12,6 +12,7 @@
 #include <bashclass/BArithOperation.h>
 #include <bashclass/BClass.h>
 #include <bashclass/BIf.h>
+#include <bashclass/IBType.h>
 
 typedef std::vector<std::shared_ptr<ecc::LexicalToken>> LexicalTokens;
 typedef std::function<void(int, LexicalTokens&, int, bool)> SemanticActionHandler;
@@ -121,6 +122,10 @@ public:
     SemanticActionHandler m_functionCall;
     SemanticActionHandler m_evalExpr;
 
+    SemanticActionHandler m_castType;
+    SemanticActionHandler m_castArray;
+    SemanticActionHandler m_castExpr;
+
     SemanticActionHandler m_setArgument;
     SemanticActionHandler m_startArgument;
     SemanticActionHandler m_endArgument;
@@ -149,6 +154,9 @@ private:
 
     // Hold if scope being defined
     std::shared_ptr<BIf> m_focusIf;
+
+    // Hold cast type
+    std::shared_ptr<BElementType> m_focusCastType;
 
     // Hold chains and expressions operands
     std::vector<std::shared_ptr<IBExpression>> m_expressionOperandStack;

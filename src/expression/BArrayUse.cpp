@@ -8,3 +8,7 @@ BArrayUse::BArrayUse() {
 void BArrayUse::setTypeLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
     m_type->setLexicalToken(lexicalToken);
 }
+
+void BArrayUse::castType(std::shared_ptr<BElementType> type) {
+    m_type->cast(type);
+}

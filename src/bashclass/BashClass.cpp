@@ -7,7 +7,7 @@
 #include <bashclass/BVariableAccess.h>
 #include <bashclass/BGenerateCode.h>
 #include <bashclass/BArrayUse.h>
-#include <bashclass/BFor.h>
+#include <bashclass/BExpressionType.h>
 
 BashClass::BashClass() {
     initHandlers();
@@ -845,6 +845,33 @@ void BashClass::initHandlers() {
         if(phase == BashClass::PHASE_EVAL) {
             auto arrayUse = std::static_pointer_cast<BArrayUse>(m_expressionOperandStack.back());
             arrayUse->getType()->setDimension(arrayUse->getType()->getDimension()+1);
+        }
+    };
+
+    /**************************************
+     *            CASTING
+     **************************************/
+    m_castType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            m_focusCastType = std::make_shared<BElementType>();
+            m_focusCastType->setLexicalToken(lexicalVector[index]);
+        }
+    };
+
+    m_castArray = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            m_focusCastType->setDimension(m_focusCastType->getDimension() + 1);
+        }
+    };
+
+    m_castExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+
+            // Cast expression
+            m_expressionOperandStack.back()->castType(m_focusCastType);
+
+            // Clear focus
+            m_focusCastType = nullptr;
         }
     };
 }

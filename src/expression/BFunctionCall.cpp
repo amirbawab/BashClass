@@ -11,3 +11,7 @@ std::shared_ptr<BFunctionChainCall> BFunctionCall::last() {
 std::shared_ptr<IBType> BFunctionCall::getType() {
     return last()->getType();
 }
+
+void BFunctionCall::castType(std::shared_ptr<BElementType> type) {
+    last()->getType()->cast(type);
+}

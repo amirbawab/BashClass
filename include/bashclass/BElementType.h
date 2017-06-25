@@ -1,7 +1,6 @@
 #ifndef BASHCLASS_BELEMENTTYPE_H
 #define BASHCLASS_BELEMENTTYPE_H
 
-#include <bashclass/IBType.h>
 #include <easycc/LexicalToken.h>
 #include <bashclass/BExpressionType.h>
 
@@ -46,5 +45,11 @@ public:
      * @return expression type
      */
     std::shared_ptr<BExpressionType> cloneToExpressionType();
+
+    /**
+     * Cast type
+     * @param type
+     */
+    void cast(std::shared_ptr<BElementType> type);
 };
 #endif

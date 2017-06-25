@@ -1,5 +1,6 @@
 #include <bashclass/BThisAccess.h>
 #include <bashclass/BException.h>
+#include <bashclass/BReport.h>
 
 void BThisAccess::setChain(std::shared_ptr<BChain> chain) {
     if(chain->size() != 1) {
@@ -17,4 +18,10 @@ std::shared_ptr<BThisChainAccess> BThisAccess::getThisChainAccess() {
 
 std::shared_ptr<IBType> BThisAccess::getType() {
     return getThisChainAccess()->getType();
+}
+
+void BThisAccess::castType(std::shared_ptr<BElementType> type) {
+    BReport::getInstance().error()
+            << "Cannot cast a 'this' reference" << std::endl;
+    BReport::getInstance().printError();
 }

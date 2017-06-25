@@ -5,6 +5,7 @@
 #include <memory>
 
 class BClass;
+class BElementType;
 class IBType {
 protected:
 
@@ -176,6 +177,12 @@ public:
      * @return string
      */
     std::string toString();
+
+    /**
+     * Cast type
+     * @param type
+     */
+    virtual void cast(std::shared_ptr<BElementType> type);
 };
 
 #endif

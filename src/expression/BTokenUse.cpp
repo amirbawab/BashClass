@@ -28,3 +28,7 @@ void BTokenUse::setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken)
         throw BException("Token type value cannot be undefined");
     }
 }
+
+void BTokenUse::castType(std::shared_ptr<BElementType> type) {
+    m_type->cast(type);
+}

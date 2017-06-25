@@ -100,7 +100,12 @@
     "EXPR_V" : ["EPSILON","OP_GROUP_K #putOp# EXPR_W #createExpr2# EXPR_V"],
     "EXPR_W" : ["EXPR_X","OP_GROUP_L #putOp# EXPR_X #createExpr1#"],
     "EXPR_X" : ["EXPR_Y","OP_GROUP_I #putOp# EXPR_Y #createExpr1#"],
-    "EXPR_Y" : ["OPEN_PAR EXPR_AA CLOSE_PAR","ARITH_ID"],
+    "EXPR_Y" : ["OPEN_PAR EXPR_AA CLOSE_PAR CAST_EXPR","ARITH_ID"],
+    
+    "CAST_EXPR" : ["EPSILON","COLON VARIABLE_TYPE #castType# CAST_ARRAY #castExpr#"],
+
+    "OPEN_CLOSE_SQ" : ["OPEN_SQ CLOSE_SQ"],
+    "CAST_ARRAY" : ["EPSILON","OPEN_CLOSE_SQ #castArray# CAST_ARRAY"],
 
     "ARITH_ID" : [
         "'integer' #tokenUse#",
@@ -114,6 +119,7 @@
     ],
     "BASH_SUB" : ["'bash_sub'"],
     "NEW": ["'new'"],
+    "COLON" : ["'colon'"],
 
     "NEW_CONS_OR_ARRAY" : [
         "#startChain# #constructorChainCall# IDENTIFIER_FUNCTION_CALL ARITH_VAR_OR_FUNC_CALL_D #endChain#",

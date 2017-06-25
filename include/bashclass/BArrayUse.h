@@ -28,6 +28,12 @@ public:
      * Set type lexical token
      */
     void setTypeLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+
+    /**
+     * Cast type
+     * @param type
+     */
+    void castType(std::shared_ptr<BElementType> type);
 };
 
 #endif

@@ -1,4 +1,5 @@
 #include <bashclass/IBType.h>
+#include <bashclass/BElementType.h>
 
 /*********************
  *  TOKEN TYPE NAME
@@ -78,4 +79,9 @@ std::string IBType::toString() {
         result += "[]";
     }
     return result;
+}
+
+void IBType::cast(std::shared_ptr<BElementType> type) {
+    m_dimension = type->getDimension();
+    m_typeScope = type->getTypeScope();
 }
