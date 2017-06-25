@@ -853,8 +853,15 @@ void BashClass::initHandlers() {
      **************************************/
     m_castType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
+
+            // Create a new type
             m_focusCastType = std::make_shared<BElementType>();
+
+            // Configure type
             m_focusCastType->setLexicalToken(lexicalVector[index]);
+
+            // Link type
+            m_focusCastType->linkType();
         }
     };
 

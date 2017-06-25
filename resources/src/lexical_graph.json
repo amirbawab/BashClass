@@ -371,6 +371,12 @@
             "id": 69,
             "token": "close_square",
             "backtrack": false
+        },
+        {
+            "type": "FINAL",
+            "id": 70,
+            "token": "colon",
+            "backtrack": false
         }
     ],
     "transitions": [
@@ -1032,6 +1038,13 @@
             "to": 69,
             "chars": [
                 "]"
+            ]
+        },
+        {
+            "from": 0,
+            "to": 70,
+            "chars": [
+                ":"
             ]
         }
     ]
