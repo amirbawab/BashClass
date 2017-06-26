@@ -498,10 +498,10 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             // =
             if(arithOperator == BArithOperation::OP_ASSIGN) {
 
-               // All types have the same code generated
-                ss << "declare " << newKey << "="
-                   << _arithOpForm1(leftOp.value, arithOperation->getOperator()->getValue(), rightOp.formattedValue())
-                   << std::endl;
+                // All types have the same code generated
+                ss << leftOp.value << "=" << rightOp.formattedValue() << std::endl;
+                _indent(scope, ss);
+                ss << "declare " << newKey << "=\"" << leftOp.formattedValue() << "\"" << std::endl;
                 return ExprReturn(newKey, ExprReturn::VARIABLE);
             }
 
