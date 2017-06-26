@@ -18,7 +18,9 @@ std::string RESULT = "_result_";
 std::string EXPRESSION = "_expression_";
 std::string PROG_ARRAY = "_array_";
 std::string PROG_ARRAY_COUNTER = "_array_uid_";
+std::string ARRAY_EXPR = "_array_expr_";
 std::string FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY="_bash_StrToCharArray";
+std::string FUNCTION_NAME_BASH_CREATE_ARRAY="_bash_createArray";
 std::string PROG_TAB = "    ";
 
 struct ExprReturn {
@@ -58,7 +60,7 @@ std::string _generateExpressionKey(unsigned int number) {
 }
 
 std::string _generateArrayKey(unsigned int number) {
-    return PROG_ARRAY + std::to_string(number);
+    return ARRAY_EXPR + std::to_string(number);
 }
 
 std::string _generateIfLock(std::shared_ptr<BIf> ifStatement) {
@@ -89,8 +91,8 @@ std::string _arrayToCode(std::shared_ptr<BScope> scope, std::string variable,
         auto expression = _expressionToCode(scope, indices[i], ss);
         _indent(scope, ss);
         std::string newKey = _generateArrayKey(uniqueId++);
-        ss << "declare -n " << newKey << "="
-           << PROG_ARRAY << "[${" << tmpVariable << "}," << expression.formattedValue() << "]" << std::endl;
+        ss << "declare -n " << newKey << "=\""
+           << PROG_ARRAY  << "${"<< tmpVariable << "}[" << expression.formattedValue() << "]\"" << std::endl;
         tmpVariable = newKey;
     }
     return tmpVariable;
@@ -301,10 +303,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
     if(arrayUse) {
         _indent(scope, ss);
         std::string newKey = _generateExpressionKey(uniqueId++);
-        ss << "declare " << newKey << "=${" << PROG_ARRAY_COUNTER << "}" << std::endl;
-        _indent(scope, ss);
-        ss << PROG_ARRAY_COUNTER << "=" << _arithOpForm1("${" + PROG_ARRAY_COUNTER + "}", "+", "1")
-           << std::endl;
+        ss << FUNCTION_NAME_BASH_CREATE_ARRAY << " " << newKey << std::endl;
         return ExprReturn(newKey, ExprReturn::VARIABLE);
     }
 
@@ -501,7 +500,7 @@ void BBashHelper::declareClass(std::shared_ptr<BClass> classScope) {
 
 void BBashHelper::declareArray() {
     std::stringstream ss;
-    ss << "declare -A " << PROG_ARRAY << "=()" << std::endl;
+    ss << "# Initialize array counter" << std::endl;
     ss << PROG_ARRAY_COUNTER << "=1" << std::endl;
     BGenerateCode::get().write(ss);
 }
@@ -839,9 +838,7 @@ void BBashHelper::closeFor(std::shared_ptr<BFor> forStatement) {
     BGenerateCode::get().write(ss);
 }
 
-void BBashHelper::bashStrToCharArray() {
-    std::stringstream ss;
-
+void BBashHelper::_bashStrToCharArray(std::stringstream &ss) {
     ss << "# Convert strings into char array" << std::endl;
     ss << "function " << FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY << "() {" << std::endl;
     ss << PROG_TAB << "declare string=\"${1}\"" << std::endl;
@@ -855,6 +852,23 @@ void BBashHelper::bashStrToCharArray() {
     ss << PROG_TAB << PROG_TAB << "index=" << _arithOpForm1("${index}", "+","1") << std::endl;
     ss << PROG_TAB << "done" << std::endl;
     ss << "}" << std::endl;
+}
 
+void BBashHelper::_bashCreateArray(std::stringstream &ss) {
+    ss << "# Create array" << std::endl;
+    ss << "function " << FUNCTION_NAME_BASH_CREATE_ARRAY << "() {" << std::endl;
+    ss << PROG_TAB << "declare -n " << FUNCTION_RETURN << "=${1}" << std::endl;
+    ss << PROG_TAB << "declare -g -A \"" << PROG_ARRAY << "${" << PROG_ARRAY_COUNTER << "}\"" << std::endl;
+    ss << PROG_TAB << FUNCTION_RETURN << "=${" << PROG_ARRAY_COUNTER << "}" << std::endl;
+    ss << PROG_TAB << PROG_ARRAY_COUNTER << "=" << _arithOpForm1("${" + PROG_ARRAY_COUNTER + "}", "+", "1") << std::endl;
+    ss << "}" << std::endl;
+}
+
+void BBashHelper::writeBashFunctions() {
+    std::stringstream ss;
+    ss << "############# BASH FUNCTIONS ##############" << std::endl;
+    _bashStrToCharArray(ss);
+    _bashCreateArray(ss);
+    ss << "###########################################" << std::endl;
     BGenerateCode::get().write(ss);
 }

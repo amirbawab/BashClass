@@ -16,12 +16,21 @@
 
 class BBashHelper {
 private:
-public:
-
     /**
      * Generate code to convert strings into char array in bash
      */
-    static void bashStrToCharArray();
+    static void _bashStrToCharArray(std::stringstream &ss);
+
+    /**
+     * Generate code to create an array in bash
+     */
+    static void _bashCreateArray(std::stringstream &ss);
+public:
+
+    /**
+     * Generate code for bash required functions
+     */
+    static void writeBashFunctions();
 
     /**
      * Generate header bash code
