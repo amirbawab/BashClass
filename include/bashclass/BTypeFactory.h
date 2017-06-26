@@ -21,12 +21,6 @@ public:
     static std::shared_ptr<IBType> createIntExpressionType();
 
     /**
-     * Create string expression type
-     * @return expression type
-     */
-    static std::shared_ptr<IBType> createStringExpressionType();
-
-    /**
      * Create char expression type
      * @return expression type
      */

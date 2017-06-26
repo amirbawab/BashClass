@@ -27,7 +27,6 @@ public:
     static const std::string TYPE_NAME_INT;
     static const std::string TYPE_NAME_CHAR;
     static const std::string TYPE_NAME_BOOLEAN;
-    static const std::string TYPE_NAME_STRING;
     static const std::string TYPE_NAME_VOID;
     static const std::string TYPE_NAME_IDENTIFIER;
 
@@ -37,7 +36,6 @@ public:
     static const std::string TYPE_VALUE_INT;
     static const std::string TYPE_VALUE_CHAR;
     static const std::string TYPE_VALUE_BOOLEAN;
-    static const std::string TYPE_VALUE_STRING;
     static const std::string TYPE_VALUE_VOID;
 
     // Undefined type is used by the compiler when an expression has an unknown type
@@ -85,12 +83,6 @@ public:
      * @return boolean
      */
     bool isInt() { return getTypeName() == IBType::TYPE_NAME_INT;};
-
-    /**
-     * String check
-     * @return boolean
-     */
-    bool isString() { return getTypeName() == IBType::TYPE_NAME_STRING;}
 
     /**
      * Void check

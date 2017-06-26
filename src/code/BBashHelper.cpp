@@ -333,13 +333,6 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             // +
             if(arithOperator == BArithOperation::OP_PLUS) {
 
-                // String concatenation
-                if(arithOperationType->isString()) {
-                    ss << "declare " << newKey << "=\"" << leftOp.formattedValue() << rightOp.formattedValue()
-                       << "\"" << std::endl;
-                    return ExprReturn(newKey, ExprReturn::VARIABLE);
-                }
-
                 // Integer addition
                 if(arithOperationType->isInt()) {
                     ss << "declare " << newKey << "="
@@ -378,15 +371,6 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
 
                 // Boolean comparison
                 if(arithOperationType->isBoolean()) {
-
-                    // String comparison
-                    if(leftOperandType->isString() || rightOperandType->isString()) {
-                        ss << "declare " << newKey << "="
-                           << _arithOpForm2(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
-                                            rightOp.formattedValue())
-                           << std::endl;
-                        return ExprReturn(newKey, ExprReturn::VARIABLE);
-                    }
 
                     // All other types comparison
                     ss << "declare " << newKey << "="
