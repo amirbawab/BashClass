@@ -22,6 +22,7 @@ std::string ARRAY_EXPR = "_array_expr_";
 std::string FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY="_bash_StrToCharArray";
 std::string FUNCTION_NAME_BASH_CREATE_ARRAY="_bash_createArray";
 std::string PROG_TAB = "    ";
+std::string NULL_CODE = "0";
 
 struct ExprReturn {
     const static short DATA = 0;
@@ -29,7 +30,10 @@ struct ExprReturn {
     ExprReturn(std::string value, short type): value(value), type(type){}
     std::string value;
     int type;
-    std::string formattedValue() { return type == VARIABLE ? "${" + value + "}" : value;}
+    std::string formattedValue() {
+        // TODO
+        return type == VARIABLE ? "${" + value + "}" : value;
+    }
 };
 
 ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression,
@@ -265,8 +269,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
 
         // If the token is null
         if(tokenUse->getType()->isNull()) {
-            // TODO Store in const
-            return ExprReturn("0", ExprReturn::DATA);
+            return ExprReturn(NULL_CODE, ExprReturn::DATA);
         }
 
         // If the token is a true/false
@@ -281,16 +284,28 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             throw BException("Unrecognized boolean token value found when trying to generate code");
         }
 
+        // TODO Check if it is a char
+
         // If the token is a bash subshell
+        // FIXME
         if(tokenUse->getLexicalToken()->getName() == BElementType::DATA_TYPE_NAME_BASH_SUB) {
-            return ExprReturn("$( " + tokenUse->getLexicalToken()->getValue().
-                    substr(2, tokenUse->getLexicalToken()->getValue().length()-4) + " )", ExprReturn::DATA);
+            return ExprReturn("", ExprReturn::VARIABLE);
         }
 
         // If the token is a string
         if(tokenUse->getLexicalToken()->getName() == BElementType::DATA_TYPE_NAME_STRING) {
-            return ExprReturn(tokenUse->getLexicalToken()->getValue()
-                    .substr(1,tokenUse->getLexicalToken()->getValue().length()-2), ExprReturn::DATA);
+            _indent(scope, ss);
+            ss << "# String literal" << std::endl;
+            _indent(scope, ss);
+            std::string newKey = _generateExpressionKey(uniqueId++);
+            ss << "declare " << newKey << std::endl;
+            std::string newValue = tokenUse->getLexicalToken()->getValue()
+                    .substr(1,tokenUse->getLexicalToken()->getValue().length()-2);
+            _indent(scope, ss);
+            ss << FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY << " \"" << newValue << "\" " << TMP_FUNCTION_RETURN << std::endl;
+            _indent(scope, ss);
+            ss << newKey << "=${" << TMP_FUNCTION_RETURN << "}" << std::endl;
+            return ExprReturn(newValue, ExprReturn::VARIABLE);
         }
 
         // Write the lexical token value
@@ -302,8 +317,14 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
      ********************/
     if(arrayUse) {
         _indent(scope, ss);
+        ss << "# New array" << std::endl;
+        _indent(scope, ss);
         std::string newKey = _generateExpressionKey(uniqueId++);
-        ss << FUNCTION_NAME_BASH_CREATE_ARRAY << " " << newKey << std::endl;
+        ss << "declare " << newKey << std::endl;
+        _indent(scope, ss);
+        ss << FUNCTION_NAME_BASH_CREATE_ARRAY << " " << TMP_FUNCTION_RETURN << std::endl;
+        _indent(scope, ss);
+        ss << newKey << "=${" << TMP_FUNCTION_RETURN << "}" << std::endl;
         return ExprReturn(newKey, ExprReturn::VARIABLE);
     }
 
@@ -841,13 +862,20 @@ void BBashHelper::closeFor(std::shared_ptr<BFor> forStatement) {
 void BBashHelper::_bashStrToCharArray(std::stringstream &ss) {
     ss << "# Convert strings into char array" << std::endl;
     ss << "function " << FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY << "() {" << std::endl;
+
+    // Store arguments
     ss << PROG_TAB << "declare string=\"${1}\"" << std::endl;
     ss << PROG_TAB << "declare -n " << FUNCTION_RETURN << "=${2}" << std::endl;
-    ss << PROG_TAB << FUNCTION_RETURN << "=${" << PROG_ARRAY_COUNTER << "}" << std::endl;
-    ss << PROG_TAB << PROG_ARRAY_COUNTER << "=" << _arithOpForm1("${" + PROG_ARRAY_COUNTER + "}", "+", "1") << std::endl;
+
+    // Create an new array
+    ss << PROG_TAB << FUNCTION_NAME_BASH_CREATE_ARRAY << " " << TMP_FUNCTION_RETURN << std::endl;
+    ss << PROG_TAB << FUNCTION_RETURN << "=${" << TMP_FUNCTION_RETURN << "}" << std::endl;
+
+    // Start copying string literal into the array
     ss << PROG_TAB << "declare index=0" << std::endl;
     ss << PROG_TAB << "while (( ${index} < ${#string} )); do" << std::endl;
-    ss << PROG_TAB << PROG_TAB << PROG_ARRAY << "[${" << FUNCTION_RETURN << "},${index}]=${string:${index}:1}" << std::endl;
+    ss << PROG_TAB << PROG_TAB << "declare -n indexValue=\"" << PROG_ARRAY << "${" << FUNCTION_RETURN << "}\"" << std::endl;
+    ss << PROG_TAB << PROG_TAB << "indexValue[${index}]=${string:${index}:1}" << std::endl;
     ss << PROG_TAB << PROG_TAB << "index=" << _arithOpForm1("${index}", "+","1") << std::endl;
     ss << PROG_TAB << "done" << std::endl;
     ss << "}" << std::endl;
@@ -866,8 +894,8 @@ void BBashHelper::_bashCreateArray(std::stringstream &ss) {
 void BBashHelper::writeBashFunctions() {
     std::stringstream ss;
     ss << "############# BASH FUNCTIONS ##############" << std::endl;
-    _bashStrToCharArray(ss);
     _bashCreateArray(ss);
+    _bashStrToCharArray(ss);
     ss << "###########################################" << std::endl;
     BGenerateCode::get().write(ss);
 }
