@@ -36,7 +36,7 @@ Compile the program to build a `bashc` executable, then run the following:
 * Run subshell (e.g. echo $(echo 1) ). They can be assigned to variables of type `string`.
 * Allow default parameters values
 * Arrays (1D, 2D, ... ND)
-* No casting
+* Casting
 * No function overloading
 * No inheritance
 
