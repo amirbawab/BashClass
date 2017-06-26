@@ -1,0 +1,39 @@
+function void print(var int a) {
+    ># echo -n "$1 "
+}
+
+function void println() {
+    ># echo 
+}
+
+function void length(var int[] length) {
+    >@
+        declare -n _l="_array_${1}"
+        echo ${#_l[@]}
+    @<
+}
+
+function int main() {
+    var int[][] mult=new int[][];
+    var int i;
+    var int j;
+    var int MAX=10;
+    for(i=1; i <= MAX; i=i+1) {
+        mult[i] = new int[];
+        for(j=1; j <= MAX; j=j+1) {
+            mult[i][j]=i*j;
+        }
+    }
+
+    for(i=1; i <= MAX; i=i+1) {
+        for(j=1; j <= MAX; j=j+1) {
+            print(mult[i][j]);
+        }
+        println();
+    }
+
+    length(mult[1]);
+
+    return 0;
+}
+

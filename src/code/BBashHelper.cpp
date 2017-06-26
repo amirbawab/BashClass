@@ -845,7 +845,6 @@ void BBashHelper::_bashStrToCharArray(std::stringstream &ss) {
     ss << PROG_TAB << "declare -n " << FUNCTION_RETURN << "=${2}" << std::endl;
     ss << PROG_TAB << FUNCTION_RETURN << "=${" << PROG_ARRAY_COUNTER << "}" << std::endl;
     ss << PROG_TAB << PROG_ARRAY_COUNTER << "=" << _arithOpForm1("${" + PROG_ARRAY_COUNTER + "}", "+", "1") << std::endl;
-    ss << PROG_TAB << PROG_ARRAY << "[${" << FUNCTION_RETURN << "},-1]=${#string}" << std::endl;
     ss << PROG_TAB << "declare index=0" << std::endl;
     ss << PROG_TAB << "while (( ${index} < ${#string} )); do" << std::endl;
     ss << PROG_TAB << PROG_TAB << PROG_ARRAY << "[${" << FUNCTION_RETURN << "},${index}]=${string:${index}:1}" << std::endl;
