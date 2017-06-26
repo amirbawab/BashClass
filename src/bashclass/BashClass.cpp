@@ -70,6 +70,9 @@ void BashClass::initHandlers() {
             // Generate code for the program array
             BBashHelper::declareArray();
 
+            // Generate code for required bash functions
+            BBashHelper::bashStrToCharArray();
+
             // Generate classes headers
             for(auto cls : BGlobal::getInstance()->findAllClasses()) {
                 BBashHelper::declareClass(cls);

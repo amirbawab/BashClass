@@ -15,7 +15,13 @@
 #include <bashclass/BFor.h>
 
 class BBashHelper {
+private:
 public:
+
+    /**
+     * Generate code to convert strings into char array in bash
+     */
+    static void bashStrToCharArray();
 
     /**
      * Generate header bash code
