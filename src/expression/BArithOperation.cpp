@@ -141,18 +141,13 @@ std::shared_ptr<IBType> BArithOperation::_evaluateTwoOperands() {
     // +
     if(m_operatorToken->getName() == OP_PLUS) {
 
-        // If left or right is a string, then it is a string
-        if((leftType->isString() && !leftType->isArray()) || (rightType->isString() && !rightType->isArray())) {
-            return BTypeFactory::createStringExpressionType();
-        }
-
         if(leftType->isInt() && rightType->isInt() && !leftType->isArray() && !rightType->isArray()) {
             return leftType;
         }
 
         BReport::getInstance().error()
                 << "Operator " << m_operatorToken->getValue()
-                << " requires both operands to be of integer or one operand to be a string" << std::endl;
+                << " requires both operands to be integers" << std::endl;
         BReport::getInstance().printError();
         return BTypeFactory::createUndefinedExpressionType();
     }

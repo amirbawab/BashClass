@@ -31,7 +31,7 @@
     "VARIABLE_DEC" : ["#newKey# VARIABLE #startVar# VARIABLE_TYPE #varType# VAR_ARRAY_TYPE_OPT VARIABLE_NAME #varName# VARIABLE_INIT SEMICOLON #endVar#"],
     "VARIABLE_INIT" : ["EPSILON","#varAsOperand# OP_GROUP_AA #putOp# EXPR_A EXPR_AB #createExpr2# #varInit#"],
     "VARIABLE" : ["'var'"],
-    "VARIABLE_TYPE" : ["'identifier'","'int_type'","'boolean_type'","'char_type'","'string_type'"],
+    "VARIABLE_TYPE" : ["'identifier'","'int_type'","'boolean_type'","'char_type'"],
     "VARIABLE_NAME" : ["'identifier'"],
     "VAR_ARRAY_TYPE": ["OPEN_SQ CLOSE_SQ #arrayVar#"],
     "VAR_ARRAY_TYPE_OPT": ["EPSILON","VAR_ARRAY_TYPE VAR_ARRAY_TYPE_OPT"],

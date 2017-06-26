@@ -13,7 +13,7 @@ void BTokenUse::setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken)
 
     } else if(m_lexicalToken->getName() == IBType::DATA_TYPE_NAME_STRING
               || m_lexicalToken->getName() == IBType::DATA_TYPE_NAME_BASH_SUB) {
-        m_type = BTypeFactory::createStringExpressionType();
+        // TODO createCharArrayExpressionType();
 
     } else if(m_lexicalToken->getName() == IBType::DATA_TYPE_NAME_CHAR) {
         m_type = BTypeFactory::createCharExpressionType();

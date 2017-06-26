@@ -18,10 +18,9 @@ std::string RESULT = "_result_";
 std::string EXPRESSION = "_expression_";
 std::string PROG_ARRAY = "_array_";
 std::string PROG_ARRAY_COUNTER = "_array_uid_";
+std::string FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY="_bash_StrToCharArray";
+std::string PROG_TAB = "    ";
 
-/**
- * Structure for the return of an expression
- */
 struct ExprReturn {
     const static short DATA = 0;
     const static short VARIABLE = 1;
@@ -31,14 +30,9 @@ struct ExprReturn {
     std::string formattedValue() { return type == VARIABLE ? "${" + value + "}" : value;}
 };
 
-// Declare function (when necessary)
 ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression,
                               std::stringstream &ss);
-/**
- * Indent generated code
- * @param parent
- * @param ss
- */
+
 void _indent(std::shared_ptr<BScope> parent, std::stringstream& ss) {
     if(!parent) {
         throw BException("Parent scope should not be empty");
@@ -46,95 +40,45 @@ void _indent(std::shared_ptr<BScope> parent, std::stringstream& ss) {
 
     auto closestClass = parent->findClosestClass();
     while (parent != BGlobal::getInstance() && parent != closestClass) {
-        ss << "\t";
+        ss << PROG_TAB;
         parent = parent->getParentScope();
     }
 }
 
-/**
- * Generate a unique counter per class
- * @param classScope
- * @return class counter
- */
 std::string _generateCounter(std::shared_ptr<BClass> classScope) {
     return classScope->getLabel().str() + "_uid_";
 }
 
-/**
- * Generate a unique result key/variable per element call
- * @param number
- * @return unique result string
- */
 std::string _generateResultKey(unsigned int number) {
     return RESULT + std::to_string(number);
 }
 
-/**
- * Generate a unique expression key/variable per expression
- * @param number
- * @return unique expression string
- */
 std::string _generateExpressionKey(unsigned int number) {
     return EXPRESSION + std::to_string(number);
 }
 
-/**
- * Generate a unique array key/variable per statement
- * @param number
- * @return unique key string
- */
 std::string _generateArrayKey(unsigned int number) {
     return PROG_ARRAY + std::to_string(number);
 }
 
-/**
- * Generate a lock for an if statement
- * @param ifStatement
- * @return lock string
- */
 std::string _generateIfLock(std::shared_ptr<BIf> ifStatement) {
     return ifStatement->getLabel().str() + "_lock";
 }
 
-/**
- * Generate code for a variable chain access that is a member and is placed first in the chain
- * @param variableChainAccess
- * @param ss
- */
 void _varChainAccess_member_first(std::shared_ptr<BVariableChainAccess> variableChainAccess, std::stringstream &ss) {
     ss << variableChainAccess->getVariable()->getParentScope()->findClosestClass()->getLabel().str()
        << "[${" << FUNCTION_THIS << "},\"" << variableChainAccess->getVariable()->getLabel().str() << "\"]";
 }
 
-/**
- * Generate code for a variable chain access that is a member and is placed in the middle of the chain
- * @param variableChainAccess
- * @param prevTypeLabel
- * @param prevResult
- * @param ss
- */
 void _varChainAccess_member_middle(std::shared_ptr<BVariableChainAccess> variableChainAccess, std::string prevTypeLabel,
                             std::string prevResult, std::stringstream &ss) {
     ss << prevTypeLabel << "[${" << prevResult << "},\"" << variableChainAccess->getVariable()->getLabel().str() << "\"]" ;
 }
 
-/**
- * Generate code for a variable call that is not a member
- * @param variableChainAccess
- * @param ss
- */
 void _varChainAccess_nonMember(std::shared_ptr<BVariableChainAccess> variableChainAccess, std::stringstream &ss) {
     ss << variableChainAccess->getVariable()->getLabel().str();
 }
 
-/**
- * Generate code for an array access
- * @param scope
- * @param variable
- * @param variableChainAccess
- * @param ss
- * @return new key
- */
 std::string _arrayToCode(std::shared_ptr<BScope> scope, std::string variable,
                          std::shared_ptr<IBChainable> chainAccess,
                          std::stringstream &ss) {
@@ -152,11 +96,6 @@ std::string _arrayToCode(std::shared_ptr<BScope> scope, std::string variable,
     return tmpVariable;
 }
 
-/**
- * Generate code for a chain call
- * @param chainCall
- * @return multi-line code representing a chain call
- */
 void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, size_t from, size_t to,
                   std::map<std::shared_ptr<IBChainable>, std::string> &returnMap, std::stringstream &ss) {
 
@@ -256,35 +195,14 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
     }
 }
 
-/**
- * Generate code for an arithmetic operation (1)
- * @param left
- * @param op
- * @param right
- * @return arithmetic operation code
- */
 std::string _arithOpForm1(std::string left, std::string op, std::string right) {
     return "$(( " + left + " " + op + " " + right + " ))";
 }
 
-/**
- * Generate code for an arithmetic operation (2)
- * @param left
- * @param op
- * @param right
- * @return arithmetic operation code
- */
 std::string _arithOpForm2(std::string left, std::string op, std::string right) {
     return "$([[ \"" + left + "\" " + op + " \"" + right + "\" ]] && echo 1 || echo 0)";
 }
 
-/**
- * Convert expression to code
- * @param scope
- * @param expression
- * @param ss
- * @return ExprReturn object
- */
 ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression,
                               std::stringstream &ss) {
 
@@ -415,13 +333,6 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             // +
             if(arithOperator == BArithOperation::OP_PLUS) {
 
-                // String concatenation
-                if(arithOperationType->isString()) {
-                    ss << "declare " << newKey << "=\"" << leftOp.formattedValue() << rightOp.formattedValue()
-                       << "\"" << std::endl;
-                    return ExprReturn(newKey, ExprReturn::VARIABLE);
-                }
-
                 // Integer addition
                 if(arithOperationType->isInt()) {
                     ss << "declare " << newKey << "="
@@ -460,15 +371,6 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
 
                 // Boolean comparison
                 if(arithOperationType->isBoolean()) {
-
-                    // String comparison
-                    if(leftOperandType->isString() || rightOperandType->isString()) {
-                        ss << "declare " << newKey << "="
-                           << _arithOpForm2(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
-                                            rightOp.formattedValue())
-                           << std::endl;
-                        return ExprReturn(newKey, ExprReturn::VARIABLE);
-                    }
 
                     // All other types comparison
                     ss << "declare " << newKey << "="
@@ -549,16 +451,10 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
     throw BException("Cannot generate code for an undefined expression type");
 }
 
-/**
- * Generate bash header
- */
 void BBashHelper::header() {
     BGenerateCode::get().writePreCode();
 }
 
-/**
- * Generate bash footer
- */
 void BBashHelper::footer() {
 
     std::stringstream ss;
@@ -596,10 +492,6 @@ void BBashHelper::footer() {
     BGenerateCode::get().writePostCode();
 }
 
-/**
- * Create class
- * @param classScope
- */
 void BBashHelper::declareClass(std::shared_ptr<BClass> classScope) {
     std::stringstream ss;
     ss << "declare -A " << classScope->getLabel().str() << "=()" << std::endl;
@@ -607,9 +499,6 @@ void BBashHelper::declareClass(std::shared_ptr<BClass> classScope) {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Create single array
- */
 void BBashHelper::declareArray() {
     std::stringstream ss;
     ss << "declare -A " << PROG_ARRAY << "=()" << std::endl;
@@ -617,10 +506,6 @@ void BBashHelper::declareArray() {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Create variable
- * @param variable
- */
 void BBashHelper::createVar(std::shared_ptr<BVariable> variable) {
     std::stringstream ss;
     ss << std::endl;
@@ -639,11 +524,6 @@ void BBashHelper::createVar(std::shared_ptr<BVariable> variable) {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Write bash
- * @param scope
- * @param token
- */
 void BBashHelper::bash(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
     std::stringstream ss;
     ss << std::endl;
@@ -662,10 +542,6 @@ void BBashHelper::bash(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lexic
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Create function
- * @param function
- */
 void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
     std::stringstream ss;
     ss << std::endl;
@@ -749,10 +625,6 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Close function
- * @param function
- */
 void BBashHelper::closeFunction(std::shared_ptr<BFunction> function) {
     std::stringstream ss;
 
@@ -769,11 +641,6 @@ void BBashHelper::closeFunction(std::shared_ptr<BFunction> function) {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Write expression
- * @param scope
- * @param expression
- */
 void BBashHelper::writeExpression(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression) {
     std::stringstream ss;
     ss << std::endl;
@@ -783,10 +650,6 @@ void BBashHelper::writeExpression(std::shared_ptr<BScope> scope, std::shared_ptr
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Write return statement
- * @param rtn
- */
 void BBashHelper::writeReturn(std::shared_ptr<BReturn> rtn) {
     std::stringstream ss;
 
@@ -812,10 +675,6 @@ void BBashHelper::writeReturn(std::shared_ptr<BReturn> rtn) {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Create if statement
- * @param ifStatement
- */
 void BBashHelper::createIf(std::shared_ptr<BIf> ifStatement) {
     std::stringstream ss;
 
@@ -842,10 +701,6 @@ void BBashHelper::createIf(std::shared_ptr<BIf> ifStatement) {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Create elif statement
- * @param elifStatement
- */
 void BBashHelper::createElif(std::shared_ptr<BElif> elifStatement) {
     std::stringstream ss;
 
@@ -872,10 +727,6 @@ void BBashHelper::createElif(std::shared_ptr<BElif> elifStatement) {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Create else statement
- * @param elseStatement
- */
 void BBashHelper::createElse(std::shared_ptr<BElse> elseStatement) {
     std::stringstream ss;
 
@@ -891,10 +742,6 @@ void BBashHelper::createElse(std::shared_ptr<BElse> elseStatement) {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Close if statement
- * @param ifStatement
- */
 void BBashHelper::closeIf(std::shared_ptr<BIf> ifStatement) {
     std::stringstream ss;
     _indent(ifStatement->getParentScope(), ss);
@@ -902,10 +749,6 @@ void BBashHelper::closeIf(std::shared_ptr<BIf> ifStatement) {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Close elif statement
- * @param elifStatement
- */
 void BBashHelper::closeElif(std::shared_ptr<BElif> elifStatement) {
     std::stringstream ss;
     _indent(elifStatement->getParentScope(), ss);
@@ -915,10 +758,6 @@ void BBashHelper::closeElif(std::shared_ptr<BElif> elifStatement) {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Close else statement
- * @param elseStatement
- */
 void BBashHelper::closeElse(std::shared_ptr<BElse> elseStatement) {
     std::stringstream ss;
     _indent(elseStatement->getParentScope(), ss);
@@ -926,10 +765,6 @@ void BBashHelper::closeElse(std::shared_ptr<BElse> elseStatement) {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Create while statement
- * @param whileStatement
- */
 void BBashHelper::createWhile(std::shared_ptr<BWhile> whileStatement) {
     std::stringstream ss;
 
@@ -952,10 +787,6 @@ void BBashHelper::createWhile(std::shared_ptr<BWhile> whileStatement) {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Close while statement
- * @param whileStatement
- */
 void BBashHelper::closeWhile(std::shared_ptr<BWhile> whileStatement) {
     std::stringstream ss;
     _indent(whileStatement->getParentScope(), ss);
@@ -963,10 +794,6 @@ void BBashHelper::closeWhile(std::shared_ptr<BWhile> whileStatement) {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Create for statement
- * @param forStatement
- */
 void BBashHelper::createFor(std::shared_ptr<BFor> forStatement) {
     std::stringstream ss;
 
@@ -998,10 +825,6 @@ void BBashHelper::createFor(std::shared_ptr<BFor> forStatement) {
     BGenerateCode::get().write(ss);
 }
 
-/**
- * Close for statement
- * @param forStatement
- */
 void BBashHelper::closeFor(std::shared_ptr<BFor> forStatement) {
     std::stringstream ss;
 
@@ -1013,5 +836,25 @@ void BBashHelper::closeFor(std::shared_ptr<BFor> forStatement) {
     // Close for loop
     _indent(forStatement->getParentScope(), ss);
     ss << "done" << std::endl;
+    BGenerateCode::get().write(ss);
+}
+
+void BBashHelper::bashStrToCharArray() {
+    std::stringstream ss;
+
+    ss << "# Convert strings into char array" << std::endl;
+    ss << "function " << FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY << "() {" << std::endl;
+    ss << PROG_TAB << "declare string=\"${1}\"" << std::endl;
+    ss << PROG_TAB << "declare -n " << FUNCTION_RETURN << "=${2}" << std::endl;
+    ss << PROG_TAB << FUNCTION_RETURN << "=${" << PROG_ARRAY_COUNTER << "}" << std::endl;
+    ss << PROG_TAB << PROG_ARRAY_COUNTER << "=" << _arithOpForm1("${" + PROG_ARRAY_COUNTER + "}", "+", "1") << std::endl;
+    ss << PROG_TAB << PROG_ARRAY << "[${" << FUNCTION_RETURN << "},-1]=${#string}" << std::endl;
+    ss << PROG_TAB << "declare index=0" << std::endl;
+    ss << PROG_TAB << "while (( ${index} < ${#string} )); do" << std::endl;
+    ss << PROG_TAB << PROG_TAB << PROG_ARRAY << "[${" << FUNCTION_RETURN << "},${index}]=${string:${index}:1}" << std::endl;
+    ss << PROG_TAB << PROG_TAB << "index=" << _arithOpForm1("${index}", "+","1") << std::endl;
+    ss << PROG_TAB << "done" << std::endl;
+    ss << "}" << std::endl;
+
     BGenerateCode::get().write(ss);
 }

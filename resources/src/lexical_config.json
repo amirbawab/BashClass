@@ -27,7 +27,6 @@
             "var" : "var",
             "return" : "return",
             "int" : "int_type",
-            "string" : "string_type",
             "void" : "void_type",
             "char" : "char_type",
             "boolean" : "boolean_type",

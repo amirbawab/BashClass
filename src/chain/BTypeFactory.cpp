@@ -32,13 +32,6 @@ std::shared_ptr<IBType> BTypeFactory::createNullExpressionType() {
     return expressionType;
 }
 
-std::shared_ptr<IBType> BTypeFactory::createStringExpressionType() {
-    std::shared_ptr<BExpressionType> expressionType = std::make_shared<BExpressionType>();
-    expressionType->setTypeName(IBType::TYPE_NAME_STRING);
-    expressionType->setTypeValue(IBType::TYPE_VALUE_STRING);
-    return expressionType;
-}
-
 std::shared_ptr<IBType> BTypeFactory::createBooleanExpressionType() {
     std::shared_ptr<BExpressionType> expressionType = std::make_shared<BExpressionType>();
     expressionType->setTypeName(IBType::TYPE_NAME_BOOLEAN);

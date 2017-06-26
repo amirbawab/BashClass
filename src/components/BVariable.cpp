@@ -24,13 +24,5 @@ std::string BVariable::getDefaultValue() {
         throw BException("Cannot get initial value without setting the variable type");
     }
 
-    if(m_type->isString()) {
-        return "\"\"";
-    }
-
-    if(m_type->isChar()) {
-        return "\"$(echo -n -e \"\\u0000\")\"";
-    }
-
     return "0";
 }
