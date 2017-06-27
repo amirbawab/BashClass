@@ -24,6 +24,7 @@
             "for" : "for",
             "function" : "function",
             "class" : "class",
+            "extends": "extends",
             "var" : "var",
             "return" : "return",
             "int" : "int_type",
