@@ -249,7 +249,7 @@
         {
             "type": "FINAL",
             "id": 46,
-            "token": "string",
+            "token": "string_literal",
             "backtrack": false
         },
         {

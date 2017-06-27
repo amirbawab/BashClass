@@ -111,7 +111,7 @@
         "'integer' #tokenUse#",
         "'character' #tokenUse#",
         "'truefalse' #tokenUse#",
-        "'string' #tokenUse#",
+        "'string_literal' #tokenUse#",
         "'null' #tokenUse#",
         "NEW VARIABLE_TYPE NEW_CONS_OR_ARRAY",
         "BASH_SUB #tokenUse#",
