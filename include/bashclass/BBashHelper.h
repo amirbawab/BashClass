@@ -49,9 +49,9 @@ public:
     static void declareClass(std::shared_ptr<BClass> classScope);
 
     /**
-     * Generate array which stores values or references/indices to arrays
+     * Generate counters wichi store the next index of the corresponding item
      */
-    static void declareArray();
+    static void declareCounters();
 
     /**
      * Generate a variable in bash

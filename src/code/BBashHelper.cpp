@@ -18,6 +18,7 @@ std::string RESULT = "_result_";
 std::string EXPRESSION = "_expression_";
 std::string PROG_ARRAY = "_array_";
 std::string PROG_ARRAY_COUNTER = "_array_uid_";
+std::string CLASS_OBJECT_COUNTER = "_object_uid_";
 std::string ARRAY_EXPR = "_array_expr_";
 std::string FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY="_bash_StrToCharArray";
 std::string FUNCTION_NAME_BASH_CREATE_ARRAY="_bash_createArray";
@@ -55,10 +56,6 @@ void _indent(std::shared_ptr<BScope> parent, std::stringstream& ss) {
         ss << PROG_TAB;
         parent = parent->getParentScope();
     }
-}
-
-std::string _generateCounter(std::shared_ptr<BClass> classScope) {
-    return classScope->getLabel().str() + "_uid_";
 }
 
 std::string _generateResultKey(unsigned int number) {
@@ -536,14 +533,22 @@ void BBashHelper::footer() {
 void BBashHelper::declareClass(std::shared_ptr<BClass> classScope) {
     std::stringstream ss;
     ss << "declare -A " << classScope->getLabel().str() << "=()" << std::endl;
-    ss << _generateCounter(classScope) << "=1" << std::endl;
     BGenerateCode::get().write(ss);
 }
 
-void BBashHelper::declareArray() {
+void BBashHelper::declareCounters() {
     std::stringstream ss;
+
+    // Array counter
     ss << "# Initialize array counter" << std::endl;
     ss << PROG_ARRAY_COUNTER << "=1" << std::endl;
+    ss << std::endl;
+
+    // Object counter
+    ss << "# Initialize class object counter" << std::endl;
+    ss << CLASS_OBJECT_COUNTER << "=1" << std::endl;
+    ss << std::endl;
+
     BGenerateCode::get().write(ss);
 }
 
@@ -623,9 +628,9 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
             // Assign `this` and increment counter
             auto classScope = std::static_pointer_cast<BClass>(function->getParentScope());
             _indent(function, ss);
-            ss << "declare " << FUNCTION_THIS << "=${" << _generateCounter(classScope) << "}" << std::endl;
+            ss << "declare " << FUNCTION_THIS << "=${" << CLASS_OBJECT_COUNTER << "}" << std::endl;
             _indent(function, ss);
-            ss << _generateCounter(classScope) << "=" << _arithOpForm1("${"+_generateCounter(classScope)+"}", "+", "1")
+            ss << CLASS_OBJECT_COUNTER << "=" << _arithOpForm1("${" + CLASS_OBJECT_COUNTER + "}", "+", "1")
                << std::endl;
 
             // Declare variables

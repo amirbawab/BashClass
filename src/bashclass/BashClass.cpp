@@ -68,7 +68,7 @@ void BashClass::initHandlers() {
             BBashHelper::header();
 
             // Generate code for the program array
-            BBashHelper::declareArray();
+            BBashHelper::declareCounters();
 
             // Generate code for required bash functions
             BBashHelper::writeBashFunctions();
