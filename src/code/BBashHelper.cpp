@@ -27,12 +27,18 @@ std::string NULL_CODE = "0";
 struct ExprReturn {
     const static short DATA = 0;
     const static short VARIABLE = 1;
+    const static short STRING = 2;
     ExprReturn(std::string value, short type): value(value), type(type){}
     std::string value;
     int type;
     std::string formattedValue() {
-        // TODO
-        return type == VARIABLE ? "${" + value + "}" : value;
+        if(type == VARIABLE) {
+            return "${" + value + "}";
+        }
+        if(type == STRING) {
+            return "\"" + value + "\"";
+        }
+        return value;
     }
 };
 
@@ -284,12 +290,25 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             throw BException("Unrecognized boolean token value found when trying to generate code");
         }
 
-        // TODO Check if it is a char
+        // If the token is a char
+        if(tokenUse->getLexicalToken()->getName() == BElementType::DATA_TYPE_NAME_CHAR) {
+            return ExprReturn(tokenUse->getLexicalToken()->getValue().substr(1, 1), ExprReturn::STRING);
+        }
 
         // If the token is a bash subshell
-        // FIXME
         if(tokenUse->getLexicalToken()->getName() == BElementType::DATA_TYPE_NAME_BASH_SUB) {
-            return ExprReturn("", ExprReturn::VARIABLE);
+            _indent(scope, ss);
+            ss << "# String literal (sub shell)" << std::endl;
+            _indent(scope, ss);
+            std::string newKey = _generateExpressionKey(uniqueId++);
+            ss << "declare " << newKey << std::endl;
+            std::string newValue = tokenUse->getLexicalToken()->getValue()
+                    .substr(2,tokenUse->getLexicalToken()->getValue().length()-4);
+            _indent(scope, ss);
+            ss << FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY << " \"$(" << newValue << ")\" " << TMP_FUNCTION_RETURN << std::endl;
+            _indent(scope, ss);
+            ss << newKey << "=${" << TMP_FUNCTION_RETURN << "}" << std::endl;
+            return ExprReturn(newKey, ExprReturn::VARIABLE);
         }
 
         // If the token is a string
@@ -305,7 +324,7 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             ss << FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY << " \"" << newValue << "\" " << TMP_FUNCTION_RETURN << std::endl;
             _indent(scope, ss);
             ss << newKey << "=${" << TMP_FUNCTION_RETURN << "}" << std::endl;
-            return ExprReturn(newValue, ExprReturn::VARIABLE);
+            return ExprReturn(newKey, ExprReturn::VARIABLE);
         }
 
         // Write the lexical token value
