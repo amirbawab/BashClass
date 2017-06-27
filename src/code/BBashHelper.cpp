@@ -354,12 +354,14 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
 
         // Get the type of the arithmetic operation
         std::shared_ptr<IBType> arithOperationType = arithOperation->getType();
-        std::shared_ptr<IBType> leftOperandType = arithOperation->getLeftOperand()->getType();
-        std::shared_ptr<IBType> rightOperandType = arithOperation->getRightOperand()->getType();
         std::string arithOperator = arithOperation->getOperator()->getName();
 
         // If both operand are defined
         if(arithOperation->getLeftOperand() && arithOperation->getRightOperand()) {
+
+            // Get the type of both operands
+            std::shared_ptr<IBType> leftOperandType = arithOperation->getLeftOperand()->getType();
+            std::shared_ptr<IBType> rightOperandType = arithOperation->getRightOperand()->getType();
 
             // Process left and right operands
             ExprReturn leftOp = _expressionToCode(scope, arithOperation->getLeftOperand(), ss);
