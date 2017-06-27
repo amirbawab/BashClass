@@ -892,8 +892,8 @@ void BBashHelper::_bashStrToCharArray(std::stringstream &ss) {
 
     // Start copying string literal into the array
     ss << PROG_TAB << "declare index=0" << std::endl;
+    ss << PROG_TAB << "declare -n indexValue=\"" << PROG_ARRAY << "${" << FUNCTION_RETURN << "}\"" << std::endl;
     ss << PROG_TAB << "while (( ${index} < ${#string} )); do" << std::endl;
-    ss << PROG_TAB << PROG_TAB << "declare -n indexValue=\"" << PROG_ARRAY << "${" << FUNCTION_RETURN << "}\"" << std::endl;
     ss << PROG_TAB << PROG_TAB << "indexValue[${index}]=${string:${index}:1}" << std::endl;
     ss << PROG_TAB << PROG_TAB << "index=" << _arithOpForm1("${index}", "+","1") << std::endl;
     ss << PROG_TAB << "done" << std::endl;
