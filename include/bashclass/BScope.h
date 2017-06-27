@@ -48,15 +48,6 @@ public:
     std::vector<std::shared_ptr<BVariable>> findAllVariables(const char* name = nullptr);
 
     /**
-     * Find all parameter variables
-     * @param name Name of the parameter variable | nullptr
-     * @return if name is a nullptr, then return all the parameter variables
-     * in their order of insertion, otherwise return the parameter variables
-     * that matches the passed name
-     */
-    std::vector<std::shared_ptr<BVariable>> findAllParameters(const char* name = nullptr);
-
-    /**
      * Find all classes
      * @param name Name of the class | nullptr
      * @return if name is a nullptr, then return all the classes

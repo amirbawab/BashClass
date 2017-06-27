@@ -2,6 +2,7 @@
 #include <iostream>
 #include <bashclass/BException.h>
 #include <bashclass/BReport.h>
+#include <bashclass/BVariable.h>
 #include <stack>
 
 BFunction::BFunction() {
@@ -50,4 +51,15 @@ std::shared_ptr<BClass> BFunction::findClosestClass() {
 
 bool BFunction::isConstructor() {
     return m_isConstructor;
+}
+
+std::vector<std::shared_ptr<BVariable>> BFunction::findAllParameters(const char *name) {
+    std::vector<std::shared_ptr<BVariable>> parameters;
+    for(auto variable : m_variables) {
+        if(variable.second->isParam() && (!name ||
+                                          (variable.second->getName() && variable.second->getName()->getValue() == name))) {
+            parameters.push_back(variable.second);
+        }
+    }
+    return parameters;
 }

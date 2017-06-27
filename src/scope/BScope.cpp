@@ -25,17 +25,6 @@ std::vector<std::shared_ptr<BVariable>> BScope::findAllVariables(const char* nam
     return variables;
 }
 
-std::vector<std::shared_ptr<BVariable>> BScope::findAllParameters(const char *name) {
-    std::vector<std::shared_ptr<BVariable>> parameters;
-    for(auto variable : m_variables) {
-        if(variable.second->isParam() && (!name ||
-                (variable.second->getName() && variable.second->getName()->getValue() == name))) {
-            parameters.push_back(variable.second);
-        }
-    }
-    return parameters;
-}
-
 std::vector<std::shared_ptr<BClass>> BScope::findAllClasses(const char* name) {
     std::vector<std::shared_ptr<BClass>> classes;
     for(auto scope : m_scopes) {
