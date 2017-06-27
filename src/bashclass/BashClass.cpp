@@ -202,7 +202,12 @@ void BashClass::initHandlers() {
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_EVAL) {
             auto functionScope = std::static_pointer_cast<BFunction>(m_scopeStack.back());
+
+            // Verify function return
             functionScope->verifyReturns();
+
+            // Verify function parameters
+            functionScope->verifyParameters();
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_GENERATE) {
             auto functionScope = std::static_pointer_cast<BFunction>(m_scopeStack.back());

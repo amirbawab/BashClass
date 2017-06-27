@@ -65,6 +65,12 @@ public:
     void verifyReturns();
 
     /**
+     * If a parameter has a default value, then its following ones
+     * should also have a default value
+     */
+    void verifyParameters();
+
+    /**
      * The closest function to this scope is the scope itself
      * @return this scope
      */

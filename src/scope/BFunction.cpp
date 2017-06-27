@@ -38,6 +38,23 @@ void BFunction::verifyReturns() {
     // since it is already handled when it is set into a scope
 }
 
+void BFunction::verifyParameters() {
+    auto params = findAllParameters();
+
+    // If a parameter has an default expression,
+    // then all the following ones must also have a default expression
+    bool hasExpression = false;
+    for(size_t i=0; i < params.size(); i++) {
+        if(hasExpression && !params[i]->getExpression()) {
+            BReport::getInstance().error()
+                    << "Parameter " << i+1 << " in function " << m_name->getValue()
+                    << " is missing a default expression" << std::endl;
+            BReport::getInstance().printError();
+        }
+        hasExpression |= params[i]->getExpression() != nullptr;
+    }
+}
+
 std::shared_ptr<BFunction> BFunction::findClosestFunction() {
     return std::static_pointer_cast<BFunction>(shared_from_this());
 }
