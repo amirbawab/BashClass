@@ -72,11 +72,6 @@ void BashClass::initHandlers() {
 
             // Generate code for required bash functions
             BBashHelper::writeBashFunctions();
-
-            // Generate classes headers
-            for(auto cls : BGlobal::getInstance()->findAllClasses()) {
-                BBashHelper::declareClass(cls);
-            }
         }
     };
 

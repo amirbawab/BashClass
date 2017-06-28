@@ -43,12 +43,6 @@ public:
     static void footer();
 
     /**
-     * Generate an associative array
-     * @param classScope
-     */
-    static void declareClass(std::shared_ptr<BClass> classScope);
-
-    /**
      * Generate counters wichi store the next index of the corresponding item
      */
     static void declareCounters();

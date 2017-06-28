@@ -18,6 +18,7 @@ std::string RESULT = "_result_";
 std::string EXPRESSION = "_expression_";
 std::string PROG_ARRAY = "_array_";
 std::string PROG_ARRAY_COUNTER = "_array_uid_";
+std::string CLASS_OBJECT = "_object_";
 std::string CLASS_OBJECT_COUNTER = "_object_uid_";
 std::string ARRAY_EXPR = "_array_expr_";
 std::string FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY="_bash_StrToCharArray";
@@ -75,13 +76,13 @@ std::string _generateIfLock(std::shared_ptr<BIf> ifStatement) {
 }
 
 void _varChainAccess_member_first(std::shared_ptr<BVariableChainAccess> variableChainAccess, std::stringstream &ss) {
-    ss << variableChainAccess->getVariable()->getParentScope()->findClosestClass()->getLabel().str()
-       << "[${" << FUNCTION_THIS << "},\"" << variableChainAccess->getVariable()->getLabel().str() << "\"]";
+    ss << CLASS_OBJECT << "[${" << FUNCTION_THIS << "},\""
+       << variableChainAccess->getVariable()->getLabel().str() << "\"]";
 }
 
-void _varChainAccess_member_middle(std::shared_ptr<BVariableChainAccess> variableChainAccess, std::string prevTypeLabel,
+void _varChainAccess_member_middle(std::shared_ptr<BVariableChainAccess> variableChainAccess,
                             std::string prevResult, std::stringstream &ss) {
-    ss << prevTypeLabel << "[${" << prevResult << "},\"" << variableChainAccess->getVariable()->getLabel().str() << "\"]" ;
+    ss << CLASS_OBJECT << "[${" << prevResult << "},\"" << variableChainAccess->getVariable()->getLabel().str() << "\"]" ;
 }
 
 void _varChainAccess_nonMember(std::shared_ptr<BVariableChainAccess> variableChainAccess, std::stringstream &ss) {
@@ -136,9 +137,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
                     _varChainAccess_nonMember(variableChainAccess, ss);
                 }
             } else {
-                _varChainAccess_member_middle(variableChainAccess,
-                                              (*chain)[i-1]->getType()->getTypeScope()->getLabel().str(),
-                                              returnMap[(*chain)[i-1]], ss);
+                _varChainAccess_member_middle(variableChainAccess, returnMap[(*chain)[i-1]], ss);
             }
             ss << std::endl;
 
@@ -530,12 +529,6 @@ void BBashHelper::footer() {
     BGenerateCode::get().writePostCode();
 }
 
-void BBashHelper::declareClass(std::shared_ptr<BClass> classScope) {
-    std::stringstream ss;
-    ss << "declare -A " << classScope->getLabel().str() << "=()" << std::endl;
-    BGenerateCode::get().write(ss);
-}
-
 void BBashHelper::declareCounters() {
     std::stringstream ss;
 
@@ -641,7 +634,7 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
                 _indent(function, ss);
                 ss << "# >> Declare" << std::endl;
                 _indent(function, ss);
-                ss << classScope->getLabel().str() << "[${" << FUNCTION_THIS << "},\""
+                ss << CLASS_OBJECT << "[${" << FUNCTION_THIS << "},\""
                    << variable->getLabel().str() << "\"]=" << variable->getDefaultValue() << std::endl;
 
                 // Check if initial expression was set
