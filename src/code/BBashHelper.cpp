@@ -581,13 +581,12 @@ void BBashHelper::bash(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lexic
     BGenerateCode::get().write(ss);
 }
 
-void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
-    std::stringstream ss;
-    ss << std::endl;
-    ss << "# Create function" << std::endl;
-    ss << "function " << function->getLabel().str() << "() {" << std::endl;
+void _addFunctionParams(std::shared_ptr<BFunction> function, std::stringstream &ss) {
+
+    // Generate parameters
     int paramPos = 1;
-    for(auto param : function->findAllParameters()) {
+    auto params = function->findAllParameters();
+    for(auto param : params) {
 
         // Check if a default value was set for that parameter
         ss << std::endl;
@@ -616,36 +615,15 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
 
     // Generate 'this' if function is a class member
     if(function->isClassMember()) {
+        ss << std::endl;
+        _indent(function, ss);
+        ss << "# Configure 'this'" << std::endl;
         if(function->isConstructor()) {
-
-            // Assign `this` and increment counter
-            auto classScope = std::static_pointer_cast<BClass>(function->getParentScope());
             _indent(function, ss);
             ss << "declare " << FUNCTION_THIS << "=${" << CLASS_OBJECT_COUNTER << "}" << std::endl;
             _indent(function, ss);
             ss << CLASS_OBJECT_COUNTER << "=" << _arithOpForm1("${" + CLASS_OBJECT_COUNTER + "}", "+", "1")
                << std::endl;
-
-            // Declare variables
-            ss << std::endl;
-            _indent(function, ss);
-            ss << "# Declaring and initialize variables" << std::endl;
-            for(auto variable : classScope->findAllVariables()) {
-                _indent(function, ss);
-                ss << "# >> Declare" << std::endl;
-                _indent(function, ss);
-                ss << CLASS_OBJECT << "[${" << FUNCTION_THIS << "},\""
-                   << variable->getLabel().str() << "\"]=" << variable->getDefaultValue() << std::endl;
-
-                // Check if initial expression was set
-                if(variable->getExpression()) {
-                    ss << std::endl;
-                    _indent(function, ss);
-                    ss << "# >> Initialize" << std::endl;
-                    _expressionToCode(function, variable->getExpression(), ss);
-                }
-            }
-
         } else {
             _indent(function, ss);
             ss << "declare " << FUNCTION_THIS << "=${" << paramPos++ << "}" << std::endl;
@@ -659,6 +637,42 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
         ss << "# Configure return statement" << std::endl;
         _indent(function, ss);
         ss << "declare -n " << FUNCTION_RETURN << "=${" << paramPos++ << "}" << std::endl;
+    }
+
+}
+
+void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
+    std::stringstream ss;
+    ss << std::endl;
+    ss << "# Create function" << std::endl;
+    ss << "function " << function->getLabel().str() << "() {" << std::endl;
+
+    // Generate function parameters
+    _addFunctionParams(function, ss);
+
+    // Initialize members
+    if(function->isClassMember()) {
+        if(function->isConstructor()) {
+
+            // Declare variables
+            auto classScope = std::static_pointer_cast<BClass>(function->getParentScope());
+            for(auto variable : classScope->findAllVariables()) {
+                ss << std::endl;
+                _indent(function, ss);
+                ss << "# Declare member" << std::endl;
+                _indent(function, ss);
+                ss << CLASS_OBJECT << "[${" << FUNCTION_THIS << "},\""
+                   << variable->getLabel().str() << "\"]=" << variable->getDefaultValue() << std::endl;
+
+                // Check if initial expression was set
+                if(variable->getExpression()) {
+                    ss << std::endl;
+                    _indent(function, ss);
+                    ss << "# Initialize member" << std::endl;
+                    _expressionToCode(function, variable->getExpression(), ss);
+                }
+            }
+        }
     }
 
     BGenerateCode::get().write(ss);
