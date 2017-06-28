@@ -25,6 +25,7 @@ std::string FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY="_bash_StrToCharArray";
 std::string FUNCTION_NAME_BASH_CREATE_ARRAY="_bash_createArray";
 std::string PROG_TAB = "    ";
 std::string NULL_CODE = "0";
+std::string ARGS_COUNTER = "_args_counter_";
 
 struct ExprReturn {
     const static short DATA = 0;
@@ -583,6 +584,23 @@ void BBashHelper::bash(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lexic
 
 void _addFunctionParams(std::shared_ptr<BFunction> function, std::stringstream &ss) {
 
+    // Declare argument counter
+    _indent(function, ss);
+    ss << "declare " << ARGS_COUNTER << "=1";
+
+    // Count the addition arguments (this and return)
+    int additionArgs = 0;
+
+    // Increment if a this reference is passed
+    if(function->isClassMember() && !function->isConstructor()) {
+        additionArgs++;
+    }
+
+    // Increment if a return is passed
+    if(function->requiresReturn() || function->hasReturn()) {
+        additionArgs++;
+    }
+
     // Generate parameters
     int paramPos = 1;
     auto params = function->findAllParameters();
@@ -595,14 +613,19 @@ void _addFunctionParams(std::shared_ptr<BFunction> function, std::stringstream &
             _indent(param->getParentScope(), ss);
             ss << "# Create argument with a default value" << std::endl;
             _indent(param->getParentScope(), ss);
-            ss << "if (( " << paramPos-1 << " < $# )); then" << std::endl;
+            ss << "if (( " << paramPos-1 << " < " << _arithOpForm1("${#}", "-", std::to_string(additionArgs))
+               << " )); then" << std::endl;
             _indent(param->getParentScope(), ss);
             ss << "declare " << param->getLabel().str() << "=\"${" << paramPos++ << "}\"" << std::endl;
+            _indent(param->getParentScope(), ss);
+            ss << ARGS_COUNTER << "=" << _arithOpForm1("${" + ARGS_COUNTER + "}","+","1") << std::endl;
             _indent(param->getParentScope(), ss);
             ss << "else" << std::endl;
             _indent(param->getParentScope(), ss);
             ss << "declare " << param->getLabel().str() << "=" << param->getDefaultValue() << std::endl;
             auto expression = _expressionToCode(param->getParentScope(), param->getExpression(), ss);
+            _indent(param->getParentScope(), ss);
+            ss << param->getLabel().str() << "=" << expression.formattedValue() << std::endl;
             _indent(param->getParentScope(), ss);
             ss << "fi" << std::endl;
         } else {
@@ -610,6 +633,8 @@ void _addFunctionParams(std::shared_ptr<BFunction> function, std::stringstream &
             ss << "# Create argument" << std::endl;
             _indent(param->getParentScope(), ss);
             ss << "declare " << param->getLabel().str() << "=\"${" << paramPos++ << "}\"" << std::endl;
+            _indent(param->getParentScope(), ss);
+            ss << ARGS_COUNTER << "=" << _arithOpForm1("${" + ARGS_COUNTER + "}","+","1") << std::endl;
         }
     }
 
@@ -626,7 +651,9 @@ void _addFunctionParams(std::shared_ptr<BFunction> function, std::stringstream &
                << std::endl;
         } else {
             _indent(function, ss);
-            ss << "declare " << FUNCTION_THIS << "=${" << paramPos++ << "}" << std::endl;
+            ss << "declare " << FUNCTION_THIS << "=${!" << ARGS_COUNTER << "}" << std::endl;
+            _indent(function, ss);
+            ss << ARGS_COUNTER << "=" << _arithOpForm1("${" + ARGS_COUNTER + "}","+","1") << std::endl;
         }
     }
 
@@ -636,7 +663,7 @@ void _addFunctionParams(std::shared_ptr<BFunction> function, std::stringstream &
         _indent(function, ss);
         ss << "# Configure return statement" << std::endl;
         _indent(function, ss);
-        ss << "declare -n " << FUNCTION_RETURN << "=${" << paramPos++ << "}" << std::endl;
+        ss << "declare -n " << FUNCTION_RETURN << "=${!" << ARGS_COUNTER << "}" << std::endl;
     }
 
 }
