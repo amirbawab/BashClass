@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
 
     easyCC.registerSemanticAction("#startClass#", bashClass.m_startClass);
     easyCC.registerSemanticAction("#className#", bashClass.m_className);
+    easyCC.registerSemanticAction("#classExtends#", bashClass.m_classExtends);
     easyCC.registerSemanticAction("#endClass#", bashClass.m_endClass);
 
     easyCC.registerSemanticAction("#startFunction#", bashClass.m_startFunction);

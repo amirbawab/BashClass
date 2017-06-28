@@ -43,6 +43,7 @@ public:
 
     SemanticActionHandler m_startClass;
     SemanticActionHandler m_className;
+    SemanticActionHandler m_classExtends;
     SemanticActionHandler m_endClass;
 
     SemanticActionHandler m_startFunction;

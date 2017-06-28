@@ -144,6 +144,13 @@ void BashClass::initHandlers() {
         }
     };
 
+    m_classExtends = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            auto cls = std::static_pointer_cast<BClass>(m_scopeStack.back());
+            cls->setExtends(lexicalVector[index]);
+        }
+    };
+
     m_endClass = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
             m_scopeStack.pop_back();
