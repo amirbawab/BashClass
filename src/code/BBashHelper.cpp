@@ -172,7 +172,9 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             }
 
             // Write the reference from previous or this when applicable
-            if(!functionChainCall->getFunction()->isConstructor()) {
+            if(functionChainCall->getFunction()->isConstructor()) {
+                ss << " $(( " << CLASS_OBJECT_COUNTER << "++ ))";
+            } else {
                 if (i == 0) {
                     if (functionChainCall->getFunction()->isClassMember()) {
                         ss << " ${" << FUNCTION_THIS << "}";
@@ -643,18 +645,10 @@ void _addFunctionParams(std::shared_ptr<BFunction> function, std::stringstream &
         ss << std::endl;
         _indent(function, ss);
         ss << "# Configure 'this'" << std::endl;
-        if(function->isConstructor()) {
-            _indent(function, ss);
-            ss << "declare " << FUNCTION_THIS << "=${" << CLASS_OBJECT_COUNTER << "}" << std::endl;
-            _indent(function, ss);
-            ss << CLASS_OBJECT_COUNTER << "=" << _arithOpForm1("${" + CLASS_OBJECT_COUNTER + "}", "+", "1")
-               << std::endl;
-        } else {
-            _indent(function, ss);
-            ss << "declare " << FUNCTION_THIS << "=${!" << ARGS_COUNTER << "}" << std::endl;
-            _indent(function, ss);
-            ss << ARGS_COUNTER << "=" << _arithOpForm1("${" + ARGS_COUNTER + "}","+","1") << std::endl;
-        }
+        _indent(function, ss);
+        ss << "declare " << FUNCTION_THIS << "=${!" << ARGS_COUNTER << "}" << std::endl;
+        _indent(function, ss);
+        ss << ARGS_COUNTER << "=" << _arithOpForm1("${" + ARGS_COUNTER + "}","+","1") << std::endl;
     }
 
     // Generate return reference if function requires a return statement
