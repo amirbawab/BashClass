@@ -5,6 +5,8 @@
 #include <bashclass/BException.h>
 #include <bashclass/BReport.h>
 #include <bashclass/BGlobal.h>
+#include <bashclass/BSuperConstructorChainCall.h>
+#include <bashclass/BConstructorChainCall.h>
 
 void BChain::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
 
@@ -180,7 +182,7 @@ void BChain::addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lex
 void BChain::addConstructor(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
 
     // Prepare function call
-    auto functionCall = std::make_shared<BFunctionChainCall>();
+    auto functionCall = std::make_shared<BConstructorChainCall>();
     functionCall->setLexicalToken(token);
 
     if(!m_callables.empty()) {
@@ -217,7 +219,7 @@ void BChain::addConstructor(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::
 void BChain::addSuperConstructor(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token) {
 
     // Prepare function call
-    auto functionCall = std::make_shared<BFunctionChainCall>();
+    auto functionCall = std::make_shared<BSuperConstructorChainCall>();
     functionCall->setLexicalToken(token);
 
     if(!m_callables.empty()) {

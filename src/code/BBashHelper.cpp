@@ -9,6 +9,7 @@
 #include <bashclass/BThisAccess.h>
 #include <bashclass/BTokenUse.h>
 #include <bashclass/BArrayUse.h>
+#include <bashclass/BConstructorChainCall.h>
 
 // Constants
 std::string FUNCTION_THIS = "_this_";
@@ -120,6 +121,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
         auto variableChainAccess = std::dynamic_pointer_cast<BVariableChainAccess>((*chain)[i]);
         auto functionChainCall = std::dynamic_pointer_cast<BFunctionChainCall>((*chain)[i]);
         auto thisChainAccess = std::dynamic_pointer_cast<BThisChainAccess>((*chain)[i]);
+        auto superChainAccess = std::dynamic_pointer_cast<BSuperChainAccess>((*chain)[i]);
 
         if (variableChainAccess) {
 
@@ -143,6 +145,10 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             ss << std::endl;
 
         } else if (functionChainCall) {
+
+            // Cast constructor
+            auto constructorChainCall = std::dynamic_pointer_cast<BConstructorChainCall>(functionChainCall);
+            auto superConstructorChainCall = std::dynamic_pointer_cast<BSuperChainAccess>(functionChainCall);
 
             // Start processing the arguments
             std::vector<std::string> argumentsValues;
@@ -172,10 +178,11 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             }
 
             // Write the reference from previous or this when applicable
-            // FIXME Handle super()
-            if(functionChainCall->getFunction()->isConstructor()) {
+            if(constructorChainCall) {
                 ss << " $(( " << CLASS_OBJECT_COUNTER << "++ ))";
-            } else {
+            } else if(superConstructorChainCall) {
+                ss << " ${" << FUNCTION_THIS << "}";
+            }else {
                 if (i == 0) {
                     if (functionChainCall->getFunction()->isClassMember()) {
                         ss << " ${" << FUNCTION_THIS << "}";
@@ -196,10 +203,10 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
 
             ss << std::endl;
 
-        } else if(thisChainAccess) {
+        } else if(thisChainAccess || superChainAccess) {
             _indent(scope, ss);
             std::string newKey = _generateResultKey(uniqueId++);
-            returnMap[thisChainAccess] = newKey;
+            returnMap[(*chain)[i]] = newKey;
             ss  << "declare " << newKey << "=${" << FUNCTION_THIS << "}" << std::endl;
         } else {
             throw BException("Cannot generate code for an unrecognized element call");
