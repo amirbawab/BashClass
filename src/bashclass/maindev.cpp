@@ -77,7 +77,9 @@ int main(int argc, char *argv[]) {
     easyCC.registerSemanticAction("#varChainAccess#", bashClass.m_varChainAccess);
     easyCC.registerSemanticAction("#functionChainCall#", bashClass.m_functionChainCall);
     easyCC.registerSemanticAction("#constructorChainCall#", bashClass.m_constructorChainCall);
+    easyCC.registerSemanticAction("#superConstructorChainCall#", bashClass.m_superConstructorChainCall);
     easyCC.registerSemanticAction("#thisChainAccess#", bashClass.m_thisChainAccess);
+    easyCC.registerSemanticAction("#superChainAccess#", bashClass.m_superChainAccess);
 
     easyCC.registerSemanticAction("#bashCode#", bashClass.m_bashCode);
 

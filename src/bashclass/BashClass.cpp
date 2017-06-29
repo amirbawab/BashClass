@@ -607,6 +607,20 @@ void BashClass::initHandlers() {
         }
     };
 
+    m_superChainAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            auto superCall = std::make_shared<BSuperChainAccess>();
+            superCall->setLexicalToken(lexicalVector[index]);
+            m_chainBuilderStack.back()->addSuper(m_scopeStack.back(), superCall);
+        }
+    };
+
+    m_superConstructorChainCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+        if(phase == BashClass::PHASE_EVAL) {
+            m_chainBuilderStack.back()->addSuperConstructor(m_scopeStack.back(), lexicalVector[index]);
+        }
+    };
+
     /**************************************
      *          RETURN STATEMENT
      **************************************/

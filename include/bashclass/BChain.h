@@ -6,6 +6,7 @@
 #include <bashclass/BScope.h>
 #include <bashclass/BThisChainAccess.h>
 #include <bashclass/IBChainable.h>
+#include <bashclass/BSuperChainAccess.h>
 
 class BChain {
 private:
@@ -67,11 +68,25 @@ public:
     void addConstructor(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token);
 
     /**
+     * Add super constructor to the chain
+     * @param scope
+     * @param token
+     */
+    void addSuperConstructor(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> token);
+
+    /**
      * Add this reference to the chain
      * @param scope
      * @param thisReference
      */
     void addThis(std::shared_ptr<BScope> scope, std::shared_ptr<BThisChainAccess> thisReference);
+
+    /**
+     * Add super reference to the chain
+     * @param scope
+     * @param superReference
+     */
+    void addSuper(std::shared_ptr<BScope> scope, std::shared_ptr<BSuperChainAccess> superReference);
 };
 
 #endif

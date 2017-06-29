@@ -140,7 +140,7 @@
     "ARITH_VAR_OR_FUNC_CALL_D" : ["#functionCall# EPSILON","DOT ARITH_VAR_OR_FUNC_CALL_B"],
     "ARITH_VAR_OR_FUNC_CALL_E" : ["#thisChainAccess# DOT ARITH_VAR_OR_FUNC_CALL_B","#thisAccess# EPSILON"],
     "ARITH_VAR_OR_FUNC_CALL_F" : ["#varAccess# EPSILON","DOT ARITH_VAR_OR_FUNC_CALL_B"],
-    "ARITH_VAR_OR_FUNC_CALL_G" : ["#superChainAccess# DOT ARITH_VAR_OR_FUNC_CALL_B","#superConstructor# IDENTIFIER_FUNCTION_CALL #functionCall#"],
+    "ARITH_VAR_OR_FUNC_CALL_G" : ["#superChainAccess# DOT ARITH_VAR_OR_FUNC_CALL_B","#superConstructorChainCall# IDENTIFIER_FUNCTION_CALL #functionCall#"],
 
     "INDEX" : ["OPEN_SQ EXPR_DEC #indexAccess# CLOSE_SQ"],
     "INDEX_OPT" : ["EPSILON","INDEX INDEX_OPT"],

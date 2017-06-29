@@ -83,6 +83,9 @@ public:
     SemanticActionHandler m_thisChainAccess;
     SemanticActionHandler m_thisAccess;
 
+    SemanticActionHandler m_superChainAccess;
+    SemanticActionHandler m_superConstructorChainCall;
+
     SemanticActionHandler m_arrayVar;
     SemanticActionHandler m_arrayFunc;
     SemanticActionHandler m_arrayClassVar;

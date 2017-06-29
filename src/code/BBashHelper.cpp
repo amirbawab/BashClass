@@ -172,6 +172,7 @@ void _chainToCode(std::shared_ptr<BScope> scope, std::shared_ptr<BChain> chain, 
             }
 
             // Write the reference from previous or this when applicable
+            // FIXME Handle super()
             if(functionChainCall->getFunction()->isConstructor()) {
                 ss << " $(( " << CLASS_OBJECT_COUNTER << "++ ))";
             } else {
