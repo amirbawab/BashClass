@@ -36,6 +36,7 @@
             "this" : "this_ref",
             "new": "new",
             "constructor": "constructor",
+            "super": "super",
             "null": "null",
             "undefined": "null"
         }
