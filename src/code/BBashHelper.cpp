@@ -37,7 +37,10 @@ struct ExprReturn {
     int type;
     std::string formattedValue() {
         if(type == VARIABLE) {
-            return "${" + value + "}";
+            // FIXME Default value is experimental.
+            // Primarily added to prevent application crash when accessing an out of bound index
+            // e.g. a[1] == 1
+            return "${" + value + ":-" + NULL_CODE + "}";
         }
         if(type == STRING) {
             return "\"" + value + "\"";
