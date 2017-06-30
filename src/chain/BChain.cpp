@@ -104,12 +104,17 @@ void BChain::addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lex
     // Check if the function is the first callable item to be added
     if(m_callables.empty()) {
 
-        // If function call is inside a class, then start searching for a function member of that class
+        // If function call is inside a class, then start searching
+        // for a function member of that class or its parent ones
         auto classScope = scope->findClosestClass();
         if(classScope) {
-            auto functions = classScope->findAllFunctions(token->getValue().c_str());
-            if(!functions.empty()) {
-                functionCall->setFunction(functions.front());
+            auto tmpClass = classScope;
+            while(!functionCall->getFunction() && tmpClass) {
+                auto functions = tmpClass->findAllFunctions(token->getValue().c_str());
+                if(!functions.empty()) {
+                    functionCall->setFunction(functions.front());
+                }
+                tmpClass = tmpClass->getExtends();
             }
         }
 
@@ -149,7 +154,13 @@ void BChain::addFunction(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lex
 
                 // Check if type was found
                 if(lastType->getTypeScope()) {
-                    auto functions = lastType->getTypeScope()->findAllFunctions(token->getValue().c_str());
+                    auto tmpClass = lastType->getTypeScope();
+                    std::vector<std::shared_ptr<BFunction>> functions;
+                    while (functions.empty() && tmpClass) {
+                        functions = tmpClass->findAllFunctions(token->getValue().c_str());
+                        tmpClass = tmpClass->getExtends();
+                    }
+
                     if(!functions.empty()) {
                         functionCall->setFunction(functions.front());
                     } else {
