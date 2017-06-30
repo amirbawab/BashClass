@@ -551,6 +551,7 @@ void BBashHelper::declareCounters() {
     // Object counter
     ss << "# Initialize class object counter" << std::endl;
     ss << CLASS_OBJECT_COUNTER << "=1" << std::endl;
+    ss << "declare -A " << CLASS_OBJECT << std::endl;
     ss << std::endl;
 
     BGenerateCode::get().write(ss);
