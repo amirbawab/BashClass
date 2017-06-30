@@ -49,11 +49,17 @@ bool IBType::isCompatible(std::shared_ptr<IBType> type) {
         return false;
     }
 
-    if((isIdentifier() && type->isNull())) {
+    if(isArray() && type->isNull()) {
         return true;
     }
 
-    if(isArray() && type->isNull()) {
+    if(isIdentifier() && type->isNull()) {
+        return true;
+    }
+
+    if(isIdentifier() && getTypeScope()
+       && type->isIdentifier() && type->getTypeScope()
+       && type->getTypeScope()->inheritsFrom(getTypeScope())) {
         return true;
     }
 
