@@ -82,16 +82,12 @@ std::vector<std::shared_ptr<BScope>> BScope::getAllScopes() {
 }
 
 std::shared_ptr<BVariable> BScope::findClosestVariable(std::string name) {
-    auto currentScope = shared_from_this();
-    while(currentScope) {
-        auto variables = currentScope->findAllVariables(name.c_str());
-        if(!variables.empty()) {
-            // If multiple variable definition were found (semantic error), also select the front
-            return variables.front();
-        }
-        currentScope = currentScope->getParentScope();
+    auto variables = findAllVariables(name.c_str());
+    if(!variables.empty()) {
+        // If multiple variable definition were found (semantic error), also select the front
+        return variables.front();
     }
-    return nullptr;
+    return m_parentScope ? m_parentScope->findClosestVariable(name) : nullptr;
 }
 
 std::stringstream BScope::getStructure() {

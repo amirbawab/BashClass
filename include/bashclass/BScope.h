@@ -107,7 +107,7 @@ public:
      * @param name Name of the variable
      * @return closest variable pointer | nullptr if not found
      */
-    std::shared_ptr<BVariable> findClosestVariable(std::string name);
+    virtual std::shared_ptr<BVariable> findClosestVariable(std::string name);
 
     /**
      * Find closest function: ancestor or itself

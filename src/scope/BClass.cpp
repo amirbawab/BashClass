@@ -81,3 +81,20 @@ bool BClass::inheritsFrom(std::shared_ptr<BClass> cls) {
     }
     return tmpParent != nullptr;
 }
+
+std::shared_ptr<BVariable> BClass::findClosestVariable(std::string name) {
+
+    // Call the original function
+    auto variable = BScope::findClosestVariable(name);
+    if(variable) {
+        return variable;
+    }
+
+    // Check in extended classes
+    if(m_extends) {
+        return m_extends->findClosestVariable(name);
+    }
+
+    // Variable not found
+    return nullptr;
+}

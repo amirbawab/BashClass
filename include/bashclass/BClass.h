@@ -68,6 +68,13 @@ public:
      * @return true if class derives from the provided class
      */
     bool inheritsFrom(std::shared_ptr<BClass> cls);
+
+    /**
+     * Find closest variable in current, ancestor or extended scopes
+     * @param name Name of the variable
+     * @return closest variable pointer | nullptr if not found
+     */
+    std::shared_ptr<BVariable> findClosestVariable(std::string name);
 };
 
 #endif
