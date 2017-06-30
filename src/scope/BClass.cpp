@@ -77,17 +77,18 @@ bool BClass::inheritsFrom(std::shared_ptr<BClass> cls) {
 
 std::shared_ptr<BVariable> BClass::findClosestVariable(std::string name) {
 
-    // Call the original function
-    auto variable = BScope::findClosestVariable(name);
-    if(variable) {
-        return variable;
+    // Check in current and extended classes
+    auto tmpClass = std::static_pointer_cast<BClass>(shared_from_this());
+    while(tmpClass) {
+        auto variables = tmpClass->findAllVariables(name.c_str());
+        if(!variables.empty()) {
+            return variables.front();
+        }
+        tmpClass = tmpClass->getExtends();
     }
 
-    // Check in extended classes
-    if(m_extends) {
-        return m_extends->findClosestVariable(name);
+    if(!m_parentScope) {
+        throw BException("Cannot search for variables in an undefined parent scope for class " + m_name->getValue());
     }
-
-    // Variable not found
-    return nullptr;
+    return m_parentScope->findClosestVariable(name);
 }

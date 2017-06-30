@@ -49,8 +49,15 @@ void BChain::addVariable(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::Lex
                 // If type was found
                 if(lastType->getTypeScope()) {
 
-                    // Search for the new variable in that new scope
-                    auto variables = lastType->getTypeScope()->findAllVariables(token->getValue().c_str());
+                    // Search for the new variable in class and its parent classes
+                    std::shared_ptr<BClass> tmpClass = lastType->getTypeScope();
+                    std::vector<std::shared_ptr<BVariable>> variables;
+                    while(variables.empty() && tmpClass) {
+                        variables = tmpClass->findAllVariables(token->getValue().c_str());
+                        tmpClass = tmpClass->getExtends();
+                    }
+
+                    // Check if variable was found
                     if(!variables.empty()) {
                         variableCall->setVariable(variables.front());
                     } else {
