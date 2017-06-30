@@ -275,3 +275,10 @@ std::shared_ptr<BFunction> BScope::findClosestFunction() {
     }
     return m_parentScope->findClosestFunction();
 }
+
+std::shared_ptr<BClass> BScope::findClosestClass() {
+    if(!m_parentScope) {
+        throw BException("Cannot find closest class for a scope with an undefined parent scope");
+    }
+    return m_parentScope->findClosestClass();
+}

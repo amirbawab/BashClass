@@ -119,7 +119,7 @@ public:
      * Find closest class: ancestor or itself
      * @return closest class pointer | nullptr if not found
      */
-    virtual std::shared_ptr<BClass> findClosestClass()=0;
+    virtual std::shared_ptr<BClass> findClosestClass();
 
     /**
      * Register class

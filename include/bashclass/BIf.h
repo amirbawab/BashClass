@@ -35,12 +35,6 @@ public:
     void setExpression(std::shared_ptr<IBExpression> expression);
 
     /**
-     * Find closest class by asking the parent scope
-     * @return class scope or nullptr if not found
-     */
-    std::shared_ptr<BClass> findClosestClass();
-
-    /**
      * Add elif scope
      * @param elifScope
      */

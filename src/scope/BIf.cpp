@@ -29,13 +29,6 @@ void BIf::setExpression(std::shared_ptr<IBExpression> expression) {
     }
 }
 
-std::shared_ptr<BClass> BIf::findClosestClass() {
-    if(!m_parentScope) {
-        throw BException("Cannot find closest class for an if statement with an undefined parent scope");
-    }
-  return m_parentScope->findClosestClass();
-}
-
 void BIf::addElif(std::shared_ptr<BElif> elifScope) {
     m_elifScopes.push_back(elifScope);
     elifScope->setParentIf(std::static_pointer_cast<BIf>(shared_from_this()));

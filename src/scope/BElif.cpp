@@ -27,10 +27,3 @@ void BElif::setExpression(std::shared_ptr<IBExpression> expression) {
         BReport::getInstance().printError();
     }
 }
-
-std::shared_ptr<BClass> BElif::findClosestClass() {
-    if(!m_parentScope) {
-        throw BException("Cannot find closest class for an elif statement with an undefined parent scope");
-    }
-    return m_parentScope->findClosestClass();
-}
