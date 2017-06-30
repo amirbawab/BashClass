@@ -24,12 +24,6 @@ public:
     std::stringstream getLabel();
 
     /**
-     * Find closest function by asking the parent scope
-     * @return function scope or nullptr if not found
-     */
-    std::shared_ptr<BFunction> findClosestFunction();
-
-    /**
      * Find closest class by asking the parent scope
      * @return class scope or nullptr if not found
      */

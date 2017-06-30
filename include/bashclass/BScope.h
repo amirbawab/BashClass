@@ -113,7 +113,7 @@ public:
      * Find closest function: ancestor or itself
      * @return closest function pointer | nullptr if not found
      */
-    virtual std::shared_ptr<BFunction> findClosestFunction()=0;
+    virtual std::shared_ptr<BFunction> findClosestFunction();
 
     /**
      * Find closest class: ancestor or itself

@@ -268,3 +268,10 @@ bool BScope::hasReturn() {
     }
     return false;
 }
+
+std::shared_ptr<BFunction> BScope::findClosestFunction() {
+    if(!m_parentScope) {
+        throw BException("Cannot find closest function for a scope with an undefined parent scope");
+    }
+    return m_parentScope->findClosestFunction();
+}

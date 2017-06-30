@@ -29,13 +29,6 @@ void BIf::setExpression(std::shared_ptr<IBExpression> expression) {
     }
 }
 
-std::shared_ptr<BFunction> BIf::findClosestFunction() {
-    if(!m_parentScope) {
-        throw BException("Cannot find closest function for an if statement with an undefined parent scope");
-    }
-    return m_parentScope->findClosestFunction();
-}
-
 std::shared_ptr<BClass> BIf::findClosestClass() {
     if(!m_parentScope) {
         throw BException("Cannot find closest class for an if statement with an undefined parent scope");

@@ -7,13 +7,6 @@ std::stringstream BElse::getLabel() {
     return stream;
 }
 
-std::shared_ptr<BFunction> BElse::findClosestFunction() {
-    if(!m_parentScope) {
-        throw BException("Cannot find closest function for an else statement with an undefined parent scope");
-    }
-    return m_parentScope->findClosestFunction();
-}
-
 std::shared_ptr<BClass> BElse::findClosestClass() {
     if(!m_parentScope) {
         throw BException("Cannot find closest class for an else statement with an undefined parent scope");

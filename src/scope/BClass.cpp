@@ -15,13 +15,6 @@ std::shared_ptr<BClass> BClass::findClosestClass() {
     return std::static_pointer_cast<BClass>(shared_from_this());
 }
 
-std::shared_ptr<BFunction> BClass::findClosestFunction() {
-    if(!m_parentScope) {
-        throw BException("Cannot find closest function for a class with an undefined parent scope");
-    }
-    return m_parentScope->findClosestFunction();
-}
-
 std::vector<std::shared_ptr<BFunction>> BClass::findAllConstructors() {
     std::vector<std::shared_ptr<BFunction>> functions;
     for(auto scope : m_scopes) {

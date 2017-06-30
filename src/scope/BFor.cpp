@@ -8,13 +8,6 @@ std::stringstream BFor::getLabel() {
     return stream;
 }
 
-std::shared_ptr<BFunction> BFor::findClosestFunction() {
-    if(!m_parentScope) {
-        throw BException("Cannot find closest function for a for statement with an undefined parent scope");
-    }
-    return m_parentScope->findClosestFunction();
-}
-
 std::shared_ptr<BClass> BFor::findClosestClass() {
     if(!m_parentScope) {
         throw BException("Cannot find closest class for a for statement with an undefined parent scope");

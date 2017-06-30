@@ -28,13 +28,6 @@ void BElif::setExpression(std::shared_ptr<IBExpression> expression) {
     }
 }
 
-std::shared_ptr<BFunction> BElif::findClosestFunction() {
-    if(!m_parentScope) {
-        throw BException("Cannot find closest function for an elif statement with an undefined parent scope");
-    }
-    return m_parentScope->findClosestFunction();
-}
-
 std::shared_ptr<BClass> BElif::findClosestClass() {
     if(!m_parentScope) {
         throw BException("Cannot find closest class for an elif statement with an undefined parent scope");

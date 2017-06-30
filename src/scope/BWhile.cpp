@@ -27,13 +27,6 @@ void BWhile::setExpression(std::shared_ptr<IBExpression> expression) {
     }
 }
 
-std::shared_ptr<BFunction> BWhile::findClosestFunction() {
-    if(!m_parentScope) {
-        throw BException("Cannot find closest function for a while statement with an undefined parent scope");
-    }
-    return m_parentScope->findClosestFunction();
-}
-
 std::shared_ptr<BClass> BWhile::findClosestClass() {
     if(!m_parentScope) {
         throw BException("Cannot find closest class for a while statement with an undefined parent scope");
