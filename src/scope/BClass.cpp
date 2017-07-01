@@ -92,3 +92,14 @@ std::shared_ptr<BVariable> BClass::findClosestVariable(std::string name) {
     }
     return m_parentScope->findClosestVariable(name);
 }
+
+std::vector<std::shared_ptr<BFunction>> BClass::findAllFunctionsExtended(const char *name) {
+    std::vector<std::shared_ptr<BFunction>> functions;
+    std::shared_ptr<BClass> tmpClass = std::static_pointer_cast<BClass>(shared_from_this());
+    while (tmpClass) {
+        auto foundFunctions = tmpClass->findAllFunctions(name);
+        functions.insert(functions.end(), foundFunctions.begin(), foundFunctions.end());
+        tmpClass = tmpClass->getExtends();
+    }
+    return functions;
+}

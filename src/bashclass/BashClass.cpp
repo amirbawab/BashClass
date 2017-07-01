@@ -191,7 +191,17 @@ void BashClass::initHandlers() {
 
             // Clear focus
             m_focusFunction = nullptr;
-        } else if(phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
+        } else if(phase == BashClass::PHASE_EVAL) {
+
+            // Push function scope
+            auto createdFunction =
+                    std::static_pointer_cast<BFunction>(m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey));
+            m_scopeStack.push_back(createdFunction);
+
+            // Verify function override
+            createdFunction->verifyOverride();
+
+        } else if(phase == BashClass::PHASE_GENERATE) {
 
             // Push function scope
             auto createdFunction = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);

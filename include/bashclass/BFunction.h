@@ -71,6 +71,11 @@ public:
     void verifyParameters();
 
     /**
+     * Check if function overrides another one
+     */
+    void verifyOverride();
+
+    /**
      * The closest function to this scope is the scope itself
      * @return this scope
      */
@@ -96,6 +101,13 @@ public:
      * that matches the passed name
      */
     std::vector<std::shared_ptr<BVariable>> findAllParameters(const char* name = nullptr);
+
+    /**
+     * Check if provided function has the same signature as this
+     * @param function
+     * @return true if both functions have the same signature
+     */
+    bool hasSameSignature(std::shared_ptr<BFunction> function);
 };
 
 #endif

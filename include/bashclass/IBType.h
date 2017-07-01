@@ -167,6 +167,13 @@ public:
      * @param type
      */
     virtual void cast(std::shared_ptr<BElementType> type);
+
+    /**
+     * Check if provided type is the same as this one
+     * @param type
+     * @return true if both types are the same
+     */
+    bool isSame(std::shared_ptr<IBType> type);
 };
 
 #endif

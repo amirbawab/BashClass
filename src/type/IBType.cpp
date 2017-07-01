@@ -83,3 +83,10 @@ void IBType::cast(std::shared_ptr<BElementType> type) {
     m_dimension = type->getDimension();
     m_typeScope = type->getTypeScope();
 }
+
+bool IBType::isSame(std::shared_ptr<IBType> type) {
+    return getTypeValue() == type->getTypeValue()
+           && getTypeName() == type->getTypeName()
+           && getTypeScope() == type->getTypeScope()
+           && getDimension() == type->getDimension();
+}

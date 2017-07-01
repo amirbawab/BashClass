@@ -69,6 +69,15 @@ public:
      * @return closest variable pointer | nullptr if not found
      */
     std::shared_ptr<BVariable> findClosestVariable(std::string name);
+
+    /**
+     * Find all functions extended
+     * @param name Name of the function | nullptr
+     * @return if name is a nullptr, then return all the functions
+     * in their order of insertion and from closest to farthest scope, otherwise return the functions
+     * that matches the passed name
+     */
+    std::vector<std::shared_ptr<BFunction>> findAllFunctionsExtended(const char* name = nullptr);
 };
 
 #endif

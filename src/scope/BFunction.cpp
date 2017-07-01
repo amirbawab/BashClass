@@ -4,6 +4,7 @@
 #include <bashclass/BReport.h>
 #include <bashclass/BVariable.h>
 #include <stack>
+#include <bashclass/BReturn.h>
 
 BFunction::BFunction() {
     m_isConstructor = false;
@@ -72,4 +73,50 @@ std::vector<std::shared_ptr<BVariable>> BFunction::findAllParameters(const char 
         }
     }
     return parameters;
+}
+
+bool BFunction::hasSameSignature(std::shared_ptr<BFunction> function) {
+
+    // Name must be identical
+    if(function->getName()->getValue() != getName()->getValue()) {
+        return false;
+    }
+
+    // Check if both functions hve the same return type
+    if(!function->getType()->isSame(getType())) {
+        return false;
+    }
+
+    // Check if the arguments number, order and type match
+    auto thisParam = findAllParameters();
+    auto funcParam = function->findAllParameters();
+    if(thisParam.size() != funcParam.size()) {
+        return false;
+    }
+
+    for(size_t i=0; i < thisParam.size(); i++) {
+        if(!thisParam[i]->getType()->isSame(funcParam[i]->getType())) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void BFunction::verifyOverride() {
+    if(isClassMember()) {
+        auto parentClass = std::static_pointer_cast<BClass>(m_parentScope)->getExtends();
+        if(parentClass) {
+            auto parGetFunc = parentClass->findAllFunctionsExtended(getName()->getValue().c_str());
+            if(!parGetFunc.empty()) {
+                auto overFunction = parGetFunc.back();
+                if(!hasSameSignature(overFunction)) {
+                    BReport::getInstance().error()
+                            << "Function " << getName()->getValue() << " at line "
+                            << getName()->getLine()
+                            <<" tries to override a parent function with a different signature" << std::endl;
+                    BReport::getInstance().printError();
+                }
+            }
+        }
+    }
 }
