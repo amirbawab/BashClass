@@ -9,6 +9,9 @@ add_subdirectory(EasyCC-CPP)
 # Compile with -std=c++11 flag
 add_compile_options(-std=c++11)
 
+# Configure directory of output file
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 # Include bashc header files (e.g. same as -I flag)
 include_directories(include)
 include_directories(EasyCC-CPP/include)
