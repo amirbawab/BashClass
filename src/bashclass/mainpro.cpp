@@ -1,32 +1,25 @@
-#include <easycc/EasyCCDev.h>
+#include <easycc/EasyCCPro.h>
 #include <iostream>
 #include <bashclass/BashClass.h>
 #include <bashclass/BReport.h>
 
 int main(int argc, char *argv[]) {
 
-    // Create easycc developer mode
-    std::shared_ptr<ecc::EasyCC> easyccdev = std::make_shared<ecc::EasyCC>();
-
-    // Create an easycc developer mode instance
-    int code;
-    code = easyccdev->init(argc, argv);
-    if(code != ecc::EasyCC::OK_CODE) {
-        return code;
-    }
+    // Create easycc production mode
+    std::shared_ptr<ecc::EasyCC> easyccpro = std::make_shared<ecc::EasyCC>();
 
     // Create a bashclass
     BashClass bashClass;
 
     // Set easycc in bashclass
-    bashClass.setEasyCC(easyccdev);
+    bashClass.setEasyCC(easyccpro);
 
     // Initialize semantic action handlers
     bashClass.initHandlers();
 
     // Configure easycc on syntax error
-    easyccdev->setOnSyntaxError([&](){
-        easyccdev->setSilentSemanticEvents(true);
+    easyccpro->setOnSyntaxError([&](){
+        easyccpro->setSilentSemanticEvents(true);
     });
 
     // Define the compiler phases
@@ -47,20 +40,20 @@ int main(int argc, char *argv[]) {
         }
 
         // Set the phase number
-        easyccdev->setParsingPhase(phase);
+        easyccpro->setParsingPhase(phase);
 
         // Show error message on create phase only
-        easyccdev->setSilentSyntaxErrorMessages(phase != BashClass::PHASE_CREATE);
+        easyccpro->setSilentSyntaxErrorMessages(phase != BashClass::PHASE_CREATE);
 
         // Compile all files passed as arguments
-        for(std::string fileName : easyccdev->getInputFilesNames()) {
-            code = easyccdev->compile(fileName);
-
-            // Store compiling if a file has syntax errors
-            if(code != ecc::EasyCC::OK_CODE) {
-                return code;
-            }
-        }
+//        for(std::string fileName : easyccdev->getInputFilesNames()) {
+//            code = easyccdev->compile(fileName);
+//
+//            // Store compiling if a file has syntax errors
+//            if(code != ecc::EasyCC::OK_CODE) {
+//                return code;
+//            }
+//        }
     }
     return 0;
 }
