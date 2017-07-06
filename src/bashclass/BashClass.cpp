@@ -7,11 +7,6 @@
 #include <bashclass/BVariableAccess.h>
 #include <bashclass/BGenerateCode.h>
 #include <bashclass/BArrayUse.h>
-#include <bashclass/BExpressionType.h>
-
-BashClass::BashClass() {
-    initHandlers();
-}
 
 void BashClass::printStructure() {
     std::cout << BGlobal::getInstance()->getStructure().str() << std::endl;
@@ -40,7 +35,7 @@ void BashClass::initHandlers() {
     /**************************************
      *          PROGRAM
      **************************************/
-    m_start = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#start#", [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
 
         // Reset the reference key value
         m_referenceKey = 0;
@@ -73,9 +68,9 @@ void BashClass::initHandlers() {
             // Generate code for required bash functions
             BBashHelper::writeBashFunctions();
         }
-    };
+    });
 
-    m_end = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#end#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
 
         // Pop the global scope in all phases
         m_scopeStack.pop_back();
@@ -88,36 +83,36 @@ void BashClass::initHandlers() {
             // Close output file
             BGenerateCode::get().closeFile();
         }
-    };
+    });
 
     /**************************************
      *          REFERENCE KEY
      **************************************/
-    m_newKey = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#newKey#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
 
         // Update reference key
         ++m_referenceKey;
-    };
+    });
 
     /**************************************
      *              BASH CODE
      **************************************/
-    m_bashCode = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#bashCode#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_GENERATE) {
             BBashHelper::bash(m_scopeStack.back(), lexicalVector[index]);
         }
-    };
+    });
 
     /**************************************
      *          CLASS DECLARATION
      **************************************/
-    m_startClass = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#startClass#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusClass = std::make_shared<BClass>();
         }
-    };
+    });
 
-    m_className = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#className#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
 
             // Set class name
@@ -137,25 +132,25 @@ void BashClass::initHandlers() {
             auto classScope = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);
             m_scopeStack.push_back(classScope);
         }
-    };
+    });
 
-    m_classExtends = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#classExtends#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto cls = std::static_pointer_cast<BClass>(m_scopeStack.back());
             cls->setExtends(lexicalVector[index]);
         }
-    };
+    });
 
-    m_endClass = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#endClass#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
             m_scopeStack.pop_back();
         }
-    };
+    });
 
     /**************************************
      *          FUNCTION DECLARATION
      **************************************/
-    m_startFunction = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#startFunction#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusFunction = std::make_shared<BFunction>();
         } else if(phase == BashClass::PHASE_GENERATE) {
@@ -163,21 +158,21 @@ void BashClass::initHandlers() {
                     m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey));
             BBashHelper::createFunction(functionScope);
         }
-    };
+    });
 
-    m_functionType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#functionType#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusFunction->getType()->setLexicalToken(lexicalVector[index]);
         }
-    };
+    });
 
-    m_functionConstructor = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#functionConstructor#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusFunction->setIsConstructor(true);
         }
-    };
+    });
 
-    m_functionName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#functionName#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
 
             // Set function name
@@ -207,9 +202,9 @@ void BashClass::initHandlers() {
             auto createdFunction = m_scopeStack.back()->getScopeByReferenceKey(m_referenceKey);
             m_scopeStack.push_back(createdFunction);
         }
-    };
+    });
 
-    m_endFunction = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#endFunction#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_EVAL) {
@@ -226,25 +221,25 @@ void BashClass::initHandlers() {
             BBashHelper::closeFunction(functionScope);
             m_scopeStack.pop_back();
         }
-    };
+    });
 
     /**************************************
      *     CLASS VARIABLE DECLARATION
      **************************************/
-    m_startClassVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#startClassVar#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusVariable = std::make_shared<BVariable>();
         }
         // Don't generate code for class members
-    };
+    });
 
-    m_classVarType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#classVarType#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusVariable->getType()->setLexicalToken(lexicalVector[index]);
         }
-    };
+    });
 
-    m_classVarName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#classVarName#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
 
             // Set variable name
@@ -260,19 +255,19 @@ void BashClass::initHandlers() {
             // Used by another handler
             m_focusVariable = m_scopeStack.back()->getVariableByReferenceKey(m_referenceKey);
         }
-    };
+    });
 
-    m_endClassVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#endClassVar#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             // Clear focus
             m_focusVariable = nullptr;
         }
-    };
+    });
 
     /**************************************
      *          VARIABLE DECLARATION
      **************************************/
-    m_startVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#startVar#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_focusVariable = std::make_shared<BVariable>();
         } else if(phase == BashClass::PHASE_GENERATE) {
@@ -280,15 +275,15 @@ void BashClass::initHandlers() {
             // Generate code for the current variable
             BBashHelper::createVar(m_scopeStack.back()->getVariableByReferenceKey(m_referenceKey));
         }
-    };
+    });
 
-    m_varType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#varType#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_focusVariable->getType()->setLexicalToken(lexicalVector[index]);
         }
-    };
+    });
 
-    m_varName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#varName#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             // Set variable name
             m_focusVariable->setName(lexicalVector[index]);
@@ -299,32 +294,32 @@ void BashClass::initHandlers() {
             // Link variable
             m_focusVariable->getType()->linkType();
         }
-    };
+    });
 
-    m_endVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#endVar#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             // Clear focus
             m_focusVariable = nullptr;
         }
-    };
+    });
 
     /**************************************
      *          PARAMETER DECLARATION
      **************************************/
-    m_startParam = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#startParam#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_focusVariable = std::make_shared<BVariable>();
             m_focusVariable->setIsParam(true);
         }
-    };
+    });
 
-    m_paramType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#paramType#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_focusVariable->getType()->setLexicalToken(lexicalVector[index]);
         }
-    };
+    });
 
-    m_paramName = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#paramName#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
             // Set parameter name
@@ -336,19 +331,19 @@ void BashClass::initHandlers() {
             // Link variable
             m_focusVariable->getType()->linkType();
         }
-    };
+    });
 
-    m_endParam = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#endParam#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             // Clear focus
             m_focusVariable = nullptr;
         }
-    };
+    });
 
     /**************************************
      *           FOR STATEMENT
      **************************************/
-    m_startFor = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#startFor#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto newFor = std::make_shared<BFor>();
             m_scopeStack.back()->registerScope(m_referenceKey, newFor);
@@ -361,9 +356,9 @@ void BashClass::initHandlers() {
             m_scopeStack.push_back(createdFor);
             BBashHelper::createFor(createdFor);
         }
-    };
+    });
 
-    m_forPreCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#forPreCond#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
             // Set pre condition
@@ -373,9 +368,9 @@ void BashClass::initHandlers() {
             // Remove consumed expression
             m_expressionOperandStack.pop_back();
         }
-    };
+    });
 
-    m_forCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#forCond#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             // Set condition
             auto createdFor = std::static_pointer_cast<BFor>(m_scopeStack.back());
@@ -384,9 +379,9 @@ void BashClass::initHandlers() {
             // Remove consumed expression
             m_expressionOperandStack.pop_back();
         }
-    };
+    });
 
-    m_forPostCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#forPostCond#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             // Set post condition
             auto createdFor = std::static_pointer_cast<BFor>(m_scopeStack.back());
@@ -395,23 +390,22 @@ void BashClass::initHandlers() {
             // Remove consumed expression
             m_expressionOperandStack.pop_back();
         }
-    };
+    });
 
-    m_endFor = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#endFor#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_GENERATE) {
             BBashHelper::closeFor(std::static_pointer_cast<BFor>(m_scopeStack.back()));
             m_scopeStack.pop_back();
         }
-    };
+    });
 
 
     /**************************************
      *          WHILE STATEMENT
      **************************************/
-
-    m_startWhile = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#startWhile#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto newWhile = std::make_shared<BWhile>();
             m_scopeStack.back()->registerScope(m_referenceKey, newWhile);
@@ -424,30 +418,29 @@ void BashClass::initHandlers() {
             m_scopeStack.push_back(createdWhile);
             BBashHelper::createWhile(createdWhile);
         }
-    };
+    });
 
-    m_whileCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#whileCond#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto whileScope = std::static_pointer_cast<BWhile>(m_scopeStack.back());
             whileScope->setExpression(m_expressionOperandStack.back());
             m_expressionOperandStack.pop_back();
         }
-    };
+    });
 
-    m_endWhile = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#endWhile#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_GENERATE) {
             BBashHelper::closeWhile(std::static_pointer_cast<BWhile>(m_scopeStack.back()));
             m_scopeStack.pop_back();
         }
-    };
+    });
 
     /**************************************
      *          IF STATEMENT
      **************************************/
-
-    m_startIf = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#startIf#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto newIf = std::make_shared<BIf>();
             m_scopeStack.back()->registerScope(m_referenceKey, newIf);
@@ -462,17 +455,17 @@ void BashClass::initHandlers() {
             m_scopeStack.push_back(createdIf);
             BBashHelper::createIf(createdIf);
         }
-    };
+    });
 
-    m_ifCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#ifCond#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto ifScope = std::static_pointer_cast<BIf>(m_scopeStack.back());
             ifScope->setExpression(m_expressionOperandStack.back());
             m_expressionOperandStack.pop_back();
         }
-    };
+    });
 
-    m_endIf = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#endIf#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusIf = std::static_pointer_cast<BIf>(m_scopeStack.back());
             m_scopeStack.pop_back();
@@ -483,13 +476,12 @@ void BashClass::initHandlers() {
             BBashHelper::closeIf(ifScope);
             m_scopeStack.pop_back();
         }
-    };
+    });
 
     /**************************************
      *          ELIF STATEMENT
      **************************************/
-
-    m_startElif = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#startElif#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto newElif = std::make_shared<BElif>();
             m_scopeStack.back()->registerScope(m_referenceKey, newElif);
@@ -509,17 +501,17 @@ void BashClass::initHandlers() {
             m_scopeStack.push_back(createdElif);
             BBashHelper::createElif(createdElif);
         }
-    };
+    });
 
-    m_elifCond = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#elifCond#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto elifScope = std::static_pointer_cast<BElif>(m_scopeStack.back());
             elifScope->setExpression(m_expressionOperandStack.back());
             m_expressionOperandStack.pop_back();
         }
-    };
+    });
 
-    m_endElif = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#endElif#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             // Update focus since a nested if statement might have updated it
             m_focusIf = std::static_pointer_cast<BElif>(m_scopeStack.back())->getParentIf();
@@ -534,13 +526,12 @@ void BashClass::initHandlers() {
             BBashHelper::closeElif(elifScope);
             m_scopeStack.pop_back();
         }
-    };
+    });
 
     /**************************************
      *          ELSE STATEMENT
      **************************************/
-
-    m_startElse = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#startElse#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             auto newElse = std::make_shared<BElse>();
             m_scopeStack.back()->registerScope(m_referenceKey, newElse);
@@ -561,9 +552,9 @@ void BashClass::initHandlers() {
             m_scopeStack.push_back(createdElse);
             BBashHelper::createElse(createdElse);
         }
-    };
+    });
 
-    m_endElse = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#endElse#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL) {
             m_scopeStack.pop_back();
         } else if(phase == BashClass::PHASE_GENERATE) {
@@ -573,82 +564,82 @@ void BashClass::initHandlers() {
             BBashHelper::closeElse(elseScope);
             m_scopeStack.pop_back();
         }
-    };
+    });
 
     /**************************
      *      CHAIN ELEMENTS
      **************************/
 
-    m_startChain = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#startChain#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_chainBuilderStack.push_back(std::make_shared<BChain>());
         }
-    };
+    });
 
-    m_endChain = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#endChain#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_chainBuilderStack.pop_back();
         }
-    };
+    });
 
-    m_varChainAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#varChainAccess#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_chainBuilderStack.back()->addVariable(m_scopeStack.back(), lexicalVector[index]);
         }
-    };
+    });
 
-    m_functionChainCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#functionChainCall#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_chainBuilderStack.back()->addFunction(m_scopeStack.back(), lexicalVector[index]);
         }
-    };
+    });
 
-    m_constructorChainCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#constructorChainCall#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_chainBuilderStack.back()->addConstructor(m_scopeStack.back(), lexicalVector[index]);
         }
-    };
+    });
 
-    m_thisChainAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#thisChainAccess#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto thisCall = std::make_shared<BThisChainAccess>();
             thisCall->setLexicalToken(lexicalVector[index]);
             m_chainBuilderStack.back()->addThis(m_scopeStack.back(), thisCall);
         }
-    };
+    });
 
-    m_superChainAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#superChainAccess#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto superCall = std::make_shared<BSuperChainAccess>();
             superCall->setLexicalToken(lexicalVector[index]);
             m_chainBuilderStack.back()->addSuper(m_scopeStack.back(), superCall);
         }
-    };
+    });
 
-    m_superConstructorChainCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#superConstructorChainCall#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_chainBuilderStack.back()->addSuperConstructor(m_scopeStack.back(), lexicalVector[index]);
         }
-    };
+    });
 
     /**************************************
      *          RETURN STATEMENT
      **************************************/
 
-    m_startReturn = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable) {
+    m_easyCC->registerSemanticAction("#startReturn#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable) {
         // Do nothing ...
-    };
+    });
 
-    m_returnVoid = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable) {
+    m_easyCC->registerSemanticAction("#returnVoid#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable) {
         if(phase == BashClass::PHASE_EVAL) {
 
             // Create a void return
             auto returnComp = std::make_shared<BReturn>();
             m_scopeStack.back()->setReturn(returnComp);
         }
-    };
+    });
 
-    m_returnExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#returnExpr#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
             // Create and configure return statement
@@ -661,24 +652,24 @@ void BashClass::initHandlers() {
             // Remove consumed expression
             m_expressionOperandStack.pop_back();
         }
-    };
+    });
 
-    m_endReturn = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#endReturn#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_GENERATE) {
             // Generate return statement
             BBashHelper::writeReturn(m_scopeStack.back()->getReturn());
         }
-    };
+    });
 
     /**************************************
      *          ARGUMENT PASS
      **************************************/
 
-    m_startArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#startArgument#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         // Do nothing ...
-    };
+    });
 
-    m_setArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#setArgument#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
             // Get function that is currently being built
@@ -690,9 +681,9 @@ void BashClass::initHandlers() {
             // Remove consumed expression
             m_expressionOperandStack.pop_back();
         }
-    };
+    });
 
-    m_endArgument = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#endArgument#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
             // Get function chain call
@@ -701,13 +692,13 @@ void BashClass::initHandlers() {
             // Verify provided arguments
             functionCall->verifyArguments();
         }
-    };
+    });
 
     /**************************************
      *          EXPRESSION
      **************************************/
 
-    m_createExpr1 = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#createExpr1#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
             // Get all expression elements
@@ -727,9 +718,9 @@ void BashClass::initHandlers() {
             // Push expression again as an operand
             m_expressionOperandStack.push_back(expression);
         }
-    };
+    });
 
-    m_createExpr2 = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#createExpr2#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
             // Get all expression elements
@@ -752,23 +743,23 @@ void BashClass::initHandlers() {
             // Push expression again as an operand
             m_expressionOperandStack.push_back(expression);
         }
-    };
+    });
 
-    m_putOp = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#putOp#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_expressionOperatorStack.push_back(lexicalVector[index]);
         }
-    };
+    });
 
-    m_tokenUse = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#tokenUse#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto token = std::make_shared<BTokenUse>();
             token->setLexicalToken(lexicalVector[index]);
             m_expressionOperandStack.push_back(token);
         }
-    };
+    });
 
-    m_thisAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#thisAccess#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto thisChainAccess = std::make_shared<BThisChainAccess>();
             thisChainAccess->setLexicalToken(lexicalVector[index]);
@@ -777,25 +768,25 @@ void BashClass::initHandlers() {
             thisAccess->setChain(m_chainBuilderStack.back());
             m_expressionOperandStack.push_back(thisAccess);
         }
-    };
+    });
 
-    m_varAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#varAccess#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto variableAccess = std::make_shared<BVariableAccess>();
             variableAccess->setChain(m_chainBuilderStack.back());
             m_expressionOperandStack.push_back(variableAccess);
         }
-    };
+    });
 
-    m_functionCall = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#functionCall#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto functionCall = std::make_shared<BFunctionCall>();
             functionCall->setChain(m_chainBuilderStack.back());
             m_expressionOperandStack.push_back(functionCall);
         }
-    };
+    });
 
-    m_evalExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable) {
+    m_easyCC->registerSemanticAction("#evalExpr#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable) {
         if(phase == BashClass::PHASE_EVAL) {
             auto expression = m_expressionOperandStack.back();
             m_scopeStack.back()->registerExpression(m_referenceKey, expression);
@@ -806,9 +797,9 @@ void BashClass::initHandlers() {
             auto expression = m_scopeStack.back()->getExpressionByReferenceKey(m_referenceKey);
             BBashHelper::writeExpression(m_scopeStack.back(), expression);
         }
-    };
+    });
 
-    m_varInit = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#varInit#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
             // Register expression in variable
@@ -817,9 +808,9 @@ void BashClass::initHandlers() {
             // Remove consumed expression
             m_expressionOperandStack.pop_back();
         }
-    };
+    });
 
-    m_varAsOperand = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#varAsOperand#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
             // Create variable access, the operand
@@ -831,61 +822,61 @@ void BashClass::initHandlers() {
             // Push operand
             m_expressionOperandStack.push_back(variableAccess);
         }
-    };
+    });
 
     /**************************************
      *              Arrays
      **************************************/
-    m_arrayClassVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#arrayClassVar#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusVariable->getType()->setDimension(m_focusVariable->getType()->getDimension()+1);
         }
-    };
+    });
 
-    m_arrayVar = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#arrayVar#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_focusVariable->getType()->setDimension(m_focusVariable->getType()->getDimension()+1);
         }
-    };
+    });
 
-    m_arrayFunc = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#arrayFunc#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusFunction->getType()->setDimension(m_focusFunction->getType()->getDimension()+1);
         }
-    };
+    });
 
-    m_indexAccess = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#indexAccess#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto chainAccess = m_chainBuilderStack.back()->last();
             chainAccess->addIndex(m_expressionOperandStack.back());
             m_expressionOperandStack.pop_back();
         }
-    };
+    });
 
-    m_newArray = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#newArray#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_expressionOperandStack.push_back(std::make_shared<BArrayUse>());
         }
-    };
+    });
 
-    m_arrayUseType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#arrayUseType#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto arrayUse = std::static_pointer_cast<BArrayUse>(m_expressionOperandStack.back());
             arrayUse->setTypeLexicalToken(lexicalVector[index]);
         }
-    };
+    });
 
-    m_arrayUseDim = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#arrayUseDim#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             auto arrayUse = std::static_pointer_cast<BArrayUse>(m_expressionOperandStack.back());
             arrayUse->getType()->setDimension(arrayUse->getType()->getDimension()+1);
         }
-    };
+    });
 
     /**************************************
      *            CASTING
      **************************************/
-    m_castType = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#castType#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
             // Create a new type
@@ -897,15 +888,15 @@ void BashClass::initHandlers() {
             // Link type
             m_focusCastType->linkType();
         }
-    };
+    });
 
-    m_castArray = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#castArray#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
             m_focusCastType->setDimension(m_focusCastType->getDimension() + 1);
         }
-    };
+    });
 
-    m_castExpr = [&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
+    m_easyCC->registerSemanticAction("#castExpr#",[&](int phase, LexicalTokens &lexicalVector, int index, bool stable){
         if(phase == BashClass::PHASE_EVAL) {
 
             // Cast expression
@@ -914,5 +905,5 @@ void BashClass::initHandlers() {
             // Clear focus
             m_focusCastType = nullptr;
         }
-    };
+    });
 }

@@ -5,114 +5,24 @@
 
 int main(int argc, char *argv[]) {
 
+    // Create easycc developer mode
+    std::shared_ptr<ecc::EasyCC> easyccdev = std::make_shared<ecc::EasyCC>();
+
     // Create an easycc developer mode instance
-    ecc::EasyCC easyCC;
     int code;
-    code = easyCC.init(argc, argv);
+    code = easyccdev->init(argc, argv);
     if(code != ecc::EasyCC::OK_CODE) {
         return code;
     }
 
-    // Create a bash class instance to hold the structure of the code
+    // Create a bashclass
     BashClass bashClass;
 
-    // Start registering semantic actions handlers
-    easyCC.registerSemanticAction("#start#", bashClass.m_start);
-    easyCC.registerSemanticAction("#end#", bashClass.m_end);
-    easyCC.registerSemanticAction("#newKey#", bashClass.m_newKey);
+    // Set easycc in bashclass
+    bashClass.setEasyCC(easyccdev);
 
-    easyCC.registerSemanticAction("#startClass#", bashClass.m_startClass);
-    easyCC.registerSemanticAction("#className#", bashClass.m_className);
-    easyCC.registerSemanticAction("#classExtends#", bashClass.m_classExtends);
-    easyCC.registerSemanticAction("#endClass#", bashClass.m_endClass);
-
-    easyCC.registerSemanticAction("#startFunction#", bashClass.m_startFunction);
-    easyCC.registerSemanticAction("#functionConstructor#", bashClass.m_functionConstructor);
-    easyCC.registerSemanticAction("#functionType#", bashClass.m_functionType);
-    easyCC.registerSemanticAction("#functionName#", bashClass.m_functionName);
-    easyCC.registerSemanticAction("#endFunction#", bashClass.m_endFunction);
-
-    easyCC.registerSemanticAction("#startVar#", bashClass.m_startVar);
-    easyCC.registerSemanticAction("#varType#", bashClass.m_varType);
-    easyCC.registerSemanticAction("#varName#", bashClass.m_varName);
-    easyCC.registerSemanticAction("#endVar#", bashClass.m_endVar);
-
-    easyCC.registerSemanticAction("#startClassVar#", bashClass.m_startClassVar);
-    easyCC.registerSemanticAction("#classVarType#", bashClass.m_classVarType);
-    easyCC.registerSemanticAction("#classVarName#", bashClass.m_classVarName);
-    easyCC.registerSemanticAction("#endClassVar#", bashClass.m_endClassVar);
-
-    easyCC.registerSemanticAction("#startParam#", bashClass.m_startParam);
-    easyCC.registerSemanticAction("#paramType#", bashClass.m_paramType);
-    easyCC.registerSemanticAction("#paramName#", bashClass.m_paramName);
-    easyCC.registerSemanticAction("#endParam#", bashClass.m_endParam);
-
-    easyCC.registerSemanticAction("#startWhile#", bashClass.m_startWhile);
-    easyCC.registerSemanticAction("#whileCond#", bashClass.m_whileCond);
-    easyCC.registerSemanticAction("#endWhile#", bashClass.m_endWhile);
-
-    easyCC.registerSemanticAction("#startFor#", bashClass.m_startFor);
-    easyCC.registerSemanticAction("#forPreCond#", bashClass.m_forPreCond);
-    easyCC.registerSemanticAction("#forCond#", bashClass.m_forCond);
-    easyCC.registerSemanticAction("#forPostCond#", bashClass.m_forPostCond);
-    easyCC.registerSemanticAction("#endFor#", bashClass.m_endFor);
-
-    easyCC.registerSemanticAction("#startIf#", bashClass.m_startIf);
-    easyCC.registerSemanticAction("#ifCond#", bashClass.m_ifCond);
-    easyCC.registerSemanticAction("#endIf#", bashClass.m_endIf);
-
-    easyCC.registerSemanticAction("#startElif#", bashClass.m_startElif);
-    easyCC.registerSemanticAction("#elifCond#", bashClass.m_elifCond);
-    easyCC.registerSemanticAction("#endElif#", bashClass.m_endElif);
-
-    easyCC.registerSemanticAction("#startElse#", bashClass.m_startElse);
-    easyCC.registerSemanticAction("#endElse#", bashClass.m_endElse);
-
-    easyCC.registerSemanticAction("#tokenUse#", bashClass.m_tokenUse);
-    easyCC.registerSemanticAction("#thisAccess#", bashClass.m_thisAccess);
-
-    easyCC.registerSemanticAction("#startChain#", bashClass.m_startChain);
-    easyCC.registerSemanticAction("#endChain#", bashClass.m_endChain);
-
-    easyCC.registerSemanticAction("#varChainAccess#", bashClass.m_varChainAccess);
-    easyCC.registerSemanticAction("#functionChainCall#", bashClass.m_functionChainCall);
-    easyCC.registerSemanticAction("#constructorChainCall#", bashClass.m_constructorChainCall);
-    easyCC.registerSemanticAction("#superConstructorChainCall#", bashClass.m_superConstructorChainCall);
-    easyCC.registerSemanticAction("#thisChainAccess#", bashClass.m_thisChainAccess);
-    easyCC.registerSemanticAction("#superChainAccess#", bashClass.m_superChainAccess);
-
-    easyCC.registerSemanticAction("#bashCode#", bashClass.m_bashCode);
-
-    easyCC.registerSemanticAction("#putOp#", bashClass.m_putOp);
-    easyCC.registerSemanticAction("#createExpr1#", bashClass.m_createExpr1);
-    easyCC.registerSemanticAction("#createExpr2#", bashClass.m_createExpr2);
-    easyCC.registerSemanticAction("#varAsOperand#", bashClass.m_varAsOperand);
-    easyCC.registerSemanticAction("#varInit#", bashClass.m_varInit);
-
-    easyCC.registerSemanticAction("#startReturn#", bashClass.m_startReturn);
-    easyCC.registerSemanticAction("#returnExpr#", bashClass.m_returnExpr);
-    easyCC.registerSemanticAction("#returnVoid#", bashClass.m_returnVoid);
-    easyCC.registerSemanticAction("#endReturn#", bashClass.m_endReturn);
-
-    easyCC.registerSemanticAction("#evalExpr#", bashClass.m_evalExpr);
-    easyCC.registerSemanticAction("#varAccess#", bashClass.m_varAccess);
-    easyCC.registerSemanticAction("#functionCall#", bashClass.m_functionCall);
-
-    easyCC.registerSemanticAction("#setArgument#", bashClass.m_setArgument);
-    easyCC.registerSemanticAction("#startArgument#", bashClass.m_startArgument);
-    easyCC.registerSemanticAction("#endArgument#", bashClass.m_endArgument);
-
-    easyCC.registerSemanticAction("#castType#", bashClass.m_castType);
-    easyCC.registerSemanticAction("#castArray#", bashClass.m_castArray);
-    easyCC.registerSemanticAction("#castExpr#", bashClass.m_castExpr);
-
-    easyCC.registerSemanticAction("#arrayVar#", bashClass.m_arrayVar);
-    easyCC.registerSemanticAction("#arrayFunc#", bashClass.m_arrayFunc);
-    easyCC.registerSemanticAction("#arrayClassVar#", bashClass.m_arrayClassVar);
-    easyCC.registerSemanticAction("#indexAccess#", bashClass.m_indexAccess);
-    easyCC.registerSemanticAction("#newArray#", bashClass.m_newArray);
-    easyCC.registerSemanticAction("#arrayUseDim#", bashClass.m_arrayUseDim);
-    easyCC.registerSemanticAction("#arrayUseType#", bashClass.m_arrayUseType);
+    // Initialize semantic action handlers
+    bashClass.initHandlers();
 
     // Start compiling
     std::vector<int> phases = {BashClass::PHASE_CREATE, BashClass::PHASE_EVAL, BashClass::PHASE_GENERATE};
@@ -129,14 +39,14 @@ int main(int argc, char *argv[]) {
         }
 
         // Set the phase number
-        easyCC.setParsingPhase(phase);
+        easyccdev->setParsingPhase(phase);
 
         // Show error message on create phase only
-        easyCC.setSilentSyntaxErrorMessages(phase != BashClass::PHASE_CREATE);
+        easyccdev->setSilentSyntaxErrorMessages(phase != BashClass::PHASE_CREATE);
 
         // Compile all files passed as arguments
-        for(std::string fileName : easyCC.getInputFilesNames()) {
-            code = easyCC.compile(fileName);
+        for(std::string fileName : easyccdev->getInputFilesNames()) {
+            code = easyccdev->compile(fileName);
             if(code != ecc::EasyCC::OK_CODE) {
                 return code;
             }
