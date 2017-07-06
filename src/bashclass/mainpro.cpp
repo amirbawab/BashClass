@@ -38,14 +38,14 @@ void initParams(int argc, char *argv[]) {
 
     int optionIndex = 0;
     int c;
-    while ((c = getopt_long(argc, argv, "hvs:c:e:g:E:o:", longOptions, &optionIndex)) != -1) {
+    while ((c = getopt_long(argc, argv, "ho:", longOptions, &optionIndex)) != -1) {
         switch (c) {
             case 'o':
                 outputFile = optarg;
                 break;
             case 'h':
             default:
-                printUsage();
+                // Print by default
                 break;
         }
     }
