@@ -42,11 +42,7 @@ void BashClass::initHandlers() {
         // Push global scope
         m_scopeStack.push_back(BGlobal::getInstance());
 
-        if(phase == BashClass::PHASE_CREATE) {
-
-            // Open output file
-            BGenerateCode::get().openFile("/tmp/test/file.sh");
-        } else if(phase == BashClass::PHASE_EVAL) {
+        if(phase == BashClass::PHASE_EVAL) {
 
             // Link types of functions and variables
             BGlobal::getInstance()->linkTypes();

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <bashclass/BashClass.h>
 #include <bashclass/BReport.h>
+#include <bashclass/BGenerateCode.h>
 
 int main(int argc, char *argv[]) {
 
