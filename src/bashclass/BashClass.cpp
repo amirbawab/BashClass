@@ -8,10 +8,6 @@
 #include <bashclass/BGenerateCode.h>
 #include <bashclass/BArrayUse.h>
 
-void BashClass::printStructure() {
-    std::cout << BGlobal::getInstance()->getStructure().str() << std::endl;
-}
-
 void BashClass::onPhaseStartCheck() {
     if(!m_chainBuilderStack.empty()) {
         throw BException("Chain builder stack is not empty");

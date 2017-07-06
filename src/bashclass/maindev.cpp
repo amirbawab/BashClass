@@ -24,18 +24,26 @@ int main(int argc, char *argv[]) {
     // Initialize semantic action handlers
     bashClass.initHandlers();
 
+    // Configure easycc on syntax error
+    easyccdev->setOnSyntaxError([&](){
+        easyccdev->setSilentSemanticEvents(true);
+    });
+
+    // Define the compiler phases
+    std::vector<int> phases = {
+            BashClass::PHASE_CREATE,
+            BashClass::PHASE_EVAL,
+            BashClass::PHASE_GENERATE
+    };
+
     // Start compiling
-    std::vector<int> phases = {BashClass::PHASE_CREATE, BashClass::PHASE_EVAL, BashClass::PHASE_GENERATE};
     for(int phase : phases) {
 
-        // Generate code only if no semantic errors were reported
+        // Don't generate code if semantic errors were reported
         if(phase == BashClass::PHASE_GENERATE) {
             if(BReport::getInstance().hasError()) {
                 return BashClass::ERR_CODE_SEMANTIC;
             }
-
-            // Print structure of the compiled files
-            //bashClass.printStructure();
         }
 
         // Set the phase number
@@ -47,6 +55,8 @@ int main(int argc, char *argv[]) {
         // Compile all files passed as arguments
         for(std::string fileName : easyccdev->getInputFilesNames()) {
             code = easyccdev->compile(fileName);
+
+            // Store compiling if a file has syntax errors
             if(code != ecc::EasyCC::OK_CODE) {
                 return code;
             }

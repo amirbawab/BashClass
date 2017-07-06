@@ -29,11 +29,6 @@ public:
     static const int ERR_CODE_SEMANTIC = 4;
 
     /**
-     * Print the structure of the code
-     */
-    void printStructure();
-
-    /**
      * Set easycc
      * @param easycc
      */
