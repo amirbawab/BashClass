@@ -13,7 +13,6 @@ WORKDIR "/tmp/boost_1_63_0/"
 RUN ./bootstrap.sh --prefix=/usr/local; ./b2 install
 RUN cd $HOME; git   clone https://github.com/amirbawab/BashClass
 WORKDIR $HOME/BashClass
-RUN git checkout docker
 RUN git submodule update --init --recursive
 RUN cmake .; make
 CMD /bin/bash
