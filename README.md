@@ -15,7 +15,7 @@ serve as an input to EasyCC-C++ to parse the user files and validate it against 
 ### Test the application
 Compile the program to build a `bashc` executable, then run the following:
 ```
-./bashc -s resources/src/lexical_graph.json -c resources/src/lexical_config.json -e resources/src/lexical_errors.json -g resources/src/grammar.json -E resources/src/syntax_errors.json resources/src/input/tmp.bc -v
+./bashc -s resources/src/lexical_graph.json -c resources/src/lexical_config.json -e resources/src/lexical_errors.json -g resources/src/grammar.json -E resources/src/syntax_errors.json resources/src/input/tmp.bc -o /tmp/test.sh -v
 ```
 
 ### Features

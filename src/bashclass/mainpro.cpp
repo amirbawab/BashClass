@@ -131,6 +131,11 @@ int main(int argc, char *argv[]) {
 
         // Compile all files passed as arguments
         for(std::string fileName : inputFiles) {
+
+            // Set file name being processed
+            BReport::getInstance().setFileName(fileName);
+
+            // Compile file
             int code = easyccpro->compile(fileName);
 
             // Store compiling if a file has syntax errors

@@ -14,6 +14,11 @@ private:
 
     // Make constructor private
     BReport() : m_hasError(false){}
+
+    // Hold temporary file name
+    // This file name correspond to the one currently
+    // being processed by the semantic analyzer
+    std::string m_fileName;
 public:
 
     // Delete constructor and operator
@@ -35,6 +40,12 @@ public:
     }
 
     /**
+     * Set file name currently being processed
+     * @param fileName
+     */
+    void setFileName(std::string fileName) { m_fileName = fileName; }
+
+    /**
      * Print error message
      */
     void printError();
@@ -43,7 +54,7 @@ public:
      * Store the error message
      * @return
      */
-    std::stringstream& error() {return m_errorStream;}
+    std::stringstream& error();
 
     /**
      * Check if an error was reported

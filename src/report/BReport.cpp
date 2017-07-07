@@ -8,6 +8,11 @@ void BReport::printError() {
     m_hasError = true;
 }
 
+std::stringstream& BReport::error() {
+    m_errorStream << m_fileName << ": ";
+    return m_errorStream;
+}
+
 BReport::~BReport() {
 
     // Get the size of the error stream
