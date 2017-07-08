@@ -7,6 +7,7 @@
 #include <bashclass/BVariableAccess.h>
 #include <bashclass/BGenerateCode.h>
 #include <bashclass/BArrayUse.h>
+#include <bashclass/BReport.h>
 
 void BashClass::onPhaseStartCheck() {
     if(!m_chainBuilderStack.empty()) {
@@ -24,6 +25,60 @@ void BashClass::onPhaseStartCheck() {
     if(!m_scopeStack.empty()) {
         throw BException("Scope stack size is not empty");
     }
+}
+
+int BashClass::compile(std::vector<std::string> inputFiles, std::string outputFile) {
+
+    // Initialize semantic action handlers
+    initHandlers();
+
+    // Set output file
+    m_outputFile = outputFile;
+
+    // Configure easycc on syntax error
+    m_easyCC->setOnSyntaxError([&](){
+        m_easyCC->setSilentSemanticEvents(true);
+    });
+
+    // Define the compiler phases
+    std::vector<int> phases = {
+            BashClass::PHASE_CREATE,
+            BashClass::PHASE_EVAL,
+            BashClass::PHASE_GENERATE
+    };
+
+    // Start compiling
+    for(int phase : phases) {
+
+        // Don't generate code if semantic errors were reported
+        if(phase == BashClass::PHASE_GENERATE) {
+            if(BReport::getInstance().hasError()) {
+                return BashClass::ERR_CODE_SEMANTIC;
+            }
+        }
+
+        // Set the phase number
+        m_easyCC->setParsingPhase(phase);
+
+        // Show error message on create phase only
+        m_easyCC->setSilentSyntaxErrorMessages(phase != BashClass::PHASE_CREATE);
+
+        // Compile all files passed as arguments
+        for(std::string fileName : inputFiles) {
+
+            // Set file name being processed
+            BReport::getInstance().setFileName(fileName);
+
+            // Compile file
+            int code = m_easyCC->compile(fileName);
+
+            // Store compiling if a file has syntax errors
+            if(code != ecc::IEasyCC::OK_CODE) {
+                return code;
+            }
+        }
+    }
+    return 0;
 }
 
 void BashClass::initHandlers() {
@@ -50,6 +105,9 @@ void BashClass::initHandlers() {
             // Check required function
             BGlobal::getInstance()->verifyMain();
         } else if(phase == BashClass::PHASE_GENERATE) {
+
+            // Open output file
+            BGenerateCode::get().openFile(m_outputFile);
 
             // Generate code required before any input
             BBashHelper::header();

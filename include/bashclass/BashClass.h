@@ -29,15 +29,23 @@ public:
     static const int ERR_CODE_SEMANTIC = 4;
 
     /**
+     * Initialize members
+     * @param easyCC
+     */
+    BashClass(std::shared_ptr<ecc::IEasyCC> easyCC) : m_easyCC(easyCC){}
+
+    /**
      * Set easycc
      * @param easycc
      */
     void setEasyCC(std::shared_ptr<ecc::IEasyCC> easycc) {m_easyCC = easycc;}
 
     /**
-     * Initialize semantic action handlers
+     * Compile files
+     * @param inputFiles
+     * @param outputFile
      */
-    void initHandlers();
+    int compile(std::vector<std::string> inputFiles, std::string outputFile);
 
 private:
 
@@ -75,6 +83,14 @@ private:
 
     // Hold expression operators
     std::vector<std::shared_ptr<ecc::LexicalToken>> m_expressionOperatorStack;
+
+    // Store output file name
+    std::string m_outputFile;
+
+    /**
+     * Initialize semantic action handlers
+     */
+    void initHandlers();
 
     /**
      * Couple of checks required at each beginning of a phase
