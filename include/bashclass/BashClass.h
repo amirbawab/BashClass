@@ -96,6 +96,16 @@ private:
      * Couple of checks required at each beginning of a phase
      */
     void onPhaseStartCheck();
+
+    /**
+     * Open output file
+     */
+    void openOutput();
+
+    /**
+     * Close output file
+     */
+    void closeOutput();
 };
 
 #endif

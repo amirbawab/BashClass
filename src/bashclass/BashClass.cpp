@@ -9,6 +9,28 @@
 #include <bashclass/BArrayUse.h>
 #include <bashclass/BReport.h>
 
+void BashClass::openOutput() {
+    // Open output file
+    BGenerateCode::get().openFile(m_outputFile);
+
+    // Generate code required before any input
+    BBashHelper::header();
+
+    // Generate code for the program array
+    BBashHelper::declareCounters();
+
+    // Generate code for required bash functions
+    BBashHelper::writeBashFunctions();
+}
+
+void BashClass::closeOutput() {
+    // Generate code required after the input
+    BBashHelper::footer();
+
+    // Close output file
+    BGenerateCode::get().closeFile();
+}
+
 void BashClass::onPhaseStartCheck() {
     if(!m_chainBuilderStack.empty()) {
         throw BException("Chain builder stack is not empty");
@@ -47,6 +69,9 @@ int BashClass::compile(std::vector<std::string> inputFiles, std::string outputFi
             BashClass::PHASE_GENERATE
     };
 
+    // Open file
+    openOutput();
+
     // Start compiling
     for(int phase : phases) {
 
@@ -78,6 +103,9 @@ int BashClass::compile(std::vector<std::string> inputFiles, std::string outputFi
             }
         }
     }
+
+    // Close file
+    closeOutput();
     return 0;
 }
 
@@ -101,19 +129,6 @@ void BashClass::initHandlers() {
 
             // Link types of functions and variables
             BGlobal::getInstance()->linkTypes();
-        } else if(phase == BashClass::PHASE_GENERATE) {
-
-            // Open output file
-            BGenerateCode::get().openFile(m_outputFile);
-
-            // Generate code required before any input
-            BBashHelper::header();
-
-            // Generate code for the program array
-            BBashHelper::declareCounters();
-
-            // Generate code for required bash functions
-            BBashHelper::writeBashFunctions();
         }
     });
 
@@ -126,13 +141,6 @@ void BashClass::initHandlers() {
 
             // Verify main function
             BGlobal::getInstance()->verifyMain();
-        }else if(phase == BashClass::PHASE_GENERATE) {
-
-            // Generate code required after the input
-            BBashHelper::footer();
-
-            // Close output file
-            BGenerateCode::get().closeFile();
         }
     });
 
