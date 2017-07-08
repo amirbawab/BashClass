@@ -102,6 +102,15 @@ int BashClass::compile(std::vector<std::string> inputFiles, std::string outputFi
                 return code;
             }
         }
+
+        if(phase == BashClass::PHASE_EVAL) {
+
+            // Link types of functions and variables
+            BGlobal::getInstance()->linkTypes();
+
+            // Verify main function
+            BGlobal::getInstance()->verifyMain();
+        }
     }
 
     // Close file
@@ -124,24 +133,12 @@ void BashClass::initHandlers() {
 
         // Push global scope
         m_scopeStack.push_back(BGlobal::getInstance());
-
-        if(phase == BashClass::PHASE_EVAL) {
-
-            // Link types of functions and variables
-            BGlobal::getInstance()->linkTypes();
-        }
     });
 
     m_easyCC->registerSemanticAction("#end#",[&](int phase, LexicalTokens &lexicalVector, int index){
 
         // Pop the global scope in all phases
         m_scopeStack.pop_back();
-
-        if(phase == BashClass::PHASE_EVAL) {
-
-            // Verify main function
-            BGlobal::getInstance()->verifyMain();
-        }
     });
 
     /**************************************
