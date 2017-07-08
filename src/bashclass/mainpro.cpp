@@ -51,6 +51,9 @@ void initParams(int argc, char *argv[]) {
 
 int main(int argc, char *argv[]) {
 
+    // Initialize parameters
+    initParams(argc, argv);
+
     // Fetch files names
     for(int i = optind; i < argc; ++i) {
         std::string fileName = argv[i];
@@ -74,9 +77,6 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-
-    // Initialize parameters
-    initParams(argc, argv);
 
     // Check missing requirements
     if(outputFile.empty() || inputFiles.empty()) {

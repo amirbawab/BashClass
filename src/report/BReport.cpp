@@ -1,5 +1,6 @@
 #include <bashclass/BReport.h>
 #include <iostream>
+#include <boost/filesystem/path.hpp>
 
 void BReport::printError() {
     std::cerr << m_errorStream.str();
@@ -9,7 +10,7 @@ void BReport::printError() {
 }
 
 std::stringstream& BReport::error() {
-    m_errorStream << m_fileName << ": ";
+    m_errorStream << boost::filesystem::path(m_fileName).filename().c_str() << ": ";
     return m_errorStream;
 }
 
