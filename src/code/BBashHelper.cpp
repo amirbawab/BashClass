@@ -510,29 +510,44 @@ void BBashHelper::footer() {
 
     std::stringstream ss;
 
-    // Add bash comment
-    ss << std::endl << "# Run main function" << std::endl;
+    // Get main function
+    std::shared_ptr<BFunction> mainFunction =
+            BGlobal::getInstance()->findAllFunctions(BGlobal::MAIN_FUNCTION.c_str()).front();
 
-    // Find main function
-    auto functions = BGlobal::getInstance()->findAllFunctions(BGlobal::MAIN_FUNCTION.c_str());
-
-    if(functions.size() != 1) {
-        throw BException("Cannot determine which main function to run");
+    // Fetch arguments
+    const std::string MAIN_ARGV = "_main_argv_";
+    const std::string MAIN_ARGV_INDEX = "_main_argv_index_";
+    const std::string MAIN_ARGV_TMP = "_main_argv_tmp_";
+    const std::string MAIN_TMP_RETURN = "_main_tmp_return_";
+    auto params = mainFunction->findAllParameters();
+    if(!params.empty()) {
+        ss << std::endl << "# Convert arguments to char[]" << std::endl;
+        ss << FUNCTION_NAME_BASH_CREATE_ARRAY << " " << MAIN_ARGV << std::endl;
+        ss << MAIN_ARGV_INDEX << "=0" << std::endl;
+        ss << "while (( ${" << MAIN_ARGV_INDEX << "} <= ${#@} )); do" << std::endl;
+        ss << PROG_TAB << FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY << " \"${!" << MAIN_ARGV_INDEX <<"}\" "
+           << MAIN_TMP_RETURN << std::endl;
+        ss << PROG_TAB << "declare -n " << MAIN_ARGV_TMP << "=" << PROG_ARRAY << "${" << MAIN_ARGV << "}"
+           << std::endl;
+        ss << PROG_TAB << MAIN_ARGV_TMP << "[${" << MAIN_ARGV_INDEX << "}]=${" << MAIN_TMP_RETURN << "}"
+           << std::endl;
+        ss << PROG_TAB << MAIN_ARGV_INDEX << "=" << _arithOpForm1("${"+MAIN_ARGV_INDEX+"}","+","1") << std::endl;
+        ss << "done" << std::endl;
     }
 
-    // Get main function
-    std::shared_ptr<BFunction> mainFunction = functions.front();
+    // Add bash comment
+    ss << std::endl << "# Run main function" << std::endl;
 
     // Generate code for the main
     ss << mainFunction->getLabel().str();
 
-    // Generate arguments
-    for(size_t argIndex=0; argIndex < mainFunction->findAllParameters().size(); argIndex++) {
-        ss << " " << "\"${" << argIndex+1 << "}\"";
+    // Add arguments if main has params
+    if(!params.empty()) {
+        ss << " " << _arithOpForm1("${#@}","+","1") << " ${" << MAIN_ARGV << "}";
     }
 
     // Generate exit
-    const char* MAIN_FUNCTION_RETURN = "_main_return_";
+    const std::string MAIN_FUNCTION_RETURN = "_main_return_";
     ss << " " << MAIN_FUNCTION_RETURN << std::endl;
     ss << "exit ${" << MAIN_FUNCTION_RETURN << "}";
 

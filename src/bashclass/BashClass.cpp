@@ -101,9 +101,6 @@ void BashClass::initHandlers() {
 
             // Link types of functions and variables
             BGlobal::getInstance()->linkTypes();
-
-            // Check required function
-            BGlobal::getInstance()->verifyMain();
         } else if(phase == BashClass::PHASE_GENERATE) {
 
             // Open output file
@@ -125,7 +122,11 @@ void BashClass::initHandlers() {
         // Pop the global scope in all phases
         m_scopeStack.pop_back();
 
-        if(phase == BashClass::PHASE_GENERATE) {
+        if(phase == BashClass::PHASE_EVAL) {
+
+            // Verify main function
+            BGlobal::getInstance()->verifyMain();
+        }else if(phase == BashClass::PHASE_GENERATE) {
 
             // Generate code required after the input
             BBashHelper::footer();

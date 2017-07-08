@@ -47,7 +47,36 @@ void BGlobal::verifyMain() {
             BReport::getInstance().error()
                     << "Main function must return an integer" << std::endl;
             BReport::getInstance().printError();
+        }
 
+        // Check params: int, char[][]
+        auto params = mainFunction->findAllParameters();
+        if(params.size() != 0 && params.size() != 2) {
+            BReport::getInstance().error()
+                    << "Main function parameters must either be empty or (int, char[][])" << std::endl;
+            BReport::getInstance().printError();
+        } else if(params.size() == 2) {
+
+            // int
+            if(!params[0]->getType()->isInt() || params[0]->getType()->getDimension() != 0) {
+                BReport::getInstance().error()
+                        << "First parameter in main function must be of type int" << std::endl;
+                BReport::getInstance().printError();
+            }
+
+            // char[][]
+            if(!params[1]->getType()->isChar() || params[1]->getType()->getDimension() != 2) {
+                BReport::getInstance().error()
+                        << "Second parameter in main function must be of type char[][]" << std::endl;
+                BReport::getInstance().printError();
+            }
+
+            // Params should not have default expression
+            if(params[0]->getExpression() || params[1]->getExpression()) {
+                BReport::getInstance().error()
+                        << "Main function parameters cannot have a default expression" << std::endl;
+                BReport::getInstance().printError();
+            }
         }
     }
 }
