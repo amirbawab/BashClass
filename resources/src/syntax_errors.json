@@ -1,20 +1,20 @@
 {
-    "default_message": "Error found: ${lexical.value} at line ${lexical.line} and column ${lexical.column}",
+    "default_message": "${filename}: Error found: ${lexical.value} at line ${lexical.line} and column ${lexical.column}",
     "error_messages": [
         {
             "non_terminal": ":any",
             "terminal": "$",
-            "message": "Unexpected end of file reached in input file"
+            "message": "${filename}: Unexpected end of file reached in input file"
         },
         {
             "non_terminal" : "$",
             "terminal" : ":any",
-            "message" : "Expected end of file in input file"
+            "message" : "${filename}: Expected end of file in input file"
         },
         {
             "non_terminal" : "CLASS_NAME",
             "terminal" : ":any",
-            "message" : "Expected class name instead of '${lexical.value}' at line ${lexical.line} and column ${lexical.column}"
+            "message" : "${filename}: Expected class name instead of '${lexical.value}' at line ${lexical.line} and column ${lexical.column}"
         }
     ]
 }
