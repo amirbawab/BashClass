@@ -81,6 +81,9 @@ int BashClass::compile(std::vector<std::string> inputFiles, std::string outputFi
                 return BashClass::ERR_CODE_SEMANTIC;
             }
         }
+        
+        // Reset the reference key value
+        m_referenceKey = 0;
 
         // Set the phase number
         m_easyCC->setParsingPhase(phase);
@@ -124,9 +127,6 @@ void BashClass::initHandlers() {
      *          PROGRAM
      **************************************/
     m_easyCC->registerSemanticAction("#start#", [&](int phase, LexicalTokens &lexicalVector, int index){
-
-        // Reset the reference key value
-        m_referenceKey = 0;
 
         // Run checks
         onPhaseStartCheck();
