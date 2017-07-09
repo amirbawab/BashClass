@@ -81,7 +81,7 @@ int BashClass::compile(std::vector<std::string> inputFiles, std::string outputFi
                 return BashClass::ERR_CODE_SEMANTIC;
             }
         }
-        
+
         // Reset the reference key value
         m_referenceKey = 0;
 
@@ -296,12 +296,14 @@ void BashClass::initHandlers() {
     });
 
     m_easyCC->registerSemanticAction("#classVarName#",[&](int phase, LexicalTokens &lexicalVector, int index){
+
         if(phase == BashClass::PHASE_CREATE) {
 
             // Set variable name
             m_focusVariable->setName(lexicalVector[index]);
 
-            // Register variable
+            // Register class variables is done in "create phase" because it can be referred by chains
+            // e.g. a.b.c.d = 1
             m_scopeStack.back()->registerVariable(m_referenceKey, m_focusVariable);
 
             // Clear focus
@@ -363,20 +365,20 @@ void BashClass::initHandlers() {
      *          PARAMETER DECLARATION
      **************************************/
     m_easyCC->registerSemanticAction("#startParam#",[&](int phase, LexicalTokens &lexicalVector, int index){
-        if(phase == BashClass::PHASE_EVAL) {
+        if(phase == BashClass::PHASE_CREATE) {
             m_focusVariable = std::make_shared<BVariable>();
             m_focusVariable->setIsParam(true);
         }
     });
 
     m_easyCC->registerSemanticAction("#paramType#",[&](int phase, LexicalTokens &lexicalVector, int index){
-        if(phase == BashClass::PHASE_EVAL) {
+        if(phase == BashClass::PHASE_CREATE) {
             m_focusVariable->getType()->setLexicalToken(lexicalVector[index]);
         }
     });
 
     m_easyCC->registerSemanticAction("#paramName#",[&](int phase, LexicalTokens &lexicalVector, int index){
-        if(phase == BashClass::PHASE_EVAL) {
+        if(phase == BashClass::PHASE_CREATE) {
 
             // Set parameter name
             m_focusVariable->setName(lexicalVector[index]);
@@ -384,8 +386,12 @@ void BashClass::initHandlers() {
             // Register parameter
             m_scopeStack.back()->registerVariable(m_referenceKey, m_focusVariable);
 
-            // Link variable
-            m_focusVariable->getType()->linkType();
+            // Clear focus
+            m_focusVariable = nullptr;
+        } else if(phase == BashClass::PHASE_EVAL) {
+
+            // Set focus variable, used by another handler
+            m_focusVariable = m_scopeStack.back()->getVariableByReferenceKey(m_referenceKey);
         }
     });
 
@@ -883,13 +889,13 @@ void BashClass::initHandlers() {
     /**************************************
      *              Arrays
      **************************************/
-    m_easyCC->registerSemanticAction("#arrayClassVar#",[&](int phase, LexicalTokens &lexicalVector, int index){
+    m_easyCC->registerSemanticAction("#arrayVar1#",[&](int phase, LexicalTokens &lexicalVector, int index){
         if(phase == BashClass::PHASE_CREATE) {
             m_focusVariable->getType()->setDimension(m_focusVariable->getType()->getDimension()+1);
         }
     });
 
-    m_easyCC->registerSemanticAction("#arrayVar#",[&](int phase, LexicalTokens &lexicalVector, int index){
+    m_easyCC->registerSemanticAction("#arrayVar2#",[&](int phase, LexicalTokens &lexicalVector, int index){
         if(phase == BashClass::PHASE_EVAL) {
             m_focusVariable->getType()->setDimension(m_focusVariable->getType()->getDimension()+1);
         }

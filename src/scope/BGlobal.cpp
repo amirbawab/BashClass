@@ -22,11 +22,19 @@ void BGlobal::linkTypes() {
 
         for(auto function : cls->findAllFunctions()) {
             function->getType()->linkType();
+
+            for(auto variable : function->findAllParameters()) {
+                variable->getType()->linkType();
+            }
         }
     }
 
     for(auto function : findAllFunctions()) {
         function->getType()->linkType();
+
+        for(auto variable : function->findAllParameters()) {
+            variable->getType()->linkType();
+        }
     }
 }
 
