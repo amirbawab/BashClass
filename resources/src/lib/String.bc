@@ -1,0 +1,16 @@
+class String extends Object {
+    var char[] data;
+    constructor String(var char[] data) {
+        super_constructor();
+        this.data = data;
+    }
+
+    function int length() {
+        ># declare -n _l_array_="_array_${_object_[${_this_},_c_String_v_data]}"
+        return >% echo ${#_l_array_[@]}%<;
+    }
+
+    function char charAt(var int index) {
+        return data[index];
+    }
+}

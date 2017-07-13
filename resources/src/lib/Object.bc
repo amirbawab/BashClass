@@ -1,0 +1,6 @@
+class Object {
+    constructor Object() {}
+    function String type() {
+        return new String( >$echo ${_object_[${_this_},"__type__"]}$<);
+    }
+}

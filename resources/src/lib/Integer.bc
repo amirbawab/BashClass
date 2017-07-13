@@ -1,0 +1,15 @@
+class Integer extends Object {
+    var int data;
+    constructor Integer(var int data=0) {
+        super_constructor();
+        this.data = data;
+    }
+
+    function void setInteger(var int data) {
+        this.data = data;
+    }
+
+    function int getInteger(){
+        return data;
+    }
+}

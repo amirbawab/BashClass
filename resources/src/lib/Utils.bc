@@ -1,0 +1,3 @@
+function void printInt(var int data) {
+    ># echo $1
+}
