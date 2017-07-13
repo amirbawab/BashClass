@@ -198,7 +198,10 @@ void BashClass::initHandlers() {
     });
 
     m_easyCC->registerSemanticAction("#endClass#",[&](int phase, LexicalTokens &lexicalVector, int index){
-        if(phase == BashClass::PHASE_CREATE || phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
+        if(phase == BashClass::PHASE_CREATE){
+            std::static_pointer_cast<BClass>(m_scopeStack.back())->verifyConstructor();
+            m_scopeStack.pop_back();
+        } else if( phase == BashClass::PHASE_EVAL || phase == BashClass::PHASE_GENERATE) {
             m_scopeStack.pop_back();
         }
     });

@@ -103,3 +103,13 @@ std::vector<std::shared_ptr<BFunction>> BClass::findAllFunctionsExtended(const c
     }
     return functions;
 }
+
+void BClass::verifyConstructor() {
+    auto constructors = findAllConstructors();
+    if(constructors.empty()) {
+        BReport::getInstance().error()
+                << "Class " << m_name->getValue()
+                << " is missing a constructor" << std::endl;
+        BReport::getInstance().printError();
+    }
+}

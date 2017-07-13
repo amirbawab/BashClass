@@ -78,6 +78,11 @@ public:
      * that matches the passed name
      */
     std::vector<std::shared_ptr<BFunction>> findAllFunctionsExtended(const char* name = nullptr);
+
+    /**
+     * Check if constructor is created
+     */
+    void verifyConstructor();
 };
 
 #endif
