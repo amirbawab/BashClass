@@ -57,6 +57,7 @@ public:
     static const std::string DATA_TYPE_NAME_CHAR;
     static const std::string DATA_TYPE_NAME_BOOLEAN;
     static const std::string DATA_TYPE_NAME_BASH_SUB;
+    static const std::string DATA_TYPE_NAME_BASH_SUB_INT;
     static const std::string DATA_TYPE_NAME_BASH_INLINE;
     static const std::string DATA_TYPE_NAME_BASH_BLOCK;
 

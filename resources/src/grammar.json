@@ -119,11 +119,11 @@
         "'truefalse' #tokenUse#",
         "'string_literal' #tokenUse#",
         "'null' #tokenUse#",
+        "'bash_sub' #tokenUse#",
+        "'bash_sub_int' #tokenUse#",
         "NEW VARIABLE_TYPE NEW_CONS_OR_ARRAY",
-        "BASH_SUB #tokenUse#",
         "ARITH_VAR_OR_FUNC_CALL"
     ],
-    "BASH_SUB" : ["'bash_sub'"],
     "NEW": ["'new'"],
     "COLON" : ["'colon'"],
 

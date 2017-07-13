@@ -26,6 +26,7 @@ const std::string IBType::DATA_TYPE_NAME_CHAR = "character";
 const std::string IBType::DATA_TYPE_NAME_BOOLEAN = "truefalse";
 const std::string IBType::DATA_TYPE_NAME_STRING = "string_literal";
 const std::string IBType::DATA_TYPE_NAME_BASH_SUB = "bash_sub";
+const std::string IBType::DATA_TYPE_NAME_BASH_SUB_INT = "bash_sub_int";
 const std::string IBType::DATA_TYPE_NAME_BASH_INLINE = "bash_inline";
 const std::string IBType::DATA_TYPE_NAME_BASH_BLOCK = "bash_block";
 

@@ -8,7 +8,8 @@ void BTokenUse::setLexicalToken(std::shared_ptr<ecc::LexicalToken> lexicalToken)
     m_lexicalToken = lexicalToken;
 
     // Configure expression type based no the lexical token data
-    if(m_lexicalToken->getName() == IBType::DATA_TYPE_NAME_INT) {
+    if(m_lexicalToken->getName() == IBType::DATA_TYPE_NAME_INT
+       || m_lexicalToken->getName() == IBType::DATA_TYPE_NAME_BASH_SUB_INT) {
         m_type = BTypeFactory::createIntExpressionType();
 
     } else if(m_lexicalToken->getName() == IBType::DATA_TYPE_NAME_STRING

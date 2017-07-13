@@ -315,10 +315,17 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
             std::string newValue = tokenUse->getLexicalToken()->getValue()
                     .substr(2,tokenUse->getLexicalToken()->getValue().length()-4);
             _indent(scope, ss);
-            ss << FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY << " \"$(" << newValue << ")\" " << TMP_FUNCTION_RETURN << std::endl;
+            ss << FUNCTION_NAME_BASH_STR_TO_CHAR_ARRAY << " \"$( " << newValue << " )\" " << TMP_FUNCTION_RETURN << std::endl;
             _indent(scope, ss);
             ss << newKey << "=${" << TMP_FUNCTION_RETURN << "}" << std::endl;
             return ExprReturn(newKey, ExprReturn::VARIABLE);
+        }
+
+        // If the token is a bash integer subshell
+        if(tokenUse->getLexicalToken()->getName() == BElementType::DATA_TYPE_NAME_BASH_SUB_INT) {
+            std::string newValue = tokenUse->getLexicalToken()->getValue()
+                    .substr(2, tokenUse->getLexicalToken()->getValue().length()-4);
+            return ExprReturn("$( "+newValue + " )", ExprReturn::DATA);
         }
 
         // If the token is a string
