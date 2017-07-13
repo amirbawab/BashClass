@@ -120,3 +120,19 @@ void BFunction::verifyOverride() {
         }
     }
 }
+
+void BFunction::verifyNoSuperConstructor() {
+
+    // If function is a constructor and class extends another one,
+    // then a super constructor call is required
+    if(isConstructor()) {
+        auto parentClass = std::static_pointer_cast<BClass>(m_parentScope);
+        if(parentClass->getExtends()) {
+            BReport::getInstance().error()
+                    << "Constructor at line "
+                    << getName()->getLine()
+                    <<" is missing a super constructor" << std::endl;
+            BReport::getInstance().printError();
+        }
+    }
+}

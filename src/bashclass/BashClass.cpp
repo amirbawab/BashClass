@@ -684,6 +684,11 @@ void BashClass::initHandlers() {
         }
     });
 
+    m_easyCC->registerSemanticAction("#noSuperConstructor#",[&](int phase, LexicalTokens &lexicalVector, int index) {
+        if(phase == BashClass::PHASE_EVAL) {
+            std::static_pointer_cast<BFunction>(m_scopeStack.back())->verifyNoSuperConstructor();
+        }
+    });
     /**************************************
      *          RETURN STATEMENT
      **************************************/

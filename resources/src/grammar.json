@@ -13,8 +13,10 @@
 
     "EXTENDS" : ["'extends'"],
     
-    "CONSTRUCTOR_DEC" : ["#newKey# CONSTRUCTOR #startFunction# #functionConstructor# FUNCTION_NAME #functionType# #functionName# OPEN_PAR FUNCTION_PARAM_DEC CLOSE_PAR OPEN_CUR FUNCTION_BODY CLOSE_CUR #endFunction#"],
+    "CONSTRUCTOR_DEC" : ["#newKey# CONSTRUCTOR #startFunction# #functionConstructor# FUNCTION_NAME #functionType# #functionName# OPEN_PAR FUNCTION_PARAM_DEC CLOSE_PAR OPEN_CUR CONSTRUCTOR_BODY CLOSE_CUR #endFunction#"],
     "CONSTRUCTOR": ["'constructor'"],
+    "CONSTRUCTOR_BODY" : ["#startChain# SUPER_CONSTRUCTOR #superConstructorChainCall# IDENTIFIER_FUNCTION_CALL #functionCall# #endChain# #evalExpr# SEMICOLON FUNCTION_BODY", "#noSuperConstructor# FUNCTION_BODY"],
+    "SUPER_CONSTRUCTOR" : ["'super_constructor'"],
 
     "FUNCTION_DEC" : ["#newKey# FUNCTION #startFunction# FUNCTION_EXTENDED_TYPE FUNCTION_NAME #functionName# OPEN_PAR FUNCTION_PARAM_DEC CLOSE_PAR OPEN_CUR FUNCTION_BODY CLOSE_CUR #endFunction#"],
     "FUNCTION": ["'function'"],
@@ -134,13 +136,12 @@
     "ARRAY_USE_OPT" : ["EPSILON","ARRAY_USE ARRAY_USE_OPT"],
 
     "ARITH_VAR_OR_FUNC_CALL" : ["#startChain# ARITH_VAR_OR_FUNC_CALL_A #endChain#"],
-    "ARITH_VAR_OR_FUNC_CALL_A" : ["THIS ARITH_VAR_OR_FUNC_CALL_E", "ARITH_VAR_OR_FUNC_CALL_B","SUPER ARITH_VAR_OR_FUNC_CALL_G"],
+    "ARITH_VAR_OR_FUNC_CALL_A" : ["THIS ARITH_VAR_OR_FUNC_CALL_E", "ARITH_VAR_OR_FUNC_CALL_B","SUPER #superChainAccess# DOT ARITH_VAR_OR_FUNC_CALL_B"],
     "ARITH_VAR_OR_FUNC_CALL_B" : ["IDENTIFIER ARITH_VAR_OR_FUNC_CALL_C"],
     "ARITH_VAR_OR_FUNC_CALL_C" : ["#varChainAccess# INDEX_OPT ARITH_VAR_OR_FUNC_CALL_F","#functionChainCall# IDENTIFIER_FUNCTION_CALL INDEX_OPT ARITH_VAR_OR_FUNC_CALL_D"],
     "ARITH_VAR_OR_FUNC_CALL_D" : ["#functionCall# EPSILON","DOT ARITH_VAR_OR_FUNC_CALL_B"],
     "ARITH_VAR_OR_FUNC_CALL_E" : ["#thisChainAccess# DOT ARITH_VAR_OR_FUNC_CALL_B","#thisAccess# EPSILON"],
     "ARITH_VAR_OR_FUNC_CALL_F" : ["#varAccess# EPSILON","DOT ARITH_VAR_OR_FUNC_CALL_B"],
-    "ARITH_VAR_OR_FUNC_CALL_G" : ["#superChainAccess# DOT ARITH_VAR_OR_FUNC_CALL_B","#superConstructorChainCall# IDENTIFIER_FUNCTION_CALL #functionCall#"],
 
     "INDEX" : ["OPEN_SQ EXPR_DEC #indexAccess# CLOSE_SQ"],
     "INDEX_OPT" : ["EPSILON","INDEX INDEX_OPT"],

@@ -76,6 +76,11 @@ public:
     void verifyOverride();
 
     /**
+     * Check if super constructor is required
+     */
+    void verifyNoSuperConstructor();
+
+    /**
      * The closest function to this scope is the scope itself
      * @return this scope
      */
