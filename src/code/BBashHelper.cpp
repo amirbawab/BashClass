@@ -622,7 +622,7 @@ void _addFunctionParams(std::shared_ptr<BFunction> function, std::stringstream &
 
     // Declare argument counter
     _indent(function, ss);
-    ss << "declare " << ARGS_COUNTER << "=1";
+    ss << "declare " << ARGS_COUNTER << "=1" << std::endl;
 
     // Count the addition arguments (this and return)
     int additionArgs = 0;
@@ -727,6 +727,16 @@ void BBashHelper::createFunction(std::shared_ptr<BFunction> function) {
                     _expressionToCode(function, variable->getExpression(), ss);
                 }
             }
+
+            // Define type
+            ss << std::endl;
+            const std::string OBJECT_TYPE = "__type__";
+            _indent(function, ss);
+            ss << "# Header info" << std::endl;
+            _indent(function, ss);
+            ss << "[[ -v " << CLASS_OBJECT << "[${"<< FUNCTION_THIS << "},\"" << OBJECT_TYPE << "\"]"
+               << " ]] || " << CLASS_OBJECT << "[${" << FUNCTION_THIS << "},\"" << OBJECT_TYPE
+               << "\"]=\"" << classScope->getName()->getValue() << "\"";
         }
     }
 
