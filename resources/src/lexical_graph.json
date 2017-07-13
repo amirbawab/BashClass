@@ -377,6 +377,26 @@
             "id": 70,
             "token": "colon",
             "backtrack": false
+        },
+        {
+            "type": "NORMAL",
+            "id": 71
+        },
+        {
+            "type": "NORMAL",
+            "id": 72
+        },
+        {
+            "type": "FINAL",
+            "id": 73,
+            "token": "bash_sub_int",
+            "backtrack": false
+        },
+        {
+            "type": "FINAL",
+            "id": 74,
+            "token": "error_bash_sub_int",
+            "backtrack": true
         }
     ],
     "transitions": [
@@ -1045,6 +1065,62 @@
             "to": 70,
             "chars": [
                 ":"
+            ]
+        },
+        {
+            "from": 28,
+            "to": 71,
+            "chars": [
+                "%"
+            ]
+        },
+        {
+            "from": 71,
+            "to": 71,
+            "chars": [
+                "OTHER"
+            ]
+        },
+        {
+            "from": 71,
+            "to": 72,
+            "chars": [
+                "%"
+            ]
+        },
+        {
+            "from": 71,
+            "to": 74,
+            "chars": [
+                "EOF"
+            ]
+        },
+        {
+            "from": 72,
+            "to": 71,
+            "chars": [
+                "OTHER"
+            ]
+        },
+        {
+            "from": 72,
+            "to": 72,
+            "chars": [
+                "%"
+            ]
+        },
+        {
+            "from": 72,
+            "to": 73,
+            "chars": [
+                "<"
+            ]
+        },
+        {
+            "from": 72,
+            "to": 74,
+            "chars": [
+                "EOF"
             ]
         }
     ]
