@@ -9,7 +9,7 @@ WORKDIR "/tmp/cmake-3.9.0-rc3"
 RUN ./configure; make; make install
 RUN curl -L "https://downloads.sourceforge.net/project/boost/boost/1.64.0/boost_1_64_0.tar.gz" > /tmp/boost.tar.gz
 RUN cd /tmp; tar -xf boost.tar.gz
-WORKDIR "/tmp/boost_1_63_0/"
+WORKDIR "/tmp/boost_1_64_0/"
 RUN ./bootstrap.sh --prefix=/usr/local; ./b2 install
 RUN cd $HOME; git   clone https://github.com/amirbawab/BashClass
 WORKDIR $HOME/BashClass
