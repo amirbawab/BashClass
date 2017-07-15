@@ -106,10 +106,11 @@ int BashClass::compile(std::vector<std::string> inputFiles, std::string outputFi
             }
         }
 
-        if(phase == BashClass::PHASE_EVAL) {
+        if(phase == BashClass::PHASE_CREATE) {
 
-            // Link types of functions and variables
+            // Link main components types
             BGlobal::getInstance()->linkTypes();
+        } else if(phase == BashClass::PHASE_EVAL) {
 
             // Verify main function
             BGlobal::getInstance()->verifyMain();
