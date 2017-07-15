@@ -11,6 +11,9 @@ private:
     // Class name
     std::shared_ptr<ecc::LexicalToken> m_name;
 
+    // Parent class lexical token
+    std::shared_ptr<ecc::LexicalToken> m_extendsName;
+
     // Parent class
     std::shared_ptr<BClass> m_extends;
 public:
@@ -48,7 +51,7 @@ public:
      * Set extends from class
      * @param class lexical token
      */
-    void setExtends(std::shared_ptr<ecc::LexicalToken> lexicalToken);
+    void setExtendsName(std::shared_ptr<ecc::LexicalToken> lexicalToken) {m_extendsName = lexicalToken;}
 
     /**
      * Get extends from class
@@ -83,6 +86,11 @@ public:
      * Check if constructor is created
      */
     void verifyConstructor();
+
+    /**
+     * Link extended function
+     */
+    void linkExtends();
 };
 
 #endif

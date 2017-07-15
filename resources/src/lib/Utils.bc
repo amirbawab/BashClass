@@ -1,3 +1,7 @@
 function void printInt(var int data) {
     ># echo $1
 }
+
+function void printChar(var char data) {
+    ># echo $1
+}

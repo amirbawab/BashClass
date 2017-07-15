@@ -12,26 +12,34 @@ std::stringstream BGlobal::getLabel() {
     return std::stringstream();
 }
 
-void BGlobal::linkTypes() {
+void BGlobal::link() {
 
     for(auto cls : findAllClasses()) {
 
+        // Link extends
+        cls->linkExtends();
+
+        // Link class variable members types
         for(auto variable : cls->findAllVariables()) {
             variable->getType()->linkType();
         }
 
+        // Link class function members types
         for(auto function : cls->findAllFunctions()) {
             function->getType()->linkType();
 
+            // Link class function parameters types
             for(auto param : function->findAllParameters()) {
                 param->getType()->linkType();
             }
         }
     }
 
+    // Link global functions types
     for(auto function : findAllFunctions()) {
         function->getType()->linkType();
 
+        // LInk global functions parameters types
         for(auto param : function->findAllParameters()) {
             param->getType()->linkType();
         }

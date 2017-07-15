@@ -34,9 +34,9 @@ public:
     std::stringstream getLabel();
 
     /**
-     * Link types of class variables and all functions
+     * Link extended classes and types of classes
      */
-    void linkTypes();
+    void link();
 
     /**
      * There is no ancestor function scope for a global scope

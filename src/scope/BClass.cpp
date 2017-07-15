@@ -36,33 +36,37 @@ std::vector<std::shared_ptr<BFunction>> BClass::findAllConstructors() {
     return functions;
 }
 
-void BClass::setExtends(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+void BClass::linkExtends() {
 
-    // Search for that class
-    auto classes = BGlobal::getInstance()->findAllClasses(lexicalToken->getValue().c_str());
+    // If extends exists
+    if(m_extendsName) {
 
-    // TODO To be tested
-    auto thisClass = std::static_pointer_cast<BClass>(shared_from_this());
+        // Search for that class
+        auto classes = BGlobal::getInstance()->findAllClasses(m_extendsName->getValue().c_str());
 
-    // Check if class was found
-    if (classes.empty()) {
-        BReport::getInstance().error()
-                << "Class " << lexicalToken->getValue()
-                << " not found while establishing an inheritance relationship with "
-                << m_name->getValue() << std::endl;
-        BReport::getInstance().printError();
-    } else {
+        // TODO To be tested
+        auto thisClass = std::static_pointer_cast<BClass>(shared_from_this());
 
-        // Check if a circular inheritance will be created
-        if (classes.front()->inheritsFrom(std::static_pointer_cast<BClass>(shared_from_this()))) {
+        // Check if class was found
+        if (classes.empty()) {
             BReport::getInstance().error()
-                    << "A circular inheritance detected while establishing an inheritance relationship between classes "
-                    << m_name->getValue() << " and " << classes.front()->getName()->getValue() << std::endl;
+                    << "Class " << m_extendsName->getValue()
+                    << " not found while establishing an inheritance relationship with "
+                    << m_name->getValue() << std::endl;
             BReport::getInstance().printError();
-        }
+        } else {
 
-        // Extend anw
-        m_extends = classes.front();
+            // Check if a circular inheritance will be created
+            if (classes.front()->inheritsFrom(std::static_pointer_cast<BClass>(shared_from_this()))) {
+                BReport::getInstance().error()
+                        << "A circular inheritance detected while establishing an inheritance relationship between classes "
+                        << m_name->getValue() << " and " << classes.front()->getName()->getValue() << std::endl;
+                BReport::getInstance().printError();
+            }
+
+            // Extend anw
+            m_extends = classes.front();
+        }
     }
 }
 

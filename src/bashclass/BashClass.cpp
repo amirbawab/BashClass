@@ -108,8 +108,8 @@ int BashClass::compile(std::vector<std::string> inputFiles, std::string outputFi
 
         if(phase == BashClass::PHASE_CREATE) {
 
-            // Link main components types
-            BGlobal::getInstance()->linkTypes();
+            // Link main components
+            BGlobal::getInstance()->link();
         } else if(phase == BashClass::PHASE_EVAL) {
 
             // Verify main function
@@ -192,9 +192,9 @@ void BashClass::initHandlers() {
     });
 
     m_easyCC->registerSemanticAction("#classExtends#",[&](int phase, LexicalTokens &lexicalVector, int index){
-        if(phase == BashClass::PHASE_EVAL) {
+        if(phase == BashClass::PHASE_CREATE) {
             auto cls = std::static_pointer_cast<BClass>(m_scopeStack.back());
-            cls->setExtends(lexicalVector[index]);
+            cls->setExtendsName(lexicalVector[index]);
         }
     });
 
