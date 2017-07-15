@@ -5,3 +5,7 @@ function void printInt(var int data) {
 function void printChar(var char data) {
     ># echo $1
 }
+
+function void exception(var char[] message) {
+    ># exit 1
+}
