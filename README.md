@@ -31,14 +31,13 @@ Compile the program to build a `bashc` executable, then run the following:
 * Easy while, for and if statements
 * Create new instance of objects (e.g. myObj = new Object())
 * Constructor is required to create instances
-* Variable of type `any` can hold a value of any type, but can't access its members (if any)
 * Run bash code (inline and block)
-* Run subshell (e.g. echo $(echo 1) ). They can be assigned to variables of type `string`.
-* Allow default parameters values
+* Run subshell (e.g. echo $(echo 1) )
 * Arrays (1D, 2D, ... ND)
 * Casting
-* No function overloading
-* No inheritance
+* Inheritance
+* No function overloading but can define a default value for params
+* No polymorphism but can check type at runtime
 
 ### Additional links
 * UML for some classes (check tabs): https://drive.google.com/file/d/0B8fWEFscW3Z4c2pvSHNaSmRiVEE/view?usp=sharing

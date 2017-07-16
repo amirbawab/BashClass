@@ -1,0 +1,36 @@
+function int main() {
+
+    // List example
+    var List list = new List();
+    list.add(new String("Hello"));
+    list.add(new Integer(123));
+    printcs("List size: ");
+    printiln(list.size());
+    var int i=0;
+    var String strType = new String("String");
+    var String intType = new String("Integer");
+    for(i=0; i < list.size(); i=i+1) {
+        var String type = list.get(i).type();
+        if(type.equals(strType)) {
+            printsln((list.get(i)):String);
+        } elif(type.equals(intType)) {
+            var Integer castInt = (list.get(i)):Integer;
+            printiln(castInt.getInteger());
+        }
+    }
+
+    // Substring
+    var String myString = new String("Hello world");
+    printsln(myString.substr(0,5));
+    printsln(myString.substr(6,5));
+
+    // String comparison
+    var String s1 = new String("Hello");
+    var String s2 = new String("World");
+    if(s1.equals(s2)) {
+        printcsln("s1 and s2 are equal!!");
+    } else {
+        printcsln("s1 and s2 are not equal!!");
+    }
+    return 0;
+}
