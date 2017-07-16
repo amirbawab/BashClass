@@ -222,7 +222,7 @@ std::string _arithOpForm1(std::string left, std::string op, std::string right) {
 }
 
 std::string _arithOpForm2(std::string left, std::string op, std::string right) {
-    return "$([[ \"" + left + "\" " + op + " \"" + right + "\" ]] && echo 1 || echo 0)";
+    return "$([[ " + left + " " + op + " " + right + " ]] && echo 1 || echo 0)";
 }
 
 ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBExpression> expression,
@@ -429,6 +429,15 @@ ExprReturn _expressionToCode(std::shared_ptr<BScope> scope, std::shared_ptr<IBEx
 
                 // Boolean comparison
                 if(arithOperationType->isBoolean()) {
+
+                    // If left and right operands are characters
+                    if(leftOperandType->isChar() && rightOperandType->isChar()) {
+                       ss << "declare " << newKey << "="
+                       << _arithOpForm2(leftOp.formattedValue(), arithOperation->getOperator()->getValue(),
+                                        rightOp.formattedValue())
+                       << std::endl;
+                        return ExprReturn(newKey, ExprReturn::VARIABLE);
+                    }
 
                     // All other types comparison
                     ss << "declare " << newKey << "="
