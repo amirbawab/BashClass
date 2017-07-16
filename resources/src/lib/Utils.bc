@@ -1,9 +1,41 @@
-function void printInt(var int data) {
-    ># echo $1
+function void printi(var int data) {
+    ># echo -n -e "$1"
 }
 
-function void printChar(var char data) {
-    ># echo $1
+function void printiln(var int data) {
+    printi(data);
+    ># echo ""
+}
+
+function void printc(var char data) {
+    ># echo -n -e "$1"
+}
+
+function void printcln(var char data) {
+    printc(data);
+    ># echo ""
+}
+
+function void prints(var String str) {
+    var int i=0;
+    while(i < str.length()) {
+        printc(str.charAt(i));
+        i=i+1;
+    }
+}
+
+function void printcs(var char[] cstr) {
+    prints(new String(cstr));
+}
+
+function void printcsln(var char[] cstr) {
+    printcs(cstr);
+    ># echo
+}
+
+function void printsln(var String str) {
+    prints(str);
+    ># echo
 }
 
 function void exception(var char[] message) {
