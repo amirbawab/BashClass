@@ -14,5 +14,7 @@ RUN ./bootstrap.sh --prefix=/usr/local; ./b2 install
 RUN cd $HOME; git   clone https://github.com/amirbawab/BashClass
 WORKDIR $HOME/BashClass
 RUN git submodule update --init --recursive
-RUN cmake .; make
+RUN ./run_cmake.sh
+RUN ./run_make_dev.sh
+RUN ./run_make_pro.sh
 CMD /bin/bash
