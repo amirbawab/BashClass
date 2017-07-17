@@ -28,9 +28,14 @@ To build the project:
 In production mode the list of files to compile can be stored in a file (e.g. `files.list`) and then passed to the application prefixed by an `@` symbol. (e.g. `./bin/bashc @files.list -o /tmp/test.sh`)
 
 ### Syntax
-#### Examples
-* Main example: <a href="resources/src/input/">Directory</a>  
-* Library example: <a href="resources/src/lib/">Directory</a> 
+#### Example
+A simple syntax tutorial is provided under the : <a href="example/">example directory</a>.  
+To run this tutorial example:
+```
+cd example/
+../bin/bashc @files.list -o /tmp/test.sh
+/tmp/test.sh "James"
+```
 
 #### Misc
 * Function: `function void hello() {}`
@@ -49,7 +54,7 @@ In production mode the list of files to compile can be stored in a file (e.g. `f
 * Type checking
 * Comments (inline and block)
 * Recursion
-* Return primitive types, strings and objects
+* Return primitive types and objects
 * While, For and If statements
 * Create new instance of objects (e.g. myObj = new Object())
 * Constructor is required to create instances
