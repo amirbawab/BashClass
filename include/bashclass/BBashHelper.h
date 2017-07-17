@@ -145,6 +145,13 @@ public:
      * @param forStatement
      */
     static void closeFor(std::shared_ptr<BFor> forStatement);
+
+    /**
+     * Write break or continue
+     * @param scope
+     * @param lexicalToken
+     */
+    static void writeBreakOrContinue(std::shared_ptr<BScope> scope, std::shared_ptr<ecc::LexicalToken> lexicalToken);
 };
 
 #endif

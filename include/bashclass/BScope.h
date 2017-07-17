@@ -11,6 +11,8 @@
 class BVariable;
 class BFunction;
 class BClass;
+class BWhile;
+class BFor;
 class BChain;
 class BReturn;
 class BScope : public std::enable_shared_from_this<BScope> {
@@ -122,6 +124,18 @@ public:
     virtual std::shared_ptr<BClass> findClosestClass();
 
     /**
+     * Find closest while: ancestor or itself
+     * @return closest while pointer | nullptr if not found
+     */
+    virtual std::shared_ptr<BWhile> findClosestWhile();
+
+    /**
+     * Find closest for: ancestor or itself
+     * @return closest for pointer | nullptr if not found
+     */
+    virtual std::shared_ptr<BFor> findClosestFor();
+
+    /**
      * Register class
      * @param referenceKey
      * @param classScope
@@ -180,6 +194,11 @@ public:
      * @return true if it has a return statement
      */
     bool hasReturn();
+
+    /**
+     * Check if can use break or continue in this scope
+     */
+    void canBreakOrContinue(std::shared_ptr<ecc::LexicalToken> lexicalToken);
 };
 
 #endif

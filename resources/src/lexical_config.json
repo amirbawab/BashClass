@@ -35,6 +35,8 @@
             "false" : "truefalse",
             "this" : "this_ref",
             "new": "new",
+            "break": "break",
+            "continue": "continue",
             "constructor": "constructor",
             "super": "super",
             "super_constructor": "super_constructor",

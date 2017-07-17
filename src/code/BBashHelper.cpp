@@ -1006,3 +1006,12 @@ void BBashHelper::writeBashFunctions() {
     ss << "###########################################" << std::endl;
     BGenerateCode::get().write(ss);
 }
+
+void BBashHelper::writeBreakOrContinue(std::shared_ptr<BScope> scope,
+                                       std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+    std::stringstream ss;
+    ss << std::endl;
+    _indent(scope, ss);
+    ss << lexicalToken->getValue() << std::endl;
+    BGenerateCode::get().write(ss);
+}

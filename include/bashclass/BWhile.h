@@ -26,6 +26,12 @@ public:
      * @param expression
      */
     void setExpression(std::shared_ptr<IBExpression> expression);
+
+    /**
+     * The closest while to this scope is this scope itself
+     * @return this scope
+     */
+    std::shared_ptr<BWhile> findClosestWhile();
 };
 
 #endif

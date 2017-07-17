@@ -977,4 +977,15 @@ void BashClass::initHandlers() {
             m_focusCastType = nullptr;
         }
     });
+
+    /**************************************
+     *          BREAK & CONTINUE
+     **************************************/
+    m_easyCC->registerSemanticAction("#breakContinue#",[&](int phase, LexicalTokens &lexicalVector, int index) {
+        if (phase == BashClass::PHASE_EVAL) {
+            m_scopeStack.back()->canBreakOrContinue(lexicalVector[index]);
+        } else if(phase == BashClass::PHASE_GENERATE) {
+            BBashHelper::writeBreakOrContinue(m_scopeStack.back(), lexicalVector[index]);
+        }
+    });
 }

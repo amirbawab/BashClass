@@ -19,3 +19,7 @@ void BFor::setCondition(std::shared_ptr<IBExpression> expression) {
         BReport::getInstance().printError();
     }
 }
+
+std::shared_ptr<BFor> BFor::findClosestFor() {
+    return std::static_pointer_cast<BFor>(shared_from_this());
+}

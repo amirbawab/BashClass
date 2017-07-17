@@ -26,3 +26,7 @@ void BWhile::setExpression(std::shared_ptr<IBExpression> expression) {
         BReport::getInstance().printError();
     }
 }
+
+std::shared_ptr<BWhile> BWhile::findClosestWhile() {
+    return std::static_pointer_cast<BWhile>(shared_from_this());
+}

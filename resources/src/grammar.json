@@ -50,7 +50,7 @@
         "#newKey# WHILE #startWhile# OPEN_PAR EXPR_DEC #whileCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY STATEMENT_BODY_RPT CLOSE_CUR #endWhile#",
         "#newKey# FOR #startFor# OPEN_PAR FOR_PRE_COND FOR_COND FOR_POST_COND CLOSE_PAR OPEN_CUR STATEMENT_BODY STATEMENT_BODY_RPT CLOSE_CUR #endFor#"
     ],
-    "STATEMENT_BODY" : ["VARIABLE_DEC", "#newKey# EXPR_DEC #evalExpr# SEMICOLON","STATEMENT","RETURN_DEC", "BASH_DEC"],
+    "STATEMENT_BODY" : ["VARIABLE_DEC", "#newKey# EXPR_DEC #evalExpr# SEMICOLON","STATEMENT","RETURN_DEC", "BASH_DEC", "BREAK #breakContinue# SEMICOLON", "CONTINUE #breakContinue# SEMICOLON"],
     "STATEMENT_BODY_RPT" : ["EPSILON","STATEMENT_BODY STATEMENT_BODY_RPT"],
 
     "ELIF_OPT" : ["EPSILON", "#newKey# ELIF #startElif# OPEN_PAR EXPR_DEC #elifCond# CLOSE_PAR OPEN_CUR STATEMENT_BODY STATEMENT_BODY_RPT CLOSE_CUR #endElif# ELIF_OPT"],
@@ -61,6 +61,8 @@
     "ELSE" : ["'else'"],
     "WHILE" : ["'while'"],
     "FOR" : ["'for'"],
+    "BREAK" : ["'break'"],
+    "CONTINUE" : ["'continue'"],
 
     "FOR_PRE_COND" : ["SEMICOLON", "EXPR_DEC #forPreCond# SEMICOLON"],
     "FOR_COND" : ["SEMICOLON", "EXPR_DEC #forCond# SEMICOLON"],

@@ -282,3 +282,26 @@ std::shared_ptr<BClass> BScope::findClosestClass() {
     }
     return m_parentScope->findClosestClass();
 }
+
+std::shared_ptr<BWhile> BScope::findClosestWhile() {
+    if(!m_parentScope) {
+        throw BException("Cannot find closest while loop for a scope with an undefined parent scope");
+    }
+    return m_parentScope->findClosestWhile();
+}
+
+std::shared_ptr<BFor> BScope::findClosestFor() {
+    if(!m_parentScope) {
+        throw BException("Cannot find closest for loop for a scope with an undefined parent scope");
+    }
+    return m_parentScope->findClosestFor();
+}
+
+void BScope::canBreakOrContinue(std::shared_ptr<ecc::LexicalToken> lexicalToken) {
+    if(!findClosestWhile() && !findClosestFor()) {
+        BReport::getInstance().error()
+                << "Cannot use " << lexicalToken->getValue() << " outside a loop at line "
+                << lexicalToken->getLine() << " and column " << lexicalToken->getColumn() << std::endl;
+        BReport::getInstance().printError();
+    }
+}

@@ -58,6 +58,12 @@ public:
      * @param expression
      */
     void setPostCondition( std::shared_ptr<IBExpression> expression) { m_postCond = expression;}
+
+    /**
+     * The closest for to this scope is this scope itself
+     * @return this scope
+     */
+    std::shared_ptr<BFor> findClosestFor();
 };
 
 #endif

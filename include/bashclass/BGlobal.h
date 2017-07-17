@@ -51,6 +51,18 @@ public:
     std::shared_ptr<BClass> findClosestClass() {return nullptr;}
 
     /**
+     * There is no ancestor while loop scope for a global scope
+     * @return nullptr
+     */
+    std::shared_ptr<BWhile> findClosestWhile() {return nullptr;}
+
+    /**
+     * There is no ancestor for loop scope for a global scope
+     * @return nullptr
+     */
+    std::shared_ptr<BFor> findClosestFor() {return nullptr;}
+
+    /**
      * Verify that the main function exists in the global scope
      */
     void verifyMain();
