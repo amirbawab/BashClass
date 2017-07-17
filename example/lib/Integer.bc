@@ -1,3 +1,7 @@
+/**
+ * BashClass Library
+ * Author: Amir Bawab
+ */
 class Integer extends Object {
     var int data;
     constructor Integer(var int data=0) {

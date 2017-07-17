@@ -1,3 +1,7 @@
+/**
+ * BashClass Library
+ * Author: Amir Bawab
+ */
 class List extends Object {
     var Object[] data = new Object[];
     var int size = 0;

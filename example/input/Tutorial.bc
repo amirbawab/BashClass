@@ -1,0 +1,85 @@
+/**
+ * BashClass - String
+ * Author: Amir Bawab
+ */
+
+function int main(var int argc, var char[][] argv) {
+
+    // Name is required
+    if(argc < 2) {
+        exception("Please enter your name as an argument: (e.g. bashc \"John\")");
+    }
+
+    // Welcome message
+    var String name = new String(argv[1]);
+    printsln(new String("Hi, ").append(name));
+
+    // Start examples
+    printcsln("Let's do some examples ...");
+
+    // List example
+    if(confirm("Want to do 'List' example?")) {
+        printcsln("Add items to a list. Type exit to stop.");
+        var List list = new List();
+        var boolean exit = false;
+        while(!exit) {
+            var String word = readStr();
+            if(word.equals(str("exit"))) {
+                exit = true;
+            } else {
+                list.add(word);
+            }
+        }
+        printcs("Total number of items added to the list: ");
+        printiln(list.size());
+    } else {
+        printcsln("Skipping 'List' example");
+    }
+
+    // Casting example
+    if(confirm("Want to do 'Casting' example?")) {
+        printcsln("Adding the following two items to a list: 123, \"Orange\"");
+        var List list = new List();
+        list.add(new Integer(123));
+        list.add(new String("Orange"));
+
+        printcsln("Printing items: ");
+        var int i;
+        var String typeString = str("String");
+        var String typeInteger = str("Integer");
+        for(i=0; i < list.size(); i=i+1) {
+            var String type = list.get(i).type();
+            printcs("Item at index ");
+            printi(i);
+            if(type.equals(typeString)) {
+                printcsln(" is a String");
+                var String cast = (list.get(i)):String;
+                printsln(cast);
+            } elif(type.equals(typeInteger)) {
+                printcsln(" is an Integer");
+                var Integer cast = (list.get(i)):Integer;
+                printiln(cast.getInteger());
+            } else {
+                exception("Unknown type!");
+            }
+        }
+    } else {
+        printcsln("Skipping 'Casting' example");
+    }
+
+    printsln(str("Congratulations ").append(name).append(str("! You've completed all the examples!")));
+    printcsln("Thank you for trying BashClass :)");
+
+    return 0;
+}
+
+function boolean confirm(var char[] message) {
+    var String yes = str("y");
+    var String YES = str("Y");
+    printsln(str(message).append(str(" (y/n)")));
+    var String val = readStr();
+    if(val.equals(yes) || val.equals(YES)) {
+        return true;
+    }
+    return false;
+}

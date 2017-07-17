@@ -1,5 +1,5 @@
 /**
- * BashClass - String
+ * BashClass Library
  * Author: Amir Bawab
  */
 class String extends Object {
