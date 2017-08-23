@@ -15,7 +15,7 @@ std::vector<std::string> inputFiles;
  */
 void printUsage() {
     std::cout
-            << "bashc - Compiler converting BashClass syntax into bash 4.3+" << std::endl
+            << "bashc - Compiler converting BashClass syntax into bash 4.4+" << std::endl
             << "Usage: bashc [OPTION]... [FILE]..." << std::endl
             << "\t-o, --output\t\t\tOutput file" << std::endl
             << "\t-h, --help\t\t\tDisplay this help message" << std::endl;
