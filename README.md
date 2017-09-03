@@ -3,7 +3,7 @@
 ### About
 BashClass is a programming language supporting Object Oriented Programming, and compiles into BASH 4.4. Classes and members written in BashClass are converted into associative arrays with unique indices in the generated BASH script. 
 
-BashClass uses EasyCC-C++ library which provides the lexical and syntax analysis. The lexical and syntax analysis configuration files, located under the resources directory, serve as an input to EasyCC-C++ to parse the user files and validate it against a grammar determining the language syntax. 
+BashClass uses [EasyCC-C++](https://github.com/amirbawab/EasyCC-CPP) library which provides the lexical and syntax analysis. The lexical and syntax analysis configuration files, located under the resources directory, serve as an input to EasyCC-C++ to parse the user files and validate it against a grammar determining the language syntax. 
 
 ### Example of BashClass to Bash
 #### BashClass
@@ -172,8 +172,13 @@ exit ${_main_return_}
 
 # -----------------------------------------------------------------
 ```
+### Docker
+* Build image: `sudo docker build -t bashclass:latest .`
+* Run container: `docker run --name bashclass-tutorial -it bashclass:latest`
+* Run the <a href="#example">tutorial example</a>
 
-### Build
+### Host
+#### Build project
 To build the project:
 * Clone project
 * Clone submodules: `git submodule update --init --recursive`
@@ -181,21 +186,16 @@ To build the project:
 * Build dev mode: `run_make_dev.sh`
 * Build pro mode: `run_make_pro.sh`
 
-### Run
-#### Developer mode
+#### Run
+##### Developer mode
 ```
 ./bin/bashcdev -s resources/src/lexical_graph.json -c resources/src/lexical_config.json -e resources/src/lexical_errors.json -g resources/src/grammar.json -E resources/src/syntax_errors.json -o /tmp/test.sh -v path/to/file1 path/to/file2 ...
 ```
-#### Production mode
+##### Production mode
 ```
 ./bin/bashc path/to/file1 path/to/file2 ... -o /tmp/test.sh
 ```
 In production mode the list of files to compile can be stored in a file (e.g. `files.list`) and then passed to the application prefixed by an `@` symbol. (e.g. `./bin/bashc @files.list -o /tmp/test.sh`)
-
-### Docker
-* Build image: `sudo docker build -t bashclass:latest .`
-* Run container: `docker run --name bashclass-tutorial -it bashclass:latest`
-* Run the <a href="#example">tutorial example</a>
 
 ### Syntax
 #### Example
@@ -206,14 +206,6 @@ cd example/
 ../bin/bashc @files.list -o /tmp/test.sh
 /tmp/test.sh "James"
 ```
-
-#### Misc
-* Function: `function void hello() {}`
-* Variable: `var int i = 0`
-* Class: `class MyClass{}`
-* For loop: `var int i; for(i=0; i < 10; i=i+1){}`
-* While loop: `var int i=0; while(i < 10) { i=i+1}`
-* If-Elif-Else: `if(i == 1) {} elif (i == 2){} else {}`
 
 ### Some features
 * Classes
@@ -233,6 +225,7 @@ cd example/
 * Arrays (1D, 2D, ... ND)
 * Casting
 * Inheritance
+* Break and continue in loops
 * No function overloading but can define a default value for params
 * No polymorphism but can check type at runtime
 
