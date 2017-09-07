@@ -2,23 +2,88 @@
     "docs": [
         {
             "location": "/",
-            "text": "Welcome to MkDocs\n\n\nFor full documentation visit \nmkdocs.org\n.\n\n\nCommands\n\n\n\n\nmkdocs new [dir-name]\n - Create a new project.\n\n\nmkdocs serve\n - Start the live-reloading docs server.\n\n\nmkdocs build\n - Build the documentation site.\n\n\nmkdocs help\n - Print this help message.\n\n\n\n\nProject layout\n\n\nmkdocs.yml    # The configuration file.\ndocs/\n    index.md  # The documentation homepage.\n    ...       # Other markdown pages, images and other files.",
+            "text": "Github\n\n\nLink: \nhttps://github.com/amirbawab/BashClass\n\n\nAbout\n\n\nBashClass is a programming language supporting Object Oriented Programming, and compiles into BASH 4.4. Classes and members written in BashClass are converted into associative arrays with unique indices in the generated BASH script. \n\n\nBashClass uses \nEasyCC-C++\n library which provides the lexical and syntax analysis. The lexical and syntax analysis configuration files, located under the resources directory, serve as input to EasyCC-C++ to parse the user files and validate it against a grammar determining the language syntax. \n\n\nBuild project\n\n\nDocker\n\n\n\n\nClone repository\n\n\nBuild image: \nsudo docker build -t bashclass:latest .\n\n\nRun container: \ndocker run --name bashclass-tutorial -it bashclass:latest\n\n\n\n\nHost\n\n\n\n\nClone repository\n\n\nClone submodules: \ngit submodule update --init --recursive\n\n\nRun cmake:\n\n\n\n\ncmake . \\\n    -DSYNTAX_ERRORS=\"resources/src/syntax_errors.json\"\\\n    -DSYNTAX_GRAMMAR=\"resources/src/grammar.json\"\\\n    -DLEXICAL_ERRORS=\"resources/src/lexical_errors.json\"\\\n    -DLEXICAL_CONFIG=\"resources/src/lexical_config.json\"\\\n    -DLEXICAL_STATE_MACHINE=\"resources/src/lexical_graph.json\"\n\n\n\n\n\n\nRun make (developer mode):\n\n\n\n\nmake bashcdev\n\n\n\n\n\n\nRun make (production mode):\n\n\n\n\nmake generate_files # Embed JSON configurations into C++ files\n# Run the `cmake` command again to include the generated files\n# cmake . ...\nmake bashc\n\n\n\n\nUsage\n\n\nDeveloper mode\n\n\n./bin/bashcdev \\\n    -s resources/src/lexical_graph.json \\\n    -c resources/src/lexical_config.json \\\n    -e resources/src/lexical_errors.json \\\n    -g resources/src/grammar.json \\\n    -E resources/src/syntax_errors.json \\\n    -o /tmp/test.sh \\\n    -v \\\n    path/to/file1 path/to/file2 ...\n\n\n\n\nProduction mode\n\n\n./bin/bashc -o gen_bash.sh \\\n    path/to/file1 path/to/file2 ... \n\n\n\n\nIn production mode the list of files to compile can be stored in a file (e.g. \nfiles.list\n) and then passed to the application prefixed by an \n@\n symbol. (e.g. \n./bin/bashc @files.list -o /tmp/test.sh\n)\n\n\nLimitations\n\n\n\n\nThe application was tested only on Arch and Ubuntu\n\n\nNot much input files has been written to test the application\n\n\nProject was created for fun and is not guaranteed to work everywhere, unless users prove the opposite ;)\n\n\n\n\nContribution\n\n\n\n\nFeel free to contribute",
             "title": "Home"
         },
         {
-            "location": "/#welcome-to-mkdocs",
-            "text": "For full documentation visit  mkdocs.org .",
-            "title": "Welcome to MkDocs"
+            "location": "/#github",
+            "text": "Link:  https://github.com/amirbawab/BashClass",
+            "title": "Github"
         },
         {
-            "location": "/#commands",
-            "text": "mkdocs new [dir-name]  - Create a new project.  mkdocs serve  - Start the live-reloading docs server.  mkdocs build  - Build the documentation site.  mkdocs help  - Print this help message.",
-            "title": "Commands"
+            "location": "/#about",
+            "text": "BashClass is a programming language supporting Object Oriented Programming, and compiles into BASH 4.4. Classes and members written in BashClass are converted into associative arrays with unique indices in the generated BASH script.   BashClass uses  EasyCC-C++  library which provides the lexical and syntax analysis. The lexical and syntax analysis configuration files, located under the resources directory, serve as input to EasyCC-C++ to parse the user files and validate it against a grammar determining the language syntax.",
+            "title": "About"
         },
         {
-            "location": "/#project-layout",
-            "text": "mkdocs.yml    # The configuration file.\ndocs/\n    index.md  # The documentation homepage.\n    ...       # Other markdown pages, images and other files.",
-            "title": "Project layout"
+            "location": "/#build-project",
+            "text": "",
+            "title": "Build project"
+        },
+        {
+            "location": "/#docker",
+            "text": "Clone repository  Build image:  sudo docker build -t bashclass:latest .  Run container:  docker run --name bashclass-tutorial -it bashclass:latest",
+            "title": "Docker"
+        },
+        {
+            "location": "/#host",
+            "text": "Clone repository  Clone submodules:  git submodule update --init --recursive  Run cmake:   cmake . \\\n    -DSYNTAX_ERRORS=\"resources/src/syntax_errors.json\"\\\n    -DSYNTAX_GRAMMAR=\"resources/src/grammar.json\"\\\n    -DLEXICAL_ERRORS=\"resources/src/lexical_errors.json\"\\\n    -DLEXICAL_CONFIG=\"resources/src/lexical_config.json\"\\\n    -DLEXICAL_STATE_MACHINE=\"resources/src/lexical_graph.json\"   Run make (developer mode):   make bashcdev   Run make (production mode):   make generate_files # Embed JSON configurations into C++ files\n# Run the `cmake` command again to include the generated files\n# cmake . ...\nmake bashc",
+            "title": "Host"
+        },
+        {
+            "location": "/#usage",
+            "text": "",
+            "title": "Usage"
+        },
+        {
+            "location": "/#developer-mode",
+            "text": "./bin/bashcdev \\\n    -s resources/src/lexical_graph.json \\\n    -c resources/src/lexical_config.json \\\n    -e resources/src/lexical_errors.json \\\n    -g resources/src/grammar.json \\\n    -E resources/src/syntax_errors.json \\\n    -o /tmp/test.sh \\\n    -v \\\n    path/to/file1 path/to/file2 ...",
+            "title": "Developer mode"
+        },
+        {
+            "location": "/#production-mode",
+            "text": "./bin/bashc -o gen_bash.sh \\\n    path/to/file1 path/to/file2 ...   In production mode the list of files to compile can be stored in a file (e.g.  files.list ) and then passed to the application prefixed by an  @  symbol. (e.g.  ./bin/bashc @files.list -o /tmp/test.sh )",
+            "title": "Production mode"
+        },
+        {
+            "location": "/#limitations",
+            "text": "The application was tested only on Arch and Ubuntu  Not much input files has been written to test the application  Project was created for fun and is not guaranteed to work everywhere, unless users prove the opposite ;)",
+            "title": "Limitations"
+        },
+        {
+            "location": "/#contribution",
+            "text": "Feel free to contribute",
+            "title": "Contribution"
+        },
+        {
+            "location": "/example/",
+            "text": "Example of BashClass to Bash\n\n\nCode in BashClass\n\n\nclass Square {\n    var int side;\n    constructor Square(var int side=0) {\n        this.side = side;\n    }\n\n    function int getArea() {\n        return side * side;\n    }\n}\n\nfunction void print(var int num) {\n    ># echo $1\n}\n\nfunction int main() {\n    var Square sq = new Square(10);\n    print(sq.getArea());\n    return 0;\n}\n\n\n\n\nGenerated BASH script\n\n\n#!/bin/bash\n#\n# Bash version 4.4+ required!\n# This code is auto generated by bashc, do not make manual changes\n# -----------------------------------------------------------------\n# Initialize array counter\n_array_uid_=1\n\n# Initialize class object counter\n_object_uid_=1\ndeclare -A _object_\n\n############# BASH FUNCTIONS ##############\n# Create array\nfunction _bash_createArray() {\n    declare -n _return_=${1}\n    declare -g -A \"_array_${_array_uid_}\"\n    _return_=${_array_uid_}\n    _array_uid_=$(( ${_array_uid_} + 1 ))\n}\n# Convert strings into char array\nfunction _bash_StrToCharArray() {\n    declare string=\"${1}\"\n    declare -n _return_=${2}\n    _bash_createArray _tmp_return_\n    _return_=${_tmp_return_}\n    declare index=0\n    declare -n indexValue=\"_array_${_return_}\"\n    while (( ${index} < ${#string} )); do\n        indexValue[${index}]=${string:${index}:1}\n        index=$(( ${index} + 1 ))\n    done\n}\n###########################################\n\n# Create function\nfunction _c_Square_f_Square() {\n    declare _args_counter_=1\n\n    # Create argument with a default value\n    if (( 0 < $(( ${#} - 0 )) )); then\n    declare _c_Square_f_Square_p_side=\"${1}\"\n    _args_counter_=$(( ${_args_counter_} + 1 ))\n    else\n    declare _c_Square_f_Square_p_side=0\n    declare -n _result_0=_c_Square_f_Square_p_side\n    _result_0=0\n    declare _expression_0=\"${_result_0:-0}\"\n    _c_Square_f_Square_p_side=${_expression_0:-0}\n    fi\n\n    # Configure 'this'\n    declare _this_=${!_args_counter_}\n    _args_counter_=$(( ${_args_counter_} + 1 ))\n\n    # Configure return statement\n    declare -n _return_=${!_args_counter_}\n\n    # Declare member\n    _object_[${_this_},\"_c_Square_v_side\"]=0\n\n    # Header info\n    [[ -v _object_[${_this_},\"__type__\"] ]] || _object_[${_this_},\"__type__\"]=\"Square\"\n    # Evaluate expression\n    declare _result_1=${_this_}\n    declare -n _result_2=_object_[${_result_1},\"_c_Square_v_side\"]\n    declare -n _result_3=_c_Square_f_Square_p_side\n    _result_2=${_result_3:-0}\n    declare _expression_1=\"${_result_2:-0}\"\n\n    # Return statement\n    _return_=${_this_}\n}\n\n# Create function\nfunction _c_Square_f_getArea() {\n    declare _args_counter_=1\n\n    # Configure 'this'\n    declare _this_=${!_args_counter_}\n    _args_counter_=$(( ${_args_counter_} + 1 ))\n\n    # Configure return statement\n    declare -n _return_=${!_args_counter_}\n\n    # Return statement\n    declare -n _result_4=_object_[${_this_},\"_c_Square_v_side\"]\n    declare -n _result_5=_object_[${_this_},\"_c_Square_v_side\"]\n    declare _expression_2=$(( ${_result_4:-0} * ${_result_5:-0} ))\n    _return_=${_expression_2:-0}\n    return\n}\n\n# Create function\nfunction _f_print() {\n    declare _args_counter_=1\n\n    # Create argument\n    declare _f_print_p_num=\"${1}\"\n    _args_counter_=$(( ${_args_counter_} + 1 ))\n\n    # Run BASH code\n     echo $1\n}\n\n# Create function\nfunction _f_main() {\n    declare _args_counter_=1\n\n    # Configure return statement\n    declare -n _return_=${!_args_counter_}\n\n    # Create variable\n    declare _f_main_v_sq=0\n\n    # Initialize variable\n    declare -n _result_6=_f_main_v_sq\n    declare _result_7\n    _c_Square_f_Square \"10\" $(( _object_uid_++ )) _tmp_return_\n    _result_7=${_tmp_return_}\n    _result_6=${_result_7:-0}\n    declare _expression_3=\"${_result_6:-0}\"\n\n    # Evaluate expression\n    declare -n _result_8=_f_main_v_sq\n    declare _result_9\n    _c_Square_f_getArea ${_result_8} _tmp_return_\n    _result_9=${_tmp_return_}\n    _f_print \"${_result_9:-0}\"\n\n    # Return statement\n    _return_=0\n    return\n}\n\n# Run main function\n_f_main _main_return_\nexit ${_main_return_}\n\n# -----------------------------------------------------------------",
+            "title": "Example"
+        },
+        {
+            "location": "/example/#example-of-bashclass-to-bash",
+            "text": "",
+            "title": "Example of BashClass to Bash"
+        },
+        {
+            "location": "/example/#code-in-bashclass",
+            "text": "class Square {\n    var int side;\n    constructor Square(var int side=0) {\n        this.side = side;\n    }\n\n    function int getArea() {\n        return side * side;\n    }\n}\n\nfunction void print(var int num) {\n    ># echo $1\n}\n\nfunction int main() {\n    var Square sq = new Square(10);\n    print(sq.getArea());\n    return 0;\n}",
+            "title": "Code in BashClass"
+        },
+        {
+            "location": "/example/#generated-bash-script",
+            "text": "#!/bin/bash\n#\n# Bash version 4.4+ required!\n# This code is auto generated by bashc, do not make manual changes\n# -----------------------------------------------------------------\n# Initialize array counter\n_array_uid_=1\n\n# Initialize class object counter\n_object_uid_=1\ndeclare -A _object_\n\n############# BASH FUNCTIONS ##############\n# Create array\nfunction _bash_createArray() {\n    declare -n _return_=${1}\n    declare -g -A \"_array_${_array_uid_}\"\n    _return_=${_array_uid_}\n    _array_uid_=$(( ${_array_uid_} + 1 ))\n}\n# Convert strings into char array\nfunction _bash_StrToCharArray() {\n    declare string=\"${1}\"\n    declare -n _return_=${2}\n    _bash_createArray _tmp_return_\n    _return_=${_tmp_return_}\n    declare index=0\n    declare -n indexValue=\"_array_${_return_}\"\n    while (( ${index} < ${#string} )); do\n        indexValue[${index}]=${string:${index}:1}\n        index=$(( ${index} + 1 ))\n    done\n}\n###########################################\n\n# Create function\nfunction _c_Square_f_Square() {\n    declare _args_counter_=1\n\n    # Create argument with a default value\n    if (( 0 < $(( ${#} - 0 )) )); then\n    declare _c_Square_f_Square_p_side=\"${1}\"\n    _args_counter_=$(( ${_args_counter_} + 1 ))\n    else\n    declare _c_Square_f_Square_p_side=0\n    declare -n _result_0=_c_Square_f_Square_p_side\n    _result_0=0\n    declare _expression_0=\"${_result_0:-0}\"\n    _c_Square_f_Square_p_side=${_expression_0:-0}\n    fi\n\n    # Configure 'this'\n    declare _this_=${!_args_counter_}\n    _args_counter_=$(( ${_args_counter_} + 1 ))\n\n    # Configure return statement\n    declare -n _return_=${!_args_counter_}\n\n    # Declare member\n    _object_[${_this_},\"_c_Square_v_side\"]=0\n\n    # Header info\n    [[ -v _object_[${_this_},\"__type__\"] ]] || _object_[${_this_},\"__type__\"]=\"Square\"\n    # Evaluate expression\n    declare _result_1=${_this_}\n    declare -n _result_2=_object_[${_result_1},\"_c_Square_v_side\"]\n    declare -n _result_3=_c_Square_f_Square_p_side\n    _result_2=${_result_3:-0}\n    declare _expression_1=\"${_result_2:-0}\"\n\n    # Return statement\n    _return_=${_this_}\n}\n\n# Create function\nfunction _c_Square_f_getArea() {\n    declare _args_counter_=1\n\n    # Configure 'this'\n    declare _this_=${!_args_counter_}\n    _args_counter_=$(( ${_args_counter_} + 1 ))\n\n    # Configure return statement\n    declare -n _return_=${!_args_counter_}\n\n    # Return statement\n    declare -n _result_4=_object_[${_this_},\"_c_Square_v_side\"]\n    declare -n _result_5=_object_[${_this_},\"_c_Square_v_side\"]\n    declare _expression_2=$(( ${_result_4:-0} * ${_result_5:-0} ))\n    _return_=${_expression_2:-0}\n    return\n}\n\n# Create function\nfunction _f_print() {\n    declare _args_counter_=1\n\n    # Create argument\n    declare _f_print_p_num=\"${1}\"\n    _args_counter_=$(( ${_args_counter_} + 1 ))\n\n    # Run BASH code\n     echo $1\n}\n\n# Create function\nfunction _f_main() {\n    declare _args_counter_=1\n\n    # Configure return statement\n    declare -n _return_=${!_args_counter_}\n\n    # Create variable\n    declare _f_main_v_sq=0\n\n    # Initialize variable\n    declare -n _result_6=_f_main_v_sq\n    declare _result_7\n    _c_Square_f_Square \"10\" $(( _object_uid_++ )) _tmp_return_\n    _result_7=${_tmp_return_}\n    _result_6=${_result_7:-0}\n    declare _expression_3=\"${_result_6:-0}\"\n\n    # Evaluate expression\n    declare -n _result_8=_f_main_v_sq\n    declare _result_9\n    _c_Square_f_getArea ${_result_8} _tmp_return_\n    _result_9=${_tmp_return_}\n    _f_print \"${_result_9:-0}\"\n\n    # Return statement\n    _return_=0\n    return\n}\n\n# Run main function\n_f_main _main_return_\nexit ${_main_return_}\n\n# -----------------------------------------------------------------",
+            "title": "Generated BASH script"
+        },
+        {
+            "location": "/syntax/",
+            "text": "",
+            "title": "Syntax"
+        },
+        {
+            "location": "/tutorial/",
+            "text": "",
+            "title": "Tutorial"
         }
     ]
 }
