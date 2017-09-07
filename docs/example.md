@@ -1,5 +1,5 @@
-### Example of BashClass to Bash
-#### BashClass
+## Example of BashClass to Bash
+### Code in BashClass
 ```
 class Square {
     var int side;
@@ -22,7 +22,7 @@ function int main() {
     return 0;
 }
 ```
-### BASH 4.4
+## Generated BASH script
 ```
 #!/bin/bash
 #

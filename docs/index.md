@@ -1,5 +1,8 @@
 # <img src="logo.png" width="200"> [![Build Status](https://travis-ci.org/amirbawab/BashClass.svg?branch=master)](https://travis-ci.org/amirbawab/BashClass)
 
+## Github
+Link: [https://github.com/amirbawab/BashClass](https://github.com/amirbawab/BashClass)
+
 ## About
 BashClass is a programming language supporting Object Oriented Programming, and compiles into BASH 4.4. Classes and members written in BashClass are converted into associative arrays with unique indices in the generated BASH script. 
 
@@ -32,7 +35,7 @@ make bashcdev
 ```bash
 make generate_files # Embed JSON configurations into C++ files
 # Run the `cmake` command again to include the generated files
-# cmake. ...
+# cmake . ...
 make bashc
 ```
 
@@ -59,7 +62,7 @@ In production mode the list of files to compile can be stored in a file (e.g. `f
 ## Limitations
 * The application was tested only on Arch and Ubuntu
 * Not much input files has been written to test the application
-* Project was created for fun and is not guaranteed to work everywhere, unless users prove the opposite
+* Project was created for fun and is not guaranteed to work everywhere, unless users prove the opposite ;)
 
 ## Contribution
 * Feel free to contribute
