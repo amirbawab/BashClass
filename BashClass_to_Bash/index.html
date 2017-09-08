@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>BashClass to Bash - BashClass</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "BashClass to Bash";
+    var mkdocs_page_input_path = "BashClass_to_Bash.md";
+    var mkdocs_page_url = "/BashClass_to_Bash/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> BashClass</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">BashClass to Bash</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#bashclass-to-bash">BashClass to Bash</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#how-it-works">How it works?</a></li>
+        
+            <li><a class="toctree-l3" href="#generated-code-example">Generated code example</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../example/">Example</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../syntax/">Syntax</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">BashClass</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>BashClass to Bash</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/amirbawab/BashClass/edit/master/docs/BashClass_to_Bash.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="bashclass-to-bash">BashClass to Bash</h1>
+<h2 id="how-it-works">How it works?</h2>
+<h3 id="introduction">Introduction</h3>
+<p>BashClass syntax is close to other programming languages like C++ and Java, however, instead of compiling to machine code or bytecode, BashClass compiles to Bash.</p>
+<h3 id="classes">Classes</h3>
+<p>Creating classes in Bash is not possible, but since Bash 4.0, the language added associative arrays which can be used as an alternative way to store a structure of an object. Using this feature, one can keep track of "objects" by assigning them a unique id as part of the key. A key is usually composed of two parts: the object id and the member name of the object. </p>
+<h3 id="functions">Functions</h3>
+<p>Functions in BashClass are converted to Bash functions in the generated Bash script. Each statement in a BashClass function is also converted to its corresponding Bash representation while maintaining the original order.</p>
+<h3 id="type-checking">Type checking</h3>
+<p>BashClass performs type checking at compile time. An expression can be forced to be of a specific type by casting it. The type of an object can also be checked at runtime (Please refer to the example files in the <a href="../example">example</a> page for further details).</p>
+<h3 id="reference">Reference</h3>
+<p>An object variable that is initialized in BashClass (using the <code>new</code> keyword) stores the unique id of the created object.</p>
+<h3 id="expressions">Expressions</h3>
+<p>Expressions in BashClass are generated step by step following the same operator precedence used in bash.</p>
+<h3 id="return">Return</h3>
+<p>BashClass function can be of any type or void. In the generated bash script, the function call passes an additional argument by reference which will hold the "returned" value.</p>
+<h3 id="arrays">Arrays</h3>
+<p>BashClass achieves  multi-dimensional arrays using associative arrays in bash where a key is a combination of the indices concatenated by a delimiter.</p>
+<h2 id="generated-code-example">Generated code example</h2>
+<h3 id="code-in-bashclass">Code in BashClass</h3>
+<pre><code>class Square {
+    var int side;
+    constructor Square(var int side=0) {
+        this.side = side;
+    }
+
+    function int getArea() {
+        return side * side;
+    }
+}
+
+function void print(var int num) {
+    &gt;# echo $1
+}
+
+function int main() {
+    var Square sq = new Square(10);
+    print(sq.getArea());
+    return 0;
+}
+</code></pre>
+
+<h3 id="generated-bash-script">Generated BASH script</h3>
+<pre><code>#!/bin/bash
+#
+# Bash version 4.4+ required!
+# This code is auto generated by bashc, do not make manual changes
+# -----------------------------------------------------------------
+# Initialize array counter
+_array_uid_=1
+
+# Initialize class object counter
+_object_uid_=1
+declare -A _object_
+
+############# BASH FUNCTIONS ##############
+# Create array
+function _bash_createArray() {
+    declare -n _return_=${1}
+    declare -g -A &quot;_array_${_array_uid_}&quot;
+    _return_=${_array_uid_}
+    _array_uid_=$(( ${_array_uid_} + 1 ))
+}
+# Convert strings into char array
+function _bash_StrToCharArray() {
+    declare string=&quot;${1}&quot;
+    declare -n _return_=${2}
+    _bash_createArray _tmp_return_
+    _return_=${_tmp_return_}
+    declare index=0
+    declare -n indexValue=&quot;_array_${_return_}&quot;
+    while (( ${index} &lt; ${#string} )); do
+        indexValue[${index}]=${string:${index}:1}
+        index=$(( ${index} + 1 ))
+    done
+}
+###########################################
+
+# Create function
+function _c_Square_f_Square() {
+    declare _args_counter_=1
+
+    # Create argument with a default value
+    if (( 0 &lt; $(( ${#} - 0 )) )); then
+    declare _c_Square_f_Square_p_side=&quot;${1}&quot;
+    _args_counter_=$(( ${_args_counter_} + 1 ))
+    else
+    declare _c_Square_f_Square_p_side=0
+    declare -n _result_0=_c_Square_f_Square_p_side
+    _result_0=0
+    declare _expression_0=&quot;${_result_0:-0}&quot;
+    _c_Square_f_Square_p_side=${_expression_0:-0}
+    fi
+
+    # Configure 'this'
+    declare _this_=${!_args_counter_}
+    _args_counter_=$(( ${_args_counter_} + 1 ))
+
+    # Configure return statement
+    declare -n _return_=${!_args_counter_}
+
+    # Declare member
+    _object_[${_this_},&quot;_c_Square_v_side&quot;]=0
+
+    # Header info
+    [[ -v _object_[${_this_},&quot;__type__&quot;] ]] || _object_[${_this_},&quot;__type__&quot;]=&quot;Square&quot;
+    # Evaluate expression
+    declare _result_1=${_this_}
+    declare -n _result_2=_object_[${_result_1},&quot;_c_Square_v_side&quot;]
+    declare -n _result_3=_c_Square_f_Square_p_side
+    _result_2=${_result_3:-0}
+    declare _expression_1=&quot;${_result_2:-0}&quot;
+
+    # Return statement
+    _return_=${_this_}
+}
+
+# Create function
+function _c_Square_f_getArea() {
+    declare _args_counter_=1
+
+    # Configure 'this'
+    declare _this_=${!_args_counter_}
+    _args_counter_=$(( ${_args_counter_} + 1 ))
+
+    # Configure return statement
+    declare -n _return_=${!_args_counter_}
+
+    # Return statement
+    declare -n _result_4=_object_[${_this_},&quot;_c_Square_v_side&quot;]
+    declare -n _result_5=_object_[${_this_},&quot;_c_Square_v_side&quot;]
+    declare _expression_2=$(( ${_result_4:-0} * ${_result_5:-0} ))
+    _return_=${_expression_2:-0}
+    return
+}
+
+# Create function
+function _f_print() {
+    declare _args_counter_=1
+
+    # Create argument
+    declare _f_print_p_num=&quot;${1}&quot;
+    _args_counter_=$(( ${_args_counter_} + 1 ))
+
+    # Run BASH code
+     echo $1
+}
+
+# Create function
+function _f_main() {
+    declare _args_counter_=1
+
+    # Configure return statement
+    declare -n _return_=${!_args_counter_}
+
+    # Create variable
+    declare _f_main_v_sq=0
+
+    # Initialize variable
+    declare -n _result_6=_f_main_v_sq
+    declare _result_7
+    _c_Square_f_Square &quot;10&quot; $(( _object_uid_++ )) _tmp_return_
+    _result_7=${_tmp_return_}
+    _result_6=${_result_7:-0}
+    declare _expression_3=&quot;${_result_6:-0}&quot;
+
+    # Evaluate expression
+    declare -n _result_8=_f_main_v_sq
+    declare _result_9
+    _c_Square_f_getArea ${_result_8} _tmp_return_
+    _result_9=${_tmp_return_}
+    _f_print &quot;${_result_9:-0}&quot;
+
+    # Return statement
+    _return_=0
+    return
+}
+
+# Run main function
+_f_main _main_return_
+exit ${_main_return_}
+
+# -----------------------------------------------------------------
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../example/" class="btn btn-neutral float-right" title="Example">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/amirbawab/BashClass" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../example/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script src="../js/theme.js"></script>
+
+</body>
+</html>
