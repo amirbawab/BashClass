@@ -1,2 +1,4 @@
-site_name: "BashClass"
-theme: 'cosmo'
+site_name: 'BashClass'
+repo_url: 'https://github.com/amirbawab/BashClass'
+theme: 'readthedocs'
+site_description: 'BashClass documentation'
