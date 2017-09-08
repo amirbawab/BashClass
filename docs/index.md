@@ -4,9 +4,9 @@
 Link: [https://github.com/amirbawab/BashClass](https://github.com/amirbawab/BashClass)
 
 ## About
-BashClass is a programming language supporting Object Oriented Programming, and compiles into BASH 4.4. Classes and members written in BashClass are converted into associative arrays with unique indices in the generated BASH script. 
+BashClass is a programming language supporting Object Oriented Programming, and compiles to BASH 4.4. Class members written in BashClass are converted to an associative array with unique indices in the generated BASH script. 
 
-BashClass uses [EasyCC-C++](https://github.com/amirbawab/EasyCC-CPP) library which provides the lexical and syntax analysis. The lexical and syntax analysis configuration files, located under the resources directory, serve as input to EasyCC-C++ to parse the user files and validate it against a grammar determining the language syntax. 
+BashClass uses [EasyCC-C++](http://amirbawab.github.io/EasyCC-CPP) library which provides the lexical and syntax analysis. The lexical and syntax analysis configuration files, located under the resources directory, serve as input to [EasyCC-C++](http://amirbawab.github.io/EasyCC-CPP) to parse the user files and validate it against a grammar determining the language syntax. 
 
 
 ## Build project
