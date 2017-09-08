@@ -41,7 +41,7 @@ make bashc
 
 ## Usage
 ### Developer mode
-```
+```bash
 ./bin/bashcdev \
     -s resources/src/lexical_graph.json \
     -c resources/src/lexical_config.json \
@@ -53,7 +53,7 @@ make bashc
     path/to/file1 path/to/file2 ...
 ```
 ### Production mode
-```
+```bash
 ./bin/bashc -o gen_bash.sh \
     path/to/file1 path/to/file2 ... 
 ```
