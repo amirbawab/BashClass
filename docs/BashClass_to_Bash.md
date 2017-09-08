@@ -1,5 +1,32 @@
 # BashClass to Bash
-## Code in BashClass
+
+## How it works?
+### Introduction
+BashClass syntax is close to other programming languages like C++ and Java, however, instead of compiling to machine code or bytecode, BashClass compiles to Bash.
+
+### Classes
+Creating classes in Bash is not possible, but since Bash 4.0, the language added associative arrays which can be used as an alternative way to store a structure of an object. Using this feature, one can keep track of "objects" by assigning them a unique id as part of the key. A key is usually composed of two parts: the object id and the member name of the object. 
+
+### Functions
+Functions in BashClass are converted to Bash functions in the generated Bash script. Each statement in a BashClass function is also converted to its corresponding Bash representation while maintaining the original order.
+
+### Type checking
+BashClass performs type checking at compile time. An expression can be forced to be of a specific type by casting it. The type of an object can also be checked at runtime (Please refer to the example files in the [example](example) page for further details).
+
+### Reference
+An object variable that is initialized in BashClass (using the `new` keyword) stores the unique id of the created object.
+
+### Expressions
+Expressions in BashClass are generated step by step following the same operator precedence used in bash.
+
+### Return
+BashClass function can be of any type or void. In the generated bash script, the function call passes an additional argument by reference which will hold the "returned" value.
+
+### Arrays
+BashClass achieves  multi-dimensional arrays using associative arrays in bash where a key is a combination of the indices concatenated by a delimiter.
+
+## Generated code example
+### Code in BashClass
 ```
 class Square {
     var int side;
@@ -22,7 +49,8 @@ function int main() {
     return 0;
 }
 ```
-## Generated BASH script
+
+### Generated BASH script
 ```
 #!/bin/bash
 #
