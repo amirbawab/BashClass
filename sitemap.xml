@@ -11,15 +11,7 @@
 
     
     <url>
-     <loc>/BashClass_to_Bash/</loc>
-     <lastmod>2017-09-10</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-    
-
-    
-    <url>
-     <loc>/example/</loc>
+     <loc>/bc2b/</loc>
      <lastmod>2017-09-10</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -28,6 +20,14 @@
     
     <url>
      <loc>/syntax/</loc>
+     <lastmod>2017-09-10</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/example/</loc>
      <lastmod>2017-09-10</lastmod>
      <changefreq>daily</changefreq>
     </url>
