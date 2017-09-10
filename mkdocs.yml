@@ -2,3 +2,8 @@ site_name: 'BashClass'
 repo_url: 'https://github.com/amirbawab/BashClass'
 theme: 'readthedocs'
 site_description: 'BashClass documentation'
+pages:
+    - 'Home': 'index.md'
+    - 'BashClass to Bash': 'bc2b.md'
+    - 'Syntax': 'syntax.md'
+    - 'Example': 'example.md'
