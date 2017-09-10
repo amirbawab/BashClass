@@ -1,7 +1,9 @@
 # <img src="logo.png" width="200"> [![Build Status](https://travis-ci.org/amirbawab/BashClass.svg?branch=master)](https://travis-ci.org/amirbawab/BashClass)
 
+**Version**: 1.1.0
+
 ## Github
-Link: [https://github.com/amirbawab/BashClass](https://github.com/amirbawab/BashClass)
+Link: [Release 1.1.0](https://github.com/amirbawab/BashClass/releases/tag/v1.1.0)
 
 ## About
 BashClass is a programming language supporting Object Oriented Programming, and compiles to BASH 4.4. Class members written in BashClass are converted to an associative array with unique indices in the generated BASH script. 
