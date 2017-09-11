@@ -5,7 +5,7 @@ set(BASH_PROJECT_DEV_EXEC "bashcdev")
 set(BASH_PROJECT_PRO_EXEC "bashc")
 
 # Add easycc CMakeLists.txt to build it automatically
-add_subdirectory(EasyCC-CPP)
+add_subdirectory(thirdparty/EasyCC-CPP)
 
 # Compile with -std=c++11 flag
 add_compile_options(-std=c++11)
@@ -15,8 +15,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Include bashc header files (e.g. same as -I flag)
 include_directories(include)
-include_directories(EasyCC-CPP/include)
-include_directories(EasyCC-CPP/rapidjson/include)
+include_directories(thirdparty/EasyCC-CPP/include)
+include_directories(thirdparty/EasyCC-CPP/rapidjson/include)
 
 # Store cpp files in a variable
 file(GLOB_RECURSE BASH_PROJECT_SOURCE_FILES src/*/*.cpp)

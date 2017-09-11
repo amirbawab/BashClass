@@ -1,9 +1,9 @@
 # <img src="logo.png" width="200"> [![Build Status](https://travis-ci.org/amirbawab/BashClass.svg?branch=master)](https://travis-ci.org/amirbawab/BashClass)
 
-**Version**: 1.1.0
+**Version**: 1.2.0
 
 ## Github
-Link: [Release 1.1.0](https://github.com/amirbawab/BashClass/releases/tag/v1.1.0)
+Link: [Release 1.2.0](https://github.com/amirbawab/BashClass/releases/tag/v1.2.0)
 
 ## About
 BashClass is a programming language supporting Object Oriented Programming, and compiles to BASH 4.4. Class members written in BashClass are converted to an associative array with unique indices in the generated BASH script. 
@@ -23,11 +23,11 @@ BashClass uses [EasyCC-C++](http://amirbawab.github.io/EasyCC-CPP) library which
 * Run cmake:
 ```bash
 cmake . \
-    -DSYNTAX_ERRORS="resources/src/syntax_errors.json"\
-    -DSYNTAX_GRAMMAR="resources/src/grammar.json"\
-    -DLEXICAL_ERRORS="resources/src/lexical_errors.json"\
-    -DLEXICAL_CONFIG="resources/src/lexical_config.json"\
-    -DLEXICAL_STATE_MACHINE="resources/src/lexical_graph.json"
+    -DSYNTAX_ERRORS="${PWD}/resources/src/syntax_errors.json"\
+    -DSYNTAX_GRAMMAR="${PWD}/resources/src/grammar.json"\
+    -DLEXICAL_ERRORS="${PWD}/resources/src/lexical_errors.json"\
+    -DLEXICAL_CONFIG="${PWD}/resources/src/lexical_config.json"\
+    -DLEXICAL_STATE_MACHINE="${PWD}/resources/src/lexical_graph.json"
 ```
 * Run make (developer mode):
 ```bash
