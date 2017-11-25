@@ -1,5 +1,8 @@
 # Example project
 
+## Demo
+<img src="../tutorial.gif" alt="tutorial.gif">
+
 ## Project structure
 ```
 example
