@@ -202,13 +202,18 @@
         },
         {
             "location": "/example/",
-            "text": "Example project\n\n\nProject structure\n\n\nexample\n\u251c\u2500\u2500 files.list\n\u251c\u2500\u2500 input\n\u2502\u00a0\u00a0 \u2514\u2500\u2500 Tutorial.bc\n\u2514\u2500\u2500 lib\n \u00a0\u00a0 \u251c\u2500\u2500 Integer.bc\n\u00a0 \u00a0 \u251c\u2500\u2500 List.bc\n\u00a0 \u00a0 \u251c\u2500\u2500 Object.bc\n\u00a0 \u00a0 \u251c\u2500\u2500 String.bc\n\u00a0 \u00a0 \u2514\u2500\u2500 Utils.bc\n\n\n\n\n\n\nThe \nmain\n function is located in \nTutorial.bc\n file.\n\n\nFiles in \nlibs/\n contain data structures and helper functions.\n\n\n\n\nPrerequisite\n\n\n\n\nBuild BashClass. For more details check the \nhome page\n.\n\n\n\n\nCompile files\n\n\ncd example\n../bin/bashc @files.list -o tutorial.sh\n\n\n\n\nRun generated bash script\n\n\n./tutorial.sh \"James\"\n\nHi, James\nLet's do some examples ...\nWant to do 'List' example? (y/n)\n> y\nAdd items to a list. Type exit to stop.\n> Apple\n> Orange\n> exit\nTotal number of items added to the list: 2\nWant to do 'Casting' example? (y/n)\n> y\nAdding the following two items to a list: 123, \"Orange\"\nPrinting items: \nItem at index 0 is an Integer\n123\nItem at index 1 is a String\nOrange\nCongratulations James! You've completed all the examples!\nThank you for trying BashClass :)",
+            "text": "Example project\n\n\nDemo\n\n\n\n\nProject structure\n\n\nexample\n\u251c\u2500\u2500 files.list\n\u251c\u2500\u2500 input\n\u2502\u00a0\u00a0 \u2514\u2500\u2500 Tutorial.bc\n\u2514\u2500\u2500 lib\n \u00a0\u00a0 \u251c\u2500\u2500 Integer.bc\n\u00a0 \u00a0 \u251c\u2500\u2500 List.bc\n\u00a0 \u00a0 \u251c\u2500\u2500 Object.bc\n\u00a0 \u00a0 \u251c\u2500\u2500 String.bc\n\u00a0 \u00a0 \u2514\u2500\u2500 Utils.bc\n\n\n\n\n\n\nThe \nmain\n function is located in \nTutorial.bc\n file.\n\n\nFiles in \nlibs/\n contain data structures and helper functions.\n\n\n\n\nPrerequisite\n\n\n\n\nBuild BashClass. For more details check the \nhome page\n.\n\n\n\n\nCompile files\n\n\ncd example\n../bin/bashc @files.list -o tutorial.sh\n\n\n\n\nRun generated bash script\n\n\n./tutorial.sh \"James\"\n\nHi, James\nLet's do some examples ...\nWant to do 'List' example? (y/n)\n> y\nAdd items to a list. Type exit to stop.\n> Apple\n> Orange\n> exit\nTotal number of items added to the list: 2\nWant to do 'Casting' example? (y/n)\n> y\nAdding the following two items to a list: 123, \"Orange\"\nPrinting items: \nItem at index 0 is an Integer\n123\nItem at index 1 is a String\nOrange\nCongratulations James! You've completed all the examples!\nThank you for trying BashClass :)",
             "title": "Example"
         },
         {
             "location": "/example/#example-project",
             "text": "",
             "title": "Example project"
+        },
+        {
+            "location": "/example/#demo",
+            "text": "",
+            "title": "Demo"
         },
         {
             "location": "/example/#project-structure",
