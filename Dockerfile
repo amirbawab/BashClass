@@ -30,8 +30,18 @@ RUN ln -s /usr/local/bin/bash /bin/bash
 RUN cd $HOME; git   clone https://github.com/amirbawab/BashClass
 WORKDIR $HOME/BashClass
 RUN git submodule update --init --recursive
-RUN ./run_cmake.sh
-RUN ./run_make_dev.sh
-RUN ./run_make_pro.sh
+RUN cmake . -DSYNTAX_ERRORS="${PWD}/resources/src/syntax_errors.json"\
+            -DSYNTAX_GRAMMAR="${PWD}/resources/src/grammar.json" \
+            -DLEXICAL_ERRORS="${PWD}/resources/src/lexical_errors.json"\
+            -DLEXICAL_CONFIG="${PWD}/resources/src/lexical_config.json"\
+            -DLEXICAL_STATE_MACHINE="${PWD}/resources/src/lexical_graph.json"
+RUN make bashcdev
+RUN make generate_files
+RUN cmake . -DSYNTAX_ERRORS="${PWD}/resources/src/syntax_errors.json"  \
+            -DSYNTAX_GRAMMAR="${PWD}/resources/src/grammar.json" \
+            -DLEXICAL_ERRORS="${PWD}/resources/src/lexical_errors.json"\
+            -DLEXICAL_CONFIG="${PWD}/resources/src/lexical_config.json"\
+            -DLEXICAL_STATE_MACHINE="${PWD}/resources/src/lexical_graph.json"
+RUN make bashc
 
 CMD /bin/bash
